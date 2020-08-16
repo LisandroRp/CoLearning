@@ -50,8 +50,29 @@ let getUsuarioById = (req, res) =>
 {      
     console.log("llegue a leer con filtro");
     //Obtener id busqueda req.param.tagid
-    console.log(req.query.usuarioId);
-    let idBusqueda = {usuarioId: req.query.usuarioId};
+    console.log(req.query.idUsuario);
+    let idBusqueda = {idUsuario: req.query.idUsuario};
+    console.log(idBusqueda);
+    //Listar resultados
+    usuarios.find(idBusqueda)
+    .then
+    (
+        (listaUsuarios)=>
+        {
+            console.log(listaUsuarios); 
+            res.send(listaUsuarios); //devuelvo resultado query   
+               
+        },
+        (err)=>{console.log(err);}
+    )       
+};
+
+let getUsuarioByMail = (req, res) =>
+{      
+    console.log("llegue a leer con filtro");
+    //Obtener id busqueda req.param.tagid
+    console.log(req.query.mail);
+    let idBusqueda = {mail: req.query.mail};
     console.log(idBusqueda);
     //Listar resultados
     usuarios.find(idBusqueda)
@@ -106,4 +127,4 @@ let updateUsuarioByPassword = (req, res) =>
       res.status(206).send({ msg: "Se actualizaron los usuarios." });  
 };
 
-module.exports = {getUsuarios,getUsuarioById,insertUsuario,updateUsuarioByPassword,getUsuarioByIdOne};
+module.exports = {getUsuarios,getUsuarioById,insertUsuario,updateUsuarioByPassword,getUsuarioByIdOne,getUsuarioByMail};

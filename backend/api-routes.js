@@ -132,6 +132,22 @@ router.get('/institutos/:name', (req, res) => {
 });
 //************************** Fin Recursos Genericos**************************** */
 
+//************************** Inicio Recursos Usuario**************************** */
+router.get('/usuarios/idUsuario', (req, res) => {
+    if(!req.query.idUsuario || req.query.idUsuario =='undefined' || req.query.idUsuario == '') 
+        res.status(409).send({ msg: "El campo id usuario es requerido." });
+    else
+        usuarioController.getUsuarioById(req,res);
+});
+
+router.get('/usuarios/mail', (req, res) => {
+    if(!req.query.mail || req.query.mail =='undefined' || req.query.mail == '') 
+        res.status(409).send({ msg: "El campo id mail es requerido." });
+    else
+        usuarioController.getUsuarioByMail(req,res);
+});
+
+//************************** Fin Recursos Usuario**************************** */
 
 //************************** Inicio Recursos Direccion**************************** */
 router.get('/direcciones', (req, res) => {
