@@ -4,7 +4,7 @@ import { Component } from 'react';
  //var ip = '192.168.1.103';
 var ip = '172.20.10.8';
 var url = 'http://'+ip+':8080/apiAppEventos';
-const key = "AIzaSyCdgRdU-qT9RXGnIBSyEUNVvCJtGhai1Ck"
+const key =''
 
 class ApiController extends Component {
 
