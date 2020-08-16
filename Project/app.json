@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "CoLearning",
+    "slug": "CoLearning",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.morgan.CoLearning",
+      "supportsTablet": true,
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-4175223710505457~5097582425"
+      }
+    },
+    "android": {
+      "package": "com.morgan.CoLearning",
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-4175223710505457~3729139362"
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [{
+            "scheme": "morgan://Rutinas"
+          }],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
+      "permissions": [],
+      "versionCode": 4
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
