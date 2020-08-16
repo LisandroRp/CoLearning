@@ -1,0 +1,7 @@
+[{
+  "_id": {
+    "$oid": "5f37132fa84f3c8ac1bc1f26"
+  },
+  "idClase_FK": "1",
+  "idProfesor": "admin"
+}]

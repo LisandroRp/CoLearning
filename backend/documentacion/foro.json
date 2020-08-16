@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "5f2eccfe1adc263829ae9f41"
+  },
+  "id_foro": "1",
+  "idUsuario": "admin",
+  "nombre_foro": "'Duda Existencial'",
+  "pregunta": "Como hacer??",
+  "esProfesor": true,
+  "respuestasCant": "114",
+  "fecha_alta": "",
+  "resuleto": true
+}]

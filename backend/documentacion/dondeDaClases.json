@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "5f384d1ea84f3c8ac1bc1f28"
+  },
+  "id_dondeClases": "1",
+  "des_dondeClases": "En casas"
+},{
+  "_id": {
+    "$oid": "5f384d65cfc38c85115282bb"
+  },
+  "id_dondeClases": "2",
+  "des_dondeClases": "En Instituto"
+}]

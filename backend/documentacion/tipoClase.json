@@ -1,0 +1,22 @@
+[{
+  "_id": {
+    "$oid": "5f3712a2a84f3c8ac1bc1f25"
+  },
+  "id_tipoClases": "1",
+  "des_tipoClases": "Virtual",
+  "descripcion": "Clase Virtuales"
+},{
+  "_id": {
+    "$oid": "5f3712d5cfc38c85115282b6"
+  },
+  "id_tipoClases": "2",
+  "des_tipoClases": "Casa",
+  "descripcion": "Clase Casa"
+},{
+  "_id": {
+    "$oid": "5f3712d9cfc38c85115282b7"
+  },
+  "id_tipoClases": "3",
+  "des_tipoClases": "Institución",
+  "descripcion": "Clase Instituto"
+}]

@@ -1,0 +1,7 @@
+[{
+  "_id": {
+    "$oid": "5f396ba2a84f3c8ac1bc1f2b"
+  },
+  "idForo_fk": "1",
+  "idTag_fk": "1"
+}]

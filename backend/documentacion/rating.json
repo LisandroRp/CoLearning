@@ -1,0 +1,22 @@
+[{
+  "_id": {
+    "$oid": "5f2ecaf71adc263829ae9f40"
+  },
+  "idRating": "1",
+  "votos": "56",
+  "rating": "3"
+},{
+  "_id": {
+    "$oid": "5f33162122102acf9c8bc5b9"
+  },
+  "idRating": "2",
+  "votos": "40",
+  "rating": "4"
+},{
+  "_id": {
+    "$oid": "5f33162422102acf9c8bc5ba"
+  },
+  "idRating": "3",
+  "votos": "67",
+  "rating": "3"
+}]

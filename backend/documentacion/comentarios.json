@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "5f2f3e121adc263829ae9f44"
+  },
+  "des_comentario": "admin",
+  "fecha_alta": "2020-08-14",
+  "ratingPos": "10",
+  "ratingNeg": "15",
+  "id_usuarioOrigen": "admin",
+  "id_usuarioDestino": "bala",
+  "id_comentario": 1
+}]

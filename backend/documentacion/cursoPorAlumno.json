@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "5f2ec7b11adc263829ae9f3b"
+  },
+  "idAlumno": "bala",
+  "idCurso": "id",
+  "fechaDesde": {
+    "$date": "2022-03-08T03:00:00Z"
+  },
+  "fechaHasta": {
+    "$date": "2020-09-25T03:00:00Z"
+  },
+  "activo": true
+}]

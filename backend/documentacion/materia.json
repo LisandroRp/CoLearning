@@ -1,0 +1,22 @@
+[{
+  "_id": {
+    "$oid": "5f3711f0a84f3c8ac1bc1f23"
+  },
+  "id_materia": "2",
+  "nombre": "Matematica",
+  "descripcion": "Dictado de matematicas"
+},{
+  "_id": {
+    "$oid": "5f3844b2cfc38c85115282b9"
+  },
+  "id_materia": "1",
+  "nombre": "Lengua",
+  "descripcion": "Dictado de Lengua"
+},{
+  "_id": {
+    "$oid": "5f3844b4cfc38c85115282ba"
+  },
+  "id_materia": "3",
+  "nombre": "Fisica",
+  "descripcion": "Dictado de Fisica"
+}]

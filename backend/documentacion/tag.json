@@ -1,0 +1,19 @@
+[{
+  "_id": {
+    "$oid": "5f396b2aa84f3c8ac1bc1f2a"
+  },
+  "id_tag": "1",
+  "nombre_tag": "React Native"
+},{
+  "_id": {
+    "$oid": "5f396b63cfc38c85115282bc"
+  },
+  "id_tag": "2",
+  "nombre_tag": "Java"
+},{
+  "_id": {
+    "$oid": "5f396b66cfc38c85115282bd"
+  },
+  "id_tag": "3",
+  "nombre_tag": ".Net"
+}]
