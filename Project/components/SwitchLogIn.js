@@ -4,32 +4,34 @@ import {
   Text,
   View,
   TextInput,
-  Button,
+  KeyboardAvoidingView,
   TouchableOpacity,
   Image,
   Alert
 } from 'react-native'; 
 import ApiController from '../controller/ApiController';
-import {KeyboardAvoidingView} from 'react-native';
-import UserDataManager from './UserDataManager';
+import ExportadorLogos from './exportadores/ExportadorLogos'
+
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 class LogIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: null,
-      password: null,
+      mail:  "JuanMn@gmail.com",
+      password: "123",
     }
   }
 
   checkLogin() {
-    //ApiController.getUsuario(this.checkUsuario.bind(this), this.state.username)
-    this.props.onPressLogin(this.state.username);
+   
+    //ApiController.getUsuarioByMail(this.state.mail, this.checkUsuario.bind(this))
+    this.props.onPressLogin(this.state.mail);
   }
 
   checkUsuario(data) {
-    if (data.username == this.state.username && data.password == this.state.password && this.state.username != null) {
-        this.props.onPressLogin(this.state.username);
+    if (data.mail == this.state.mail && data.password == this.state.password && this.state.mail != null) {
+        this.props.onPressLogin(this.state.mail);
     } else {
         alert("Contraseña incorrecta");
     }
@@ -37,25 +39,27 @@ class LogIn extends Component {
  
   render() {
     return (
-      <View style={styles.container}>
+        <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(3)} enabled>
        {/* <Image style={styles.bgImage} source={{ uri: "https://lorempixel.com/900/1400/nightlife/8/" }}/> */}
        <View style={[styles.imageContainer]}>
                         <Image
                             style={{height:300, width:300,resizeMode: 'contain',}}
-                            source={require('./Licha-enjoy.png')}></Image>
+                            source={ExportadorLogos.traerLogoBlanco()}></Image>
                     </View>
        <View style={{paddingTop:50}}>
         <View style={styles.inputContainer}>
           <TextInput style={styles.inputs}
-              placeholder="Username"
+              value= {this.state.mail}
+              placeholder="Mail"
               underlineColorAndroid='transparent'
-              onChangeText={(text) => this.setState({ username: text })}
+              onChangeText={(text) => this.setState({ mail: text })}
               />
           <Image style={styles.inputIcon} source={{uri: "https://img.icons8.com/office/40/000000/user.png"}}/>
         </View>
         
         <View style={styles.inputContainer}>
           <TextInput style={styles.inputs}
+              value={this.state.password}
               placeholder="Password"
               secureTextEntry={true}
               underlineColorAndroid='transparent'
@@ -80,7 +84,7 @@ class LogIn extends Component {
         </TouchableOpacity>
         </View>
       </View>
-      </View>
+      </KeyboardAvoidingView>
       
     );
   }
@@ -95,7 +99,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '100%',
-    backgroundColor: '#9FA8DA',
+    backgroundColor: '#F28C0F',
   },
   inputContainer: {
     borderBottomColor: '#F5FCFF',

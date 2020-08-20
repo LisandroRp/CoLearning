@@ -11,6 +11,7 @@ let SCREEN_HEIGHT = Dimensions.get('window').height
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FontAwesome } from '@expo/vector-icons';
+import ApiController from '../controller/ApiController';
 
 var images = [
   { id: 0, src: null, nombre: 'Co-Learning' },
@@ -26,7 +27,7 @@ class HomeClases extends React.Component {
   constructor() {
     super()
     this.state = {
-      clases: [{ id: 0, src: require("../assets/Title.png"), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
+      clases: [{ id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
       {
         nombre: 'Caca',
         apellido: 'Arcolucci',
@@ -79,7 +80,7 @@ class HomeClases extends React.Component {
         materias: [{ nombre_materia: "Ingles", des_materia: "Doy clases de ingles nivel avanzado perri" },
         { nombre_materia: "Perreo", des_materia: "Enseño perrear hasta el piso" }]
       }],
-      activeImage: { id: 0, src: require("../assets/Title.png"), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: ''},
+      activeImage: { id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: ''},
       y: 0,
       max_rating: 5,
       isLoading: true
@@ -88,9 +89,15 @@ class HomeClases extends React.Component {
     this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
   }
   componentDidMount = async () => {
-    this.setState({ isLoading: false })
+    //ApiController.getUsuarios(this.okUsuarios.bind(this))
+    this.setState({isLoading: false})
   }
-
+  okUsuarios(usuariosBase){
+    console.log(usuariosBase)
+    var usuarios = [{ id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' }]
+    usuarios.concat(usuariosBase)
+    this.setState({usuarios: usuarios, isLoading: false})
+  }
   componentWillMount() {
     this.allImages = {}
     this.oldPosition = {}
@@ -344,7 +351,7 @@ class HomeClases extends React.Component {
       return (
         <View style={styles.container}>
           <StatusBar barStyle="black" backgroundColor="white" />
-          <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+          <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
         </View>
       );
     }
@@ -363,8 +370,8 @@ class HomeClases extends React.Component {
             initialScrollIndex={0}
             onSnapToItem={(index) => this.onCarouselItemChange(index)}
           />
-          <View style={{ position: 'absolute', marginTop: hp(60), left: 0, right: 0, justifyContent: 'center', alignItems: 'center' }}>
-            <Text >Hola</Text>
+         <View style={{ position: 'absolute', bottom: hp(5), left: 0, right: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
           </View>
           <Animated.View
             pointerEvents={this.state.activeImage ? "auto" : "none"}
@@ -380,7 +387,7 @@ class HomeClases extends React.Component {
               <Text>{this.inactiveImageVotos()}{this.state.activeImage ? this.state.activeImage.rating.votos : ''}</Text>
             </View>
             <Animated.View style={[{ backgroundColor: 'white', flex: 1, padding: 20, flexDirection: 'column'}]}>
-              <Text style={{ fontSize: 20, color: '#F28C0F', fontWeight: 'bold', textAlign: 'center', paddingBottom: 10 }}>{this.state.activeImage ? this.state.activeImage.nombre + " " + this.state.activeImage.apellido : ''}</Text>
+            {this.state.activeImage ? (this.state.activeImage.id != 0 ? <Text style={{ fontSize: 20, color: '#F28C0F', fontWeight: 'bold', textAlign: 'center', paddingBottom: 10 }}>{this.state.activeImage.nombre + " " + this.state.activeImage.apellido}</Text> : <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.imageTitulo}/>) : <View></View>}
               {this.state.activeImage ? ( this.state.activeImage.id == 0 ? <Text style={{textAlign: 'justify'}}>Eiusmod consectetur cupidatat dolor Lorem excepteur excepteur. Nostrud sint officia consectetur eu pariatur laboris est velit. Laborum non cupidatat qui ut sit dolore proident. Eiusmod consectetur cupidatat dolor Lorem excepteur excepteur. Nostrud sint officia consectetur eu pariatur laboris est velit. Laborum non cupidatat qui ut sit dolore proident.Eiusmod consectetur cupidatat dolor Lorem excepteur excepteur. Nostrud sint officia consectetur eu pariatur laboris est velit. Laborum non cupidatat qui ut sit dolore proident.</Text> : <Text></Text>): <Text></Text>}
               {/* <View style={[styles.infoContainer, { backgroundColor: this.inactiveImageButton() }]}> */}
               
@@ -433,7 +440,7 @@ class HomeClases extends React.Component {
         <Image
           ref={(item) => (this.allImages[index] = item)}
           source={item.src}
-          style={{ height: hp(25), width: hp(25), borderRadius: 100, resizeMode: ((item.id == 0) ? 'contain' : '')}}
+          style={[styles.carouselImage,{ resizeMode: ((item.id == 0) ? 'contain' : 'contain')}]}
         />
       </Animated.View>
     </TouchableOpacity>
@@ -447,9 +454,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  imageTitulo:{
+    alignSelf: 'center',
+    height: hp(5),
+    resizeMode: 'contain',
+    marginBottom: hp(2)
+  },
+  fondoImage:{
+    width: wp(80),
+    resizeMode: 'contain'
+  },
   carousel: {
     //backgroundColor: 'white',
     marginTop: 10,
+  },
+  carouselImage: {
+    height: hp(25),
+    width: hp(25),
+    borderRadius: 100
   },
   //Heart
   heartView: {

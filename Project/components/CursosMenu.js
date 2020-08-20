@@ -46,7 +46,7 @@ class Clases extends Component {
     }
 
     render() {
-        rating2 = this.state.rating
+        var rating2 = this.state.rating
         let React_Native_Rating_Bar = [];
         for (var i = 1; i <= this.state.max_rating; i++) {
             React_Native_Rating_Bar.push(
@@ -69,7 +69,7 @@ class Clases extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
@@ -81,7 +81,7 @@ class Clases extends Component {
                             placeholder="Tema"
                             platform='ios'
                             value={this.state.tema}
-                            inputContainerStyle={{ backgroundColor: 'white'}}
+                            inputContainerStyle={styles.searchShadow}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
                             containerStyle={styles.searchBar}
                             cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
@@ -92,7 +92,7 @@ class Clases extends Component {
                             placeholder="Direccion"
                             platform='ios'
                             value={this.state.direccion}
-                            inputContainerStyle={{ backgroundColor: 'white'}}
+                            inputContainerStyle={styles.searchShadow}
                             placeholderTextColor= 'rgba(0, 0, 0, 0.3)'
                             containerStyle={styles.searchBar}
                             cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
@@ -122,15 +122,28 @@ const styles = StyleSheet.create({
         flex: 1
     },
 
-    searchBar: {
-            backgroundColor: "#FFF7EE",
-            marginHorizontal: 35
-    },
     searchContainer: {
         justifyContent: 'center',
         alignItems: 'center',
     },
 
+    searchBar: {
+        backgroundColor: "#FFF7EE",
+        marginHorizontal: wp(10)
+},
+
+    searchShadow: {
+        backgroundColor: 'white',
+        shadowColor: '#00000045',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        elevation: 12,
+    },
+    
     ContainerInside: {
         backgroundColor: "black",
         marginTop: hp(5),
@@ -196,8 +209,8 @@ const styles = StyleSheet.create({
         marginBottom: hp(1)
     },
     heartImage: {
-        height: hp(4),
-        width: hp(4),
+        height: hp(5.5),
+        width: hp(5.5),
         color: "orange"
     },
     //Boton

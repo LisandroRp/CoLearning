@@ -5,6 +5,7 @@ import { withNavigation } from 'react-navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ExportadorLogos from './exportadores/ExportadorLogos'
+import ExportadorCreadores from './exportadores/ExportadorCreadores'
 
 var { height, width } = Dimensions.get('window');
 
@@ -20,7 +21,28 @@ class UserCalendario extends Component {
             id_idioma: 0,
             tema: '',
             direccion: '',
-            clases: [{ id: 1, nombre: "idiomas" }, { id: 2, nombre: "Deportes" }, { id: 3, nombre: "Estudios" }, { id: 4, nombre: "Arte" }]
+            usuario: {
+                id_usuario: 1,
+                nombre_usuario: 'Leila',
+                apellido: 'Arcolucci',
+                src: require("../assets/leila.jpg"),
+                esProfesor: true,
+                domicilio: 'Spega Ñeri',
+                dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
+                { id_dondeClases: 2, des_dondeClases: "A Domicilio" },
+                { id_dondeClases: 3, des_dondeClases: "Instituto" }],
+                tipoClases: [{ id_tipoClases: 1, des_tipoClases: "Particulares" },
+                { id_tipoClases: 2, des_tipoClases: "Grupales" },
+                { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
+                mail: 'lisandro@gmail.com',
+                instagram: "@LisandroRp",
+                whatsApp: "1144373492",
+                telefono: '1112244455',
+                materias: [{ nombre_materia: "Ingles", des_materia: "Doy clases de ingles nivel avanzado perri" },
+                { nombre_materia: "Perreo", des_materia: "Enseño perrear hasta el piso" }],
+                latitud: 123,
+                longitud: 123
+            }
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
@@ -41,38 +63,46 @@ class UserCalendario extends Component {
         this.setState({ searchBarFocused: false })
     }
 
-    vote(i) {
-        this.setState({ rating: i })
-    }
 
     render() {
-        rating2 = this.state.rating
-        let React_Native_Rating_Bar = [];
-        for (var i = 1; i <= this.state.max_rating; i++) {
-            React_Native_Rating_Bar.push(
-                <TouchableOpacity
-                    activeOpacity={0.7}
-                    key={i}
-                    onPress={this.vote.bind(this, i)}
-                >
-                    <FontAwesome name={i <= rating2
-                                ? 'heart'
-                                : 'heart-o'} style={styles.heartImage} size={hp(5)} />
-                </TouchableOpacity>
-            );
-        }
         if (this.state.isLoading) {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
         else {
             return (
                 <View style={styles.container}>
-              
+                    {this.state.usuario.mail ?
+                        <View style={styles.socialMediaContainer}>
+                            <Image style={styles.logoSocialMedia} source={ExportadorLogos.traerMail()} />
+                            <Text style={styles.socialMedia}>{this.state.usuario.mail}</Text>
+                        </View>
+                        : <View />}
+
+                    {this.state.usuario.instagram ?
+                        <View style={styles.socialMediaContainer}>
+                            <Image style={styles.logoSocialMedia} source={ExportadorLogos.traerInstagram()} />
+                            <Text style={styles.socialMedia} onPress={() => Linking.openURL(ExportadorCreadores.queLinkInstagram() + this.state.usuario.instagram)}>{this.state.rutina.instagram}</Text>
+                        </View>
+                        : <View />}
+
+                    {this.state.usuario.whatsApp ?
+                        <View style={styles.socialMediaContainer}>
+                            <Image style={styles.logoSocialMedia} source={ExportadorLogos.traerWpp()} />
+                            <Text style={styles.socialMedia}>{this.state.usuario.whatsApp}</Text>
+                        </View>
+                        : <View />}
+
+                    {this.state.usuario.telefono ?
+                        <View style={styles.socialMediaContainer}>
+                            <Image style={styles.logoSocialMedia} source={ExportadorLogos.traerInstagram()} />
+                            <Text style={styles.socialMedia}>{this.state.usuario.telefono}</Text>
+                        </View>
+                        : <View />}
                 </View>
             );
         }
@@ -82,101 +112,26 @@ const resizeMode = 'center';
 const styles = StyleSheet.create({
 
     container: {
-        backgroundColor: "#FFEEEE",
+        backgroundColor: "#FFF7EE",
         flex: 1
     },
 
-    searchContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    ContainerInside: {
-        backgroundColor: "black",
-        marginTop: hp(5),
-        padding: height * 0.04,
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: 'center',
-        height: height * 0.33,
-        width: width * 0.88
-    },
-    //FlatList
-    contentList: {
-        flex: 1,
+    socialMedia:{
+        color: "white",
+        textDecorationLine: 'underline',
+      },
+    
+      logoSocialMedia:{
+        height: height * 0.044,
+        width: height * 0.044,
+        alignSelf: "center",
+        marginRight: width * 0.033
+      },
+      socialMediaContainer: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        padding: 2,
-        alignSelf: 'center'
-    },
-    image: {
-        width: wp(49),
-        height: hp(24.5),
-        margin: 1,
-        borderWidth: 1.5,
-        borderColor: 'black',
-        resizeMode: 'stretch',
-        justifyContent: 'center',
         alignItems: 'center',
-        alignContent: 'center',
-        overflow: 'hidden'
-    },
-
-    bgImage: {
-        flex: 1,
-        resizeMode,
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        resizeMode: 'cover'
-    },
-    textImage: {
-        textAlign: 'center',
-        fontSize: hp(4),
-        textTransform: 'uppercase',
-        color: "#2A73E0",
-        letterSpacing: wp(1),
-        fontWeight: 'bold',
-        textShadowColor: 'black',
-        textShadowOffset: { width: 2.2, height: 2.2 },
-        textShadowRadius: 0.1
-    },
-
-    Text: {
-        fontSize: height * 0.027,
-        color: "#3399ff",
-        textAlign: "center"
-    },
-    //Star View
-    heartView: {
-        justifyContent: 'center',
-        flexDirection: 'row',
-        marginTop: hp(1.5),
-        marginBottom: hp(1)
-    },
-    heartImage: {
-        color: "#f66"
-    },
-    //Boton
-
-    buscarButton: {
-        backgroundColor: 'white',
-        borderRadius: 10,
-        borderColor: 'black',
-        borderWidth: 1,
-        alignItems: 'center',
-        width: width * 0.33,
-        marginHorizontal: height * 0.025,
-        marginVertical: height * 0.025,
-        alignSelf: 'center',
-        opacity: .95
-    },
-    screenButtonText: {
-        marginVertical: height * 0.02,
-        fontWeight: 'bold',
-        fontSize: height * 0.025
-    },
+        marginTop: height * 0.02
+      },
 
 })
 export default withNavigation(UserCalendario);

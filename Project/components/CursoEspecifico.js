@@ -110,7 +110,7 @@ class CursoEspecifico extends React.Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color='#F28C0F' backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
@@ -204,7 +204,8 @@ const styles = StyleSheet.create({
     image: {
         flex: 1,
         height: undefined,
-        width: undefined
+        width: undefined,
+        borderRadius: 100,
     },
     subText: {
         fontSize: 12,
@@ -213,11 +214,19 @@ const styles = StyleSheet.create({
         fontWeight: "500"
     },
     profileImage: {
-        width: 200,
-        height: 200,
+        width: hp(25),
+        height: hp(25),
         borderRadius: 100,
-        overflow: "hidden",
-        marginTop: hp(5)
+        marginTop: hp(5),
+        backgroundColor: 'transparent',
+        shadowColor: '#00000045',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        elevation: 20,
     },
     dm: {
         backgroundColor: "#F28C0F",
