@@ -77,7 +77,7 @@ class Cursos extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }

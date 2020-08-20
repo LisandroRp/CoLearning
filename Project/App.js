@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Image, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from '@expo/vector-icons/Ionicons';
@@ -19,6 +19,8 @@ import {
 import {
   createDrawerNavigator, DrawerItems
 } from 'react-navigation-drawer';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+
 import LogIn from './components/LogIn'
 import SwitchLogIn from './components/SwitchLogIn'
 import SwitchCrearUser from './components/SwitchCrearUser'
@@ -44,10 +46,12 @@ import Foros from './components/Foros'
 import ForoEspecifico from './components/ForoEspecifico'
 
 import UserDataManager from './components/UserDataManager';
+import ExportadorLogos from './components/exportadores/ExportadorLogos';
+
 
 console.disableYellowBox = true
 
-UserDataManager.getInstance().setCurrentPositionFromReact()
+//UserDataManager.getInstance().setCurrentPositionFromReact()
 
 class App extends Component {
 
@@ -202,8 +206,8 @@ class ClasesMenuScreen extends React.Component {
     );
   }
 
-  buscarClase() {
-    this.props.navigation.navigate('profesores', {});
+  buscarClase(nombre_profesor, tema_profesor, direccion_profesor) {
+    this.props.navigation.navigate('profesores', {nombre_profesor: nombre_profesor, tema_profesor: tema_profesor, direccion_profesor: direccion_profesor});
   }
 }
 class ClasesScreen extends React.Component {
@@ -508,12 +512,13 @@ const BuscarTabNavigator = createBottomTabNavigator({
     const { routeName } = navigation.state.routes[navigation.state.index]
     return {
       headerTitle: 'CoLearning',
+      //(<Image source={ExportadorLogos.traerLogoBlanco()} styles={styles.imageHeader} resizeMode='contain'/>),
       headerTintColor: 'white',
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: 66,
-        borderBottomWidth: 0
-      }
+        borderBottomWidth: 0,
+      },
     }
   },
 swipeEnabled: true,
@@ -1102,6 +1107,7 @@ const DrawerConfig = {
 const customDrawerComponent = (props) => (
   <View style={{ flex: 1 }}>
     <LinearGradient colors={['#F28C0F', '#F28C0F']} style={styles.profile}>
+      <Image style={styles.imageDrawer} source={ExportadorLogos.traerLogoBlanco()}></Image>
     </LinearGradient>
     <ScrollView style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0 }}>
       <DrawerItems {...props} style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0 }} />
@@ -1186,8 +1192,8 @@ const AppSwitchNavigator = createSwitchNavigator({
   drawer: { screen: AppDrawerNavigator }
 });
 
-//const AppContainer = createAppContainer(AppSwitchNavigator);
-const AppContainer = createAppContainer(AppDrawerNavigator);
+const AppContainer = createAppContainer(AppSwitchNavigator);
+//const AppContainer = createAppContainer(AppDrawerNavigator);
 
 const resizeMode = 'center';
 const styles = StyleSheet.create({
@@ -1204,10 +1210,10 @@ const styles = StyleSheet.create({
   },
   profile: {
     justifyContent: 'center',
-    paddingTop: 50,
-    paddingBottom: 50,
+    alignItems: 'center',
     borderBottomWidth: 0,
-    height: 200,
+    paddingTop: hp(2),
+    height: hp(20),
     borderBottomColor: '#3399ff',
     backgroundColor: '#3399ff',
   },
@@ -1216,9 +1222,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
   },
-  img: {
-    width: 80,
-    borderRadius: 50,
+  imageDrawer: {
+    width: hp(28),
+    resizeMode: 'contain'
+  },
+  imageHeader: {
+    height: 2,
+    width: 2,
   },
   profileText: {
     flex: 3,

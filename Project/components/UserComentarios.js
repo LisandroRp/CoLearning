@@ -46,7 +46,7 @@ class UserCalendario extends Component {
     }
 
     render() {
-        rating2 = this.state.rating
+        var rating2 = this.state.rating
         let React_Native_Rating_Bar = [];
         for (var i = 1; i <= this.state.max_rating; i++) {
             React_Native_Rating_Bar.push(
@@ -65,7 +65,7 @@ class UserCalendario extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
@@ -82,7 +82,7 @@ const resizeMode = 'center';
 const styles = StyleSheet.create({
 
     container: {
-        backgroundColor: "#FFEEEE",
+        backgroundColor: "#FFF7EE",
         flex: 1
     },
 

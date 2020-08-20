@@ -1,9 +1,9 @@
 import { Component } from 'react';
 
 //  var ip = '172.20.10.5';
- //var ip = '192.168.1.103';
-var ip = '172.20.10.8';
-var url = 'http://'+ip+':8080/apiAppEventos';
+var ip = '192.168.1.105';
+//var ip = '172.20.10.8';
+var url = 'http://'+ip+':8080/apiColearning';
 const key =''
 
 class ApiController extends Component {
@@ -17,7 +17,30 @@ class ApiController extends Component {
                 okEventos(data);
             }).catch((err) => alert("Intentar de nuevo"));
     }
-
+//********************** */
+//Usuarios
+//********************** */
+getUsuarioByMail(mail, okUsuario) {
+    let uri = url+'/usuarios/mail?mail=' + mail
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => alert("Intentar de nuevo1")).
+        then(data => {
+            okUsuario(data[0]);
+        }).catch((err) => alert("Intentar de nuevo2"));
+}
+getUsuarios(okUsuarios) {
+    let uri = url+'/usuarios'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => alert("Intentar de nuevo")).
+        then(data => {
+            okUsuarios(data);
+        }).catch((err) => alert("Intentar de nuevo"));
+}
+//********************** */
+//Apis
+//********************** */
     getCoordenadas(direccion,okCoordenadas) {
         let urigoogle = 'https://maps.googleapis.com/maps/api/geocode/json?address='+direccion+'&key=' + key
         

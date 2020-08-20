@@ -59,7 +59,7 @@ class ForoEspecifico extends Component {
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <ActivityIndicator size="large" color="#3399ff" backgroundColor=' #616161' style={{ flex: 2 }}></ActivityIndicator>
+          <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 2 }}></ActivityIndicator>
         </View>
       );
     } else {

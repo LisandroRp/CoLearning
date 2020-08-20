@@ -55,7 +55,7 @@ class ForoMenu extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
@@ -63,15 +63,14 @@ class ForoMenu extends Component {
             return (
                 <View style={styles.container}>
                     <View style={styles.searchContainer}>
-                        <SearchBar
+                    <SearchBar
                             placeholder="Tema"
                             platform='ios'
-                           
                             value={this.state.tema}
-                            inputContainerStyle={styles.searchBarInput}
+                            inputContainerStyle={styles.searchShadow}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
                             containerStyle={styles.searchBar}
-                            cancelButtonProps={{buttonTextStyle: {color: '#F28C0F' }}}
+                            cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
                             buttonStyle={{}}
                             searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
                         />
@@ -137,28 +136,34 @@ const styles = StyleSheet.create({
     searchContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: hp(8)
+        paddingTop: hp(5),
+        flex:0.75
     },
     searchBar: {
-        paddingTop: 0,
-        paddingBottom: 0,
-        marginHorizontal: 35,
-        borderRadius: 10,
-        shadowColor: '#00000525',
-        shadowOffset: {
-            width: 30,
-            height: 50,
-        },
-        shadowOpacity: 2,
-        shadowRadius: 0,
-        elevation: 550
+        backgroundColor: "#FFF7EE",
+        marginHorizontal: wp(10)
     },
-    searchBarInput: {
+    searchShadow: {
         backgroundColor: 'white',
-        marginLeft: 0,
-        marginRight: 0,
+        shadowColor: '#00000045',
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        elevation: 12,
     },
-
+    ContainerInside: {
+        backgroundColor: "black",
+        marginTop: hp(5),
+        padding: height * 0.04,
+        borderRadius: 10,
+        alignItems: "center",
+        justifyContent: 'center',
+        height: height * 0.33,
+        width: width * 0.88
+    },
     ContainerInside: {
         backgroundColor: "black",
         marginTop: hp(5),
@@ -171,7 +176,7 @@ const styles = StyleSheet.create({
     },
     //CAROUSEL
     carousel: {
-        marginTop: 10,
+        flex:1.25
         //backgroundColor:'red'
     },
     cardContainer: {

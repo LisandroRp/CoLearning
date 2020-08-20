@@ -7,6 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import ExportadorLogos from './exportadores/ExportadorLogos'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import ApiController from '../controller/ApiController';
 
 var { height, width } = Dimensions.get('window');
 
@@ -35,12 +36,15 @@ class Clases extends Component {
             { id_profesor: 8, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 }]
         };
     }
-    componentDidMount() {
+    componentDidMount = async () => {
+        //ApiController.getProfesoresFilter(await this.navigation.getParam("nombre_profesor"), await this.navigation.getParam("tema_profesor"), await this.navigation.getParam("direccion_profesor"), this.okProfesores.bind(this))
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
       }
-    
+      okProfesores(profesoresBase){
+        this.setState({profesores: profesoresBase, memory: profesoresBase, isLoading: false})
+      }
       keyboardDidShow = () => {
         this.setState({ searchBarFocused: true })
       }
@@ -85,7 +89,7 @@ class Clases extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
@@ -154,67 +158,6 @@ const styles = StyleSheet.create({
         backgroundColor: "black"
     },
 
-    slide: {
-        backgroundColor: "black",
-        marginTop: height * 0.05,
-        marginBottom: height * 0.05,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        borderRadius: 10,
-        opacity: .95,
-    },
-
-    slideText: {
-        textAlign: "center",
-        fontSize: height * 0.03,
-        color: "#3399ff"
-    },
-
-    bgImage: {
-        flex: 1,
-        resizeMode,
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        resizeMode: 'cover'
-    },
-    slideContainer: {
-        flex: 1,
-        alignItems: "center",
-    },
-
-    TextContainer: {
-        backgroundColor: 'grey',
-        borderRadius: 10,
-        width: wp("20"),
-        height: hp("5.5"),
-        flexDirection: 'row',
-        alignItems: 'center',
-        fontWeight: 'bold',
-        fontSize: height * 0.02,
-        textAlign: 'center',
-        marginTop: height * 0.028,
-        opacity: .95
-    },
-
-    ContainerInside: {
-        width: width,
-        height: height,
-        alignItems: "center",
-    },
-    guardarButton: {
-        backgroundColor: 'grey',
-        borderRadius: 10,
-        alignItems: 'center',
-        width: width * 0.33,
-        marginHorizontal: 22,
-        marginTop: height * 0.05,
-        alignSelf: 'center',
-        opacity: .95
-    },
-
     // FlatList
 
     card: {
@@ -266,8 +209,7 @@ const styles = StyleSheet.create({
     //Estrellas
     starImage: {
         height: hp(4.4),
-        width: hp(4.4),
-        color: "orange"
+        width: hp(4.4)
     },
     starView: {
         alignItems: 'center',

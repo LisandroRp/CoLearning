@@ -183,7 +183,8 @@ class MapaVarios extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#FFF7EE'
   },
   map: {
     ...StyleSheet.absoluteFillObject

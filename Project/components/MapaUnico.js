@@ -280,7 +280,8 @@ class MapaUnico extends Component {
 /> */}
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#FFF7EE'
   },
   map: {
     ...StyleSheet.absoluteFillObject
