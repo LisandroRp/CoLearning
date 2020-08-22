@@ -13,6 +13,7 @@ import {
 import DropDownItem from 'react-native-drop-down-item';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Ionicons, SimpleLineIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import ApiController from '../controller/ApiController';
 var { height, width } = Dimensions.get('window');
 
 class ForoEspecifico extends Component {
@@ -23,7 +24,7 @@ class ForoEspecifico extends Component {
       foro: {
         id_foro: 1,
         nombre_foro: 'Duda Existencial',
-        pregunta: 'Como hacer para estudiar para Investigacion Operativa??',
+        pregunta: 'Consejos para leer mas rápido',
         des_foro: "Que puedo hacer gente. Ayuda!!!",
         id_usuario: 1,
         nombre_usuario: "Lorenzo Coco",
@@ -34,14 +35,19 @@ class ForoEspecifico extends Component {
         tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }]
       },
 
-      respuestas: [{ id_respues: 1, id_foro: 1, id_usuario: 1, nombre_usuario: "Lisandro", esProfesor: false, fecha: "24 de Junio", nombre_respuesta: 'Es esta Brohh', des_respuesta: "Era joda broh, no entendi nada de tu pregunta", ratingUp: 10, ratingDown: 4, ratingTotal: 6 }],
+      respuestas: [{ id_respues: 1, id_foro: 1, id_usuario: 1, nombre_usuario: "Leila Pereyra", esProfesor: false, fecha: "24 de Junio", nombre_respuesta: '5 consejos', des_respuesta: "1-2-3-4-5", ratingUp: 10, ratingDown: 4, ratingTotal: 6 }],
       modalVisible: false,
       isLoading: false,
 
     };
   }
   componentDidMount = async () => {
+    //ApiController.getForo(await this.props.navigation.getParam('id_foro'), this.okForo.bind(this))
     this.setState({ nombre_curso: await this.props.navigation.getParam('nombre_curso'), institucion: await this.props.navigation.getParam('institucion'), isLoading: false })
+  }
+
+  okForo(foro){
+    this.setState({foro: foro, isLoading: false})
   }
 
   votar(voto, item, index) {
@@ -91,7 +97,7 @@ class ForoEspecifico extends Component {
                           <View><Text></Text></View>
                           <View style={[{ flexDirection: 'row', flex:1, position: 'absolute', bottom: 0, right: 0, marginRight: 10}]}>
                             <Text style={styles.cardSubTitulo}>Preguntado el {item.fecha} por </Text>
-                            <Text style={styles.cardSubTituloUsuario} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.profesor)}>{item.nombre_usuario}</Text>
+                            <Text style={styles.cardSubTituloUsuario} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario}</Text>
                           </View>
                       </View>
 
@@ -220,6 +226,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
     fontSize: height * 0.0166,
     color: '#F28C0F',
+    fontWeight: "bold"
   },
 })
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, StyleSheet, ActivityIndicator, Text, KeyboardAvoidingView, Dimensions, Keyboard, TouchableOpacity, StatusBar, TouchableWithoutFeedback, FlatList } from 'react-native';
+import { View, Image, StyleSheet, ActivityIndicator, Text, ScrollView, Dimensions, Keyboard, TouchableOpacity, StatusBar, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import { SearchBar, Icon } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 import { FontAwesome } from '@expo/vector-icons';
@@ -13,9 +13,12 @@ class ClasesMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            nombre_profesor: '',
+            rating: 0,
+            max_rating: 5,
+            isLoading: false,
+            nombre_profesor: "",
             tema: '',
-            direccion: ''
+            direccion: '',
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
@@ -51,10 +54,10 @@ class ClasesMenu extends Component {
                     onPress={this.vote.bind(this, i)}
                 >
                     {i <= rating2
-                        ? <Image style={styles.heartImage} source={ExportadorLogos.traerEstrellaLlena()}></Image>
-                        : <Image style={styles.heartImage} source={ExportadorLogos.traerEstrellaBorde()}></Image>
+                     ? <Image style={styles.heartImage} source={ExportadorLogos.traerEstrellaLlena()}></Image>
+                     : <Image style={styles.heartImage} source={ExportadorLogos.traerEstrellaBorde()}></Image>
                     }
-                    {/* <FontAwesome name={i <= rating2
+                     {/* <FontAwesome name={i <= rating2
                                 ? 'star'
                                 : 'star'} style={styles.heartImage} size={hp(5)} /> */}
                 </TouchableOpacity>
@@ -64,65 +67,62 @@ class ClasesMenu extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
         else {
             return (
                 <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(2.2)} enabled>
-                    <TouchableWithoutFeedback style={{ flex: 1}} onPress={Keyboard.dismiss}>
-                        <View style={styles.searchContainer}>
+                <TouchableWithoutFeedback style={{ flex: 1}} onPress={Keyboard.dismiss}>
+                    <View style={styles.searchContainer}>
+                    <SearchBar
+                            placeholder="Nombre Profesor"
+                            platform='ios'
+                            onChangeText={value => this.setState({nombre_profesor: value})}
+                            value={this.state.nombre_profesor}
+                            inputContainerStyle={styles.searchShadow}
+                            placeholderTextColor='rgba(0, 0, 0, 0.3)'
+                            containerStyle={styles.searchBar}
+                            cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
+                            buttonStyle={{}}
+                            searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
+                        />
+                        <SearchBar
+                            placeholder="Tema"
+                            platform='ios'
+                            onChangeText={value => this.setState({tema: value})}
+                            value={this.state.tema}
+                            inputContainerStyle={styles.searchShadow}
+                            placeholderTextColor='rgba(0, 0, 0, 0.3)'
+                            containerStyle={styles.searchBar}
+                            cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
+                            buttonStyle={{}}
+                            searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
+                        />
+                        <SearchBar
+                            placeholder="Direccion"
+                            platform='ios'
+                            onChangeText={value => this.setState({direccion: value})}
+                            value={this.state.direccion}
+                            inputContainerStyle={styles.searchShadow}
+                            placeholderTextColor= 'rgba(0, 0, 0, 0.3)'
+                            containerStyle={styles.searchBar}
+                            cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
+                            buttonStyle={{}}
+                            searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
+                        />
+                        <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
+                        <Text>Votos: {this.state.rating}</Text>
 
-                            <SearchBar
-                                placeholder="Nombre Profesor"
-                                platform='ios'
-                                onChangeText={value => this.setState({ nombre_profesor: value })}
-                                value={this.state.nombre_profesor}
-                                inputContainerStyle={styles.searchShadow}
-                                placeholderTextColor='rgba(0, 0, 0, 0.3)'
-                                containerStyle={styles.searchBar}
-                                cancelButtonProps={{ buttonTextStyle: { color: '#F28C0F' } }}
-                                buttonStyle={{}}
-                                searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
-                            />
-
-                            <SearchBar
-                                placeholder="Tema"
-                                platform='ios'
-                                onChangeText={value => this.setState({ tema: value })}
-                                value={this.state.tema}
-                                inputContainerStyle={styles.searchShadow}
-                                placeholderTextColor='rgba(0, 0, 0, 0.3)'
-                                containerStyle={styles.searchBar}
-                                cancelButtonProps={{ buttonTextStyle: { color: '#F28C0F' } }}
-                                buttonStyle={{}}
-                                searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
-                            />
-
-                            <SearchBar
-                                placeholder="Direccion"
-                                platform='ios'
-                                onChangeText={value => this.setState({ direccion: value })}
-                                value={this.state.direccion}
-                                inputContainerStyle={styles.searchShadow}
-                                placeholderTextColor='rgba(0, 0, 0, 0.3)'
-                                containerStyle={styles.searchBar}
-                                cancelButtonProps={{ buttonTextStyle: { color: '#F28C0F' } }}
-                                buttonStyle={{}}
-                                searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
-                            />
-
-                            <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
-
-                            <TouchableOpacity style={styles.buscarButton} onPress={() => { this.props.onPressSearch(this.state.nombre_profesor, this.state.tema, this.state.direccion) }}>
-                                <Text style={styles.screenButtonText}>
-                                    Buscar Clases
+                        <TouchableOpacity style={styles.buscarButton} onPress={() => { this.props.onPressSearch() }}>
+                            <Text style={styles.screenButtonText}>
+                                Buscar Clases
                 </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </KeyboardAvoidingView>
+                        </TouchableOpacity>
+                    </View>
+                   </TouchableWithoutFeedback>
+               </KeyboardAvoidingView>
             );
         }
     }
@@ -135,17 +135,19 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1
     },
+
+    searchBar: {
+            backgroundColor: "#FFF7EE",
+            width: wp(90),
+            paddingHorizontal: wp(2)
+    },
     searchContainer: {
         justifyContent: 'center',
         alignItems: 'center',
     },
-    searchBar: {
-        backgroundColor: "#FFF7EE",
-        marginHorizontal: wp(10)
-    },
     searchShadow: {
         backgroundColor: 'white',
-        shadowColor: '#00000045',
+        shadowColor: 'grey',
         shadowOffset: {
             width: 0,
             height: 1,
@@ -219,8 +221,8 @@ const styles = StyleSheet.create({
         marginBottom: hp(1)
     },
     heartImage: {
-        height: hp(5.5),
-        width: hp(5.5),
+        height: hp(4),
+        width: hp(4),
         color: "orange"
     },
     //Boton

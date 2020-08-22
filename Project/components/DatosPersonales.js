@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, StatusBar, SafeAreaView, Image, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons, MaterialCommunityIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import DropDownItem from 'react-native-drop-down-item';
 import { withNavigation } from 'react-navigation';
@@ -13,17 +13,12 @@ class DatosPersonales extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            perfil: {},
-            isLoading: false,
-            id_idioma: 0,
-            rating: 3,
+            isLoading: false,     
             max_rating: 5,
-            tema: '',
-            direccion: '',
             usuario: {
                 id_usuario: 1,
-                nombre_usuario: 'Leila',
-                apellido: 'Arcolucci',
+                nombre_usuario: 'Juan',
+                apellido: 'Marinelli',
                 src: require("../assets/leila.jpg"),
                 esProfesor: true,
                 domicilio: 'Spega Ñeri',
@@ -35,8 +30,9 @@ class DatosPersonales extends React.Component {
                 { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
                 instagram: "@LisandroRp",
                 whatsApp: "1144373492",
-                materias: [{ nombre_materia: "Ingles", des_materia: "Doy clases de ingles nivel avanzado perri" },
-                { nombre_materia: "Perreo", des_materia: "Enseño perrear hasta el piso" }],
+                rating: 3,
+                materias: [{ nombre_materia: "Ingles", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
+                { nombre_materia: "Matematica", des_materia: "Clases de matematica de secundaria y universidad" }],
                 latitud: 123,
                 longitud: 123
             }
@@ -45,7 +41,9 @@ class DatosPersonales extends React.Component {
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
     vote(i) {
-        this.setState({ rating: i })
+        var usuarioUpdate = this.state.usuario
+        usuarioUpdate.rating = i
+        this.setState({ usuario: usuarioUpdate })
     }
     queDondeClase(id_usuario) {
         switch (id_usuario) {
@@ -90,7 +88,7 @@ class DatosPersonales extends React.Component {
         }
     }
     render() {
-        var rating2 = this.state.rating
+        var rating2 = this.state.usuario.rating
         let React_Native_Rating_Bar = [];
         for (var i = 1; i <= this.state.max_rating; i++) {
             React_Native_Rating_Bar.push(
@@ -134,10 +132,14 @@ class DatosPersonales extends React.Component {
                         </View>
 
                         <View style={styles.statsContainer}>
+                            {
+                            this.state.usuario.esProfesor ? 
                             <View style={[styles.statsBoxHearts]}>
                                 <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
                                 <Text style={[styles.text, styles.subText]}>Votos: 1523</Text>
-                            </View>
+                            </View> : 
+                            <View/>
+                            }
                             <View style={[styles.statsBoxForo]}>
                                 <View style={{ flexDirection: 'row'}}>
                                     <FontAwesome style={[{flex: 0.5, textAlign: 'right', marginRight: wp(5)}]} name={"thumbs-up"} size={hp(3)} color="#5EC43A"/>
@@ -293,6 +295,10 @@ const styles = StyleSheet.create({
     },
     statsContainer: {
         flexDirection: "row",
+        borderColor: "#DFD8C8",
+        borderBottomWidth: 1,
+        paddingBottom: hp(2.2),
+        marginHorizontal: wp(8),
         marginTop: 32,
     },
     //Heart
@@ -305,14 +311,12 @@ const styles = StyleSheet.create({
     },
     starImage: {
         width: hp(4),
-        height: hp(4),
-        color: "orange"
+        height: hp(4)
     },
     statsBoxHearts: {
         flex: 1,
         alignSelf: "stretch",
         borderColor: "#DFD8C8",
-        borderLeftWidth: 1,
         borderRightWidth: 1,
         alignItems: 'center'
     },
@@ -356,18 +360,16 @@ const styles = StyleSheet.create({
         marginRight: 20
     },
     bottomBox: {
-        borderColor: "#DFD8C8",
         alignItems: "center",
-        borderTopWidth: 1,
-        marginTop: hp(2.2),
         paddingTop: hp(2.2),
+        paddingBottom: hp(2.2),
+        borderBottomWidth: 1,
+        borderColor: "#DFD8C8",
         marginHorizontal: wp(8)
     },
     //DROPDOWN
     dropDownViewContainer: {
         borderColor: "#DFD8C8",
-        borderTopWidth: 1,
-        marginTop: hp(2.2),
         paddingTop: hp(2.2),
         marginHorizontal: wp(8),
         shadowColor: '#00000045',

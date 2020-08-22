@@ -6,6 +6,7 @@ import Carousel from 'react-native-snap-carousel';
 import { FontAwesome } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ExportadorLogos from './exportadores/ExportadorLogos'
+import ApiController from '../controller/ApiController';
 
 var { height, width } = Dimensions.get('window');
 
@@ -14,28 +15,22 @@ class ForoMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            perfil: {},
-            isLoading: false,
-            id_idioma: 0,
-            rating: 0,
-            max_rating: 5,
-            tema: '',
-            direccion: '',
-            foros: [
-                { id_foro: 1, nombre_foro: 'Duda Existencial', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 2, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 3, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 4, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 5, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] }
-            ]
+            tema: "",
+            forosPopulares: [{ id_foro: 1, nombre_foro: 'Duda Existencial', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Juan Marinelli", esProfesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
+            { id_foro: 2, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Leila Pereyra", esProfesor: false, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },]
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
     componentDidMount() {
+        //ApiController.getForosPopulares(this.okForosPopulares.bind(this))
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
+    }
+
+    okForosPopulares(forosPopulares){
+        this.setState({forosPopulares: forosPopulares})
     }
 
     keyboardDidShow = () => {
@@ -66,6 +61,7 @@ class ForoMenu extends Component {
                     <SearchBar
                             placeholder="Tema"
                             platform='ios'
+                            onChangeText={value => this.setState({tema: value})}
                             value={this.state.tema}
                             inputContainerStyle={styles.searchShadow}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
@@ -75,7 +71,7 @@ class ForoMenu extends Component {
                             searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
                         />
 
-                        <TouchableOpacity style={styles.buscarButton} onPress={() => { this.props.onPressSearch() }}>
+                        <TouchableOpacity style={styles.buscarButton} onPress={() => { this.props.onPressSearch(this.state.tema) }}>
                             <Text style={styles.screenButtonText}>
                                 Buscar Foro
                             </Text>
@@ -83,7 +79,7 @@ class ForoMenu extends Component {
                     </View>
                     <Carousel
                         ref={(c) => { this._carousel = c; }}
-                        data={this.state.foros}
+                        data={this.state.forosPopulares}
                         containerCustomStyle={styles.carousel}
                         contentContainerCustomStyle={{ alignItems: 'center' }}
                         renderItem={this.renderCarouselItem}
@@ -119,7 +115,7 @@ class ForoMenu extends Component {
                     <Text style={styles.cardSubTitulo}>Respuestas: {item.respuestas}</Text>
                     <View style={[{ flexDirection: 'row' }]}>
                         <Text style={styles.cardSubTitulo}>Preguntado el {item.fecha_inicio} por </Text>
-                        <Text style={styles.cardSubTituloUsuario} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.profesor)}>{item.nombre_usuario}</Text>
+                        <Text style={styles.cardSubTituloUsuario} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario}</Text>
                     </View>
                 </View>
             </View>
@@ -141,11 +137,12 @@ const styles = StyleSheet.create({
     },
     searchBar: {
         backgroundColor: "#FFF7EE",
-        marginHorizontal: wp(10)
+        width: wp(90),
+            paddingHorizontal: wp(2)
     },
     searchShadow: {
         backgroundColor: 'white',
-        shadowColor: '#00000045',
+        shadowColor: 'grey',
         shadowOffset: {
             width: 0,
             height: 1,

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, Image, StyleSheet, ActivityIndicator, Text, ScrollView, Dimensions, Keyboard, TouchableOpacity, StatusBar, ImageBackground, FlatList } from 'react-native';
+import { View, Image, StyleSheet, ActivityIndicator, Text, Linking, Dimensions, Keyboard, TouchableOpacity, StatusBar, ImageBackground, FlatList } from 'react-native';
 import { SearchBar, Icon } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Entypo } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ExportadorLogos from './exportadores/ExportadorLogos'
 import ExportadorCreadores from './exportadores/ExportadorCreadores'
@@ -17,16 +17,16 @@ class UserCalendario extends Component {
             perfil: {},
             rating: 0,
             max_rating: 5,
-            isLoading: true,
+            isLoading: false,
             id_idioma: 0,
             tema: '',
             direccion: '',
             usuario: {
                 id_usuario: 1,
-                nombre_usuario: 'Leila',
-                apellido: 'Arcolucci',
+                nombre_usuario: 'Juan',
+                apellido: 'Marinelli',
                 src: require("../assets/leila.jpg"),
-                esProfesor: true,
+                esProfesor: false,
                 domicilio: 'Spega Ñeri',
                 dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
                 { id_dondeClases: 2, des_dondeClases: "A Domicilio" },
@@ -34,14 +34,15 @@ class UserCalendario extends Component {
                 tipoClases: [{ id_tipoClases: 1, des_tipoClases: "Particulares" },
                 { id_tipoClases: 2, des_tipoClases: "Grupales" },
                 { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
-                mail: 'lisandro@gmail.com',
-                instagram: "@LisandroRp",
+                mail: 'JuanM@gmail.com',
+                instagram: "juanmarinelli",
                 whatsApp: "1144373492",
                 telefono: '1112244455',
-                materias: [{ nombre_materia: "Ingles", des_materia: "Doy clases de ingles nivel avanzado perri" },
-                { nombre_materia: "Perreo", des_materia: "Enseño perrear hasta el piso" }],
+                rating: 3,
+                materias: [{ nombre_materia: "Ingles", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
+                { nombre_materia: "Matematica", des_materia: "Clases de matematica de secundaria y universidad" }],
                 latitud: 123,
-                longitud: 123
+                longitud: 123 
             }
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
@@ -76,33 +77,39 @@ class UserCalendario extends Component {
         else {
             return (
                 <View style={styles.container}>
+                <View style={styles.allSocialMediaContainer}>
                     {this.state.usuario.mail ?
                         <View style={styles.socialMediaContainer}>
-                            <Image style={styles.logoSocialMedia} source={ExportadorLogos.traerMail()} />
+                        <View style={styles.logoSocialMedia}> 
+                        <Entypo style={{textAlign: "center"}} name={"email"} size={hp(3.3)} color='#F28C0F'></Entypo>
+                        </View>
                             <Text style={styles.socialMedia}>{this.state.usuario.mail}</Text>
                         </View>
                         : <View />}
 
                     {this.state.usuario.instagram ?
                         <View style={styles.socialMediaContainer}>
-                            <Image style={styles.logoSocialMedia} source={ExportadorLogos.traerInstagram()} />
-                            <Text style={styles.socialMedia} onPress={() => Linking.openURL(ExportadorCreadores.queLinkInstagram() + this.state.usuario.instagram)}>{this.state.rutina.instagram}</Text>
+                            <Image style={styles.logoSocialMediaImage} source={ExportadorLogos.traerInstagram()} />
+                            <Text style={styles.socialMedia} onPress={() => Linking.openURL(ExportadorCreadores.queLinkInstagram() + this.state.usuario.instagram)}>{this.state.usuario.instagram}</Text>
                         </View>
                         : <View />}
 
                     {this.state.usuario.whatsApp ?
                         <View style={styles.socialMediaContainer}>
-                            <Image style={styles.logoSocialMedia} source={ExportadorLogos.traerWpp()} />
+                            <Image style={styles.logoSocialMediaImage} source={ExportadorLogos.traerWpp()} />
                             <Text style={styles.socialMedia}>{this.state.usuario.whatsApp}</Text>
                         </View>
                         : <View />}
 
                     {this.state.usuario.telefono ?
                         <View style={styles.socialMediaContainer}>
-                            <Image style={styles.logoSocialMedia} source={ExportadorLogos.traerInstagram()} />
+                        <View style={styles.logoSocialMedia}> 
+                            <FontAwesome style={{textAlign: "center"}} name={"phone"} size={hp(3.3)} color='#F28C0F'></FontAwesome>
+                            </View>
                             <Text style={styles.socialMedia}>{this.state.usuario.telefono}</Text>
                         </View>
                         : <View />}
+                        </View>
                 </View>
             );
         }
@@ -113,24 +120,37 @@ const styles = StyleSheet.create({
 
     container: {
         backgroundColor: "#FFF7EE",
-        flex: 1
+        flex: 1,
     },
 
     socialMedia:{
-        color: "white",
+        color: "black",
         textDecorationLine: 'underline',
       },
     
-      logoSocialMedia:{
+      logoSocialMediaImage:{
         height: height * 0.044,
         width: height * 0.044,
         alignSelf: "center",
-        marginRight: width * 0.033
+        marginRight: width * 0.033,
+        textAlign: "center",
+      },
+      logoSocialMedia:{
+        height: height * 0.044,
+        width: height * 0.044,
+        justifyContent: "center",
+        marginRight: width * 0.033,
+        textAlign: "center",
+      },
+      allSocialMediaContainer: {
+        flexDirection: 'column',
+        marginTop: height * 0.02
       },
       socialMediaContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: height * 0.02
+        marginLeft: wp(3.3),
+        marginTop: height * 0.02,
       },
 
 })

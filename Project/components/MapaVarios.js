@@ -30,21 +30,21 @@ class MapaVarios extends Component {
   state = {
     markers:[],
     coordinates: [
-      { name: 'Matematica', direccion: 'Newton', institucion: 'instituto locas organizadas', distancia: '100km', tiempo: "8hs", latitude: -34.901978, longitude: -58.621620},
-      { name: 'Piano', latitude: -34.911988, longitude: -58.621620},
-      { name: 'Guitarra', latitude: -34.905988, longitude: -58.621620},
-      { name: 'Centro', latitude: -34.896500, longitude: -58.621620},
-      { name: 'Izquierda', latitude: -34.896500, longitude: -58.631620},
-      { name: 'Izquierda2', latitude: -34.896500, longitude: -58.641620},
-      { name: 'IzquierdaArriba', latitude: -34.890500, longitude: -58.641620},
-      { name: 'Derecha', latitude: -34.896500, longitude: -58.611620},
-      { name: 'Derecha2', latitude: -34.896500, longitude: -58.601620},
-      { name: 'DerechaAbajo', latitude: -34.901500, longitude: -58.601620},
-      { name: 'Ping Pong', latitude: -34.891988, longitude: -58.621620},
-      { name: 'Magia', latitude: -34.881988, longitude: -58.621620},
-      { name: 'Fortine', latitude: -34.886988, longitude: -58.621620},
-      { name: 'Play Station', latitude: -34.881988, longitude: -58.611620},
-      { name: 'Futbol', latitude: -34.911988, longitude: -58.631620},
+      { name: 'Matematica', direccion: 'Jujuy 3000', institucion: 'instituto locas organizadas', distancia: '100km', tiempo: "8hs", latitude: -34.901978, longitude: -58.621620},
+      { name: 'Piano', direccion: 'Cordoba 565', latitude: -34.911988, longitude: -58.621620},
+      { name: 'Guitarra', direccion: 'Giribone 909', latitude: -34.905988, longitude: -58.621620},
+      // { name: 'Centro', latitude: -34.896500, longitude: -58.621620},
+      // { name: 'Izquierda', latitude: -34.896500, longitude: -58.631620},
+      // { name: 'Izquierda2', latitude: -34.896500, longitude: -58.641620},
+      // { name: 'IzquierdaArriba', latitude: -34.890500, longitude: -58.641620},
+      // { name: 'Derecha', latitude: -34.896500, longitude: -58.611620},
+      // { name: 'Derecha2', latitude: -34.896500, longitude: -58.601620},
+      // { name: 'DerechaAbajo', latitude: -34.901500, longitude: -58.601620},
+      // { name: 'Ping Pong', latitude: -34.891988, longitude: -58.621620},
+      // { name: 'Magia', latitude: -34.881988, longitude: -58.621620},
+      // { name: 'Fortine', latitude: -34.886988, longitude: -58.621620},
+      // { name: 'Play Station', latitude: -34.881988, longitude: -58.611620},
+      // { name: 'Futbol', latitude: -34.911988, longitude: -58.631620},
     ],
     region: {
       latitude: 45.52220671242907,
@@ -55,15 +55,12 @@ class MapaVarios extends Component {
     miLatitude: -34.896500,
     miLongitude: -58.631620,
     isLoading: true,
-    tipoMapa: this.props.navigation.getParam('tipo')
+    tipoMapa: ""
   };
 
-  componentWillMount() {
-    this.index = 0;
-    this.animation = new Animated.Value(0);
-  }
-  componentDidMount(){
-    this.obtenerPos(this.okPos.bind(this))
+  componentDidMount = async () =>{
+    this.setState({tipoMapa: this.props.navigation.getParam('tipo'), isLoading: false })
+    //this.obtenerPos(this.okPos.bind(this))
   }
   obtenerPos(okPos) {
     //this.setState({ miLongitude: UserDataManager.getInstance().getLongitude(), miLatitude: UserDataManager.getInstance().getLatitude() })
@@ -139,10 +136,12 @@ class MapaVarios extends Component {
           ref={(c) => { this._carousel = c; }}
           data={this.state.coordinates}
           containerCustomStyle={styles.carousel}
+          contentContainerCustomStyle={{ alignItems: 'center' }}
           renderItem={this.renderCarouselItem}
           sliderWidth={Dimensions.get('window').width}
           itemWidth={wp(80)}
           removeClippedSubviews={false}
+          initialScrollIndex={0}
           onSnapToItem={(index) => this.onCarouselItemChange(index)}
         />
       </View>
@@ -154,8 +153,11 @@ class MapaVarios extends Component {
   <View style={styles.cardContainer}>
   <TouchableOpacity style={styles.cardContainer2} onPress={() => this.props.onPressGoCurso(item.id_curso, item.nombre, item.direccion)}>
 
-    <View style={styles.cardImage}>
-    </View>
+  <View style={styles.cardImage}>
+      <Text style={{ fontSize: hp(5), textAlign:"center", color: '#F28C0F', alignContent: 'center' }}>
+                          {item.name.slice(0, 1).toUpperCase()}
+      </Text>
+      </View>
 
     <View style={{flexDirection: 'column', width: 0, flexGrow: 1}}>
     <Text style={styles.cardTitle}>{item.name}</Text>
@@ -170,6 +172,9 @@ class MapaVarios extends Component {
     <TouchableOpacity style={styles.cardContainer2} onPress={() => this.props.onPressGoProfesor(item.id_profesor, item.nombre, item.direccion)}>
 
       <View style={styles.cardImage}>
+      <Text style={{ fontSize: hp(5), textAlign:"center", color: '#F28C0F', alignContent: 'center' }}>
+                          {item.name.slice(0, 1).toUpperCase()}
+      </Text>
       </View>
 
       <View style={{flexDirection: 'column', width: 0, flexGrow: 1}}>
@@ -230,9 +235,10 @@ const styles = StyleSheet.create({
   cardImage: {
     height: hp(10),
     width: hp(10),
-    backgroundColor: 'black',
+    backgroundColor: '#FFF7EE',
     marginRight: wp(5),
-    borderRadius: 100
+    borderRadius: 100,
+    justifyContent: "center"
   },
   cardTitle: {
     color: '#F28C0F',

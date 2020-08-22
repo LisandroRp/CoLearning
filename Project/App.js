@@ -30,12 +30,11 @@ import CursosMenu from './components/CursosMenu'
 import Cursos from './components/Cursos'
 import UsuarioEspecifico from './components/UsuarioEspecifico'
 import UserComentarios from './components/UserComentarios'
-import UserCalendario from './components/UserCalendario'
+import UserContacto from './components/UserContacto'
 import Clases from './components/Clases'
 import CursoEspecifico from './components/CursoEspecifico';
 import MapaVarios from './components/MapaVarios'
 import MapaUnico from './components/MapaUnico'
-import Home from './components/Home'
 import HomeClases from './components/HomeClases'
 import HomeCursos from './components/HomeCursos'
 import DatosPersonales from './components/DatosPersonales'
@@ -51,7 +50,7 @@ import ExportadorLogos from './components/exportadores/ExportadorLogos';
 
 console.disableYellowBox = true
 
-//UserDataManager.getInstance().setCurrentPositionFromReact()
+UserDataManager.getInstance().setCurrentPositionFromReact()
 
 class App extends Component {
 
@@ -99,7 +98,7 @@ class SwitchContraseñaScreen extends React.Component {
     );
   }
   checkPassword() {
-    this.props.navigation.navigate('SignUpClass')
+    this.props.navigation.navigate('switchLogIn')
   }
 }
 class SwitchCrearUserScreen extends React.Component {
@@ -138,7 +137,6 @@ class MapaVariosScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tipo: this.props.navigation.getParam('tipo'),
     }
   }
   render() {
@@ -170,7 +168,7 @@ class MapaUnicoScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam('nombre', 'Mapa'),
+      title: "Mapa",
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: 66,
@@ -220,12 +218,12 @@ class ClasesScreen extends React.Component {
         height: 66,
         shadowColor: 'transparent'
       },
-      headerRight: (
+      headerRight: () => 
         <FontAwesome name="map" style={{ paddingRight: 20, color: 'white' }}
                 onPress={() => navigation.navigate("mapaVarios", { tipo: 'Profesor' })}
                 size={22}
         />
-      ),
+      ,
       headerTintColor: 'white',
     };
   }
@@ -270,7 +268,7 @@ class UsuarioEspecificoScreen extends React.Component {
     this.props.navigation.navigate('Profesores', {});
   }
 }
-class UserCalendarioScreen extends React.Component {
+class UserContactoScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
     return {
@@ -289,7 +287,7 @@ class UserCalendarioScreen extends React.Component {
   }
   render() {
     return (
-      <UserCalendario
+      <UserContacto
         onPressSearch={this.buscarClase.bind(this)}
       />
     );
@@ -332,7 +330,7 @@ class UserComentariosScreen extends React.Component {
 //UsuarioTab
 //************** */
 const UsuarioTabNavigator = createBottomTabNavigator({
-  Profesor: UsuarioEspecificoScreen,
+  Usuario: UsuarioEspecificoScreen,
 },
 {
   navigationOptions: ({ navigation }) => {
@@ -367,7 +365,7 @@ swipeEnabled: true,
 });
 const ProfesorTabNavigator = createBottomTabNavigator({
   Profesor: UsuarioEspecificoScreen,
-  Calendario: UserCalendarioScreen,
+  Calendario: UserContactoScreen,
   Comentario: UserComentariosScreen
 },
 {
@@ -380,14 +378,14 @@ const ProfesorTabNavigator = createBottomTabNavigator({
         height: 66,
         borderBottomWidth: 0
       },
-      headerRight: (
+      headerRight: () =>
         <View style={{ flexDirection: 'row' }}>
           <FontAwesome name="map-marker" style={{ paddingRight: 20, color: 'white' }}
             onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_profesor'), direccion: navigation.getParam('direccion'), tipo: 'Unico' })}
             size={22}
           />
         </View>
-      ),
+      ,
       headerTintColor: 'white',
     };
   },
@@ -424,8 +422,8 @@ class CursosMenuScreen extends React.Component {
     );
   }
 
-  buscarClase() {
-    this.props.navigation.navigate('cursos', {});
+  buscarClase(nombre_curso, tema, direccion) {
+    this.props.navigation.navigate('cursos', {nombre_curso: nombre_curso, tema: tema, direccion: direccion});
   }
 }
 class CursosScreen extends React.Component {
@@ -438,12 +436,12 @@ class CursosScreen extends React.Component {
         height: 66,
         shadowColor: 'transparent'
       },
-      headerRight: (
+      headerRight: () => 
         <FontAwesome name="map" style={{ paddingRight: 20, color: 'white' }}
                 onPress={() => navigation.navigate("mapaVarios", { tipo: 'Curso' })}
                 size={22}
         />
-      ),
+      ,
       headerTintColor: 'white',
     };
   }
@@ -473,14 +471,14 @@ class CursoEspecificoScreen extends React.Component {
         height: 66,
         borderBottomWidth: 0
       },
-      headerRight: (
+      headerRight: () => 
         <View style={{ flexDirection: 'row' }}>
           <FontAwesome name="map-marker" style={{ paddingRight: 20, color: 'white' }}
             onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_curso'), direccion: navigation.getParam('direccion'), tipo: 'Unico' })}
             size={22}
           />
         </View>
-      ),
+      ,
       headerTintColor: 'white',
     };
   }
@@ -546,14 +544,14 @@ const BuscarStackNavigator = createStackNavigator({
     screen: BuscarTabNavigator,
     navigationOptions: ({ navigation }) => {
       return {
-        headerLeft: (
+        headerLeft: () =>
           <Icon
             style={{ paddingLeft: 10, color: 'white' }}
             onPress={() => navigation.openDrawer()}
             name="md-menu"
             size={30}
           />
-        ),
+        ,
       }
     }     
   },
@@ -573,7 +571,7 @@ class PerfilScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "Datos Personales",
+      title: "Detalles",
       headerStyle: {
         backgroundColor: '#6BA8FF',
         height: 66,
@@ -605,6 +603,8 @@ class PerfilScreen extends React.Component {
 }
 const PerfilTabNavigator = createBottomTabNavigator({
   Perfil: PerfilScreen,
+  Calendario: UserContactoScreen,
+  Comentario: UserComentariosScreen
 },
 {
   navigationOptions: ({ navigation }) => {
@@ -612,14 +612,22 @@ const PerfilTabNavigator = createBottomTabNavigator({
     return {
       headerTitle: 'Perfil',
       headerTintColor: 'white',
-      headerLeft: (
+      headerLeft: () =>
         <Icon
           style={{ paddingLeft: 10, color: '#A01A50' }}
           onPress={() => navigation.openDrawer()}
           name="md-menu"
           size={30}
         />
-      ),
+      ,
+      headerRight: () => 
+        <View style={{ flexDirection: 'row' }}>
+          <FontAwesome name="edit" style={{ paddingRight: 20, color: 'white' }}
+            onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_curso'), direccion: navigation.getParam('direccion'), tipo: 'Unico' })}
+            size={22}
+          />
+        </View>
+      ,
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: 66,
@@ -652,14 +660,14 @@ const PerfilStackNavigator = createStackNavigator(
       navigationOptions: ({ navigation }) => {
         return {
           // headerLeft: () => <SomeElement />
-          headerLeft: (
+          headerLeft: () =>
             <Icon
               style={{ paddingLeft: 10, color: 'white' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
               size={30}
             />
-          ),
+          ,
         }
       }     
     },
@@ -694,9 +702,9 @@ class HomeClasesMenuScreen extends React.Component {
     );
   }
 
-  buscarClase(id_profesor, nombre, esProfesor) {
+  buscarClase(id_profesor, nombre, direccion,  esProfesor) {
     if(esProfesor){
-      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_profesor, nombre_profesor: nombre, esProfesor: esProfesor});
+      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_profesor, nombre_profesor: nombre, direccion: direccion, esProfesor: esProfesor});
     }
     else{
       this.props.navigation.navigate('usuarioEspecifico', {id_profesor: id_profesor, nombre_profesor: nombre, esProfesor: esProfesor});
@@ -770,14 +778,14 @@ const HomeStackNavigator = createStackNavigator(
       navigationOptions: ({ navigation }) => {
         return {
           // headerLeft: () => <SomeElement />
-          headerLeft: (
+          headerLeft: () =>
             <Icon
               style={{ paddingLeft: 10, color: 'white' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
               size={30}
             />
-          ),
+          ,
         }
       }     
     },
@@ -898,11 +906,11 @@ class ChatEspecificoScreen extends React.Component {
     return {
       title: navigation.getParam("nombre_chatDestino"),
       headerStyle: {
-        backgroundColor: '#6BA8FF',
+        backgroundColor: '#F28C0F',
         height: 66,
         borderBottomWidth: 0
       },
-      headerTintColor: '#A01A50',
+      headerTintColor: 'white',
     };
   }
 
@@ -929,14 +937,14 @@ const ChatListStackNavigator = createStackNavigator(
       navigationOptions: ({ navigation }) => {
         return {
           // headerLeft: () => <SomeElement />
-          headerLeft: (
+          headerLeft: () =>
             <Icon
               style={{ paddingLeft: 10, color: '#A01A50' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
               size={30}
             />
-          ),
+          ,
         }
       }     
     },
@@ -978,18 +986,18 @@ class ForoMenuScreen extends React.Component {
     );
 
   }
-  buscarForos(id_profesor, nombre, direccion) {
-    this.props.navigation.navigate('foros', {id_profesor: id_profesor, nombre_profesor: nombre, direccion: direccion});
+  buscarForos(tema) {
+    this.props.navigation.navigate('foros', {tema: tema});
   }
   buscarForo(id_foro, nombre_foro) {
     this.props.navigation.navigate('foroEspecifico', {id_foro: id_foro, nombre_foro: nombre_foro});
   }
   buscarUsuario(id_usuario, nombre_usuario, esProfesor) {
     if(esProfesor){
-      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_usuario, nombre_profesor: nombre_usuario});
+      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_usuario, nombre_profesor: nombre_usuario, esProfesor: esProfesor});
     }
     else{
-      this.props.navigation.navigate('usuarioEspecifico', {id_usuario: id_usuario, nombre_usuario: nombre_usuario});
+      this.props.navigation.navigate('usuarioEspecifico', {id_usuario: id_usuario, nombre_usuario: nombre_usuario, esProfesor: esProfesor});
     }
   }
 }
@@ -1072,20 +1080,21 @@ const ForoStackNavigator = createStackNavigator(
       navigationOptions: ({ navigation }) => {
         return {
           // headerLeft: () => <SomeElement />
-          headerLeft: (
+          headerLeft: () =>
             <Icon
               style={{ paddingLeft: 10, color: 'white' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
               size={30}
             />
-          ),
+          ,
         }
       }     
     },
     foros: ForosScreen,
     foroEspecifico: ForoEspecificoScreen,
     usuarioEspecifico: UsuarioTabNavigator,
+    mapaUnico: MapaUnicoScreen,
     profesorEspecifico: ProfesorTabNavigator,
   },
   {
@@ -1139,7 +1148,7 @@ const AppDrawerNavigator = createDrawerNavigator({
   Foro: {
     screen: ForoStackNavigator,
     navigationOptions: {
-      title: "Foro",
+      title: "Foros",
       drawerIcon: ({ tintColor }) => (<FontAwesome name="list" size={24} color={tintColor} />)
     }
   },

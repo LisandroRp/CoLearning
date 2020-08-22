@@ -4,7 +4,7 @@ import { Component } from 'react';
 var ip = '192.168.1.105';
 //var ip = '172.20.10.8';
 var url = 'http://'+ip+':8080/apiColearning';
-const key =''
+const key ="AIzaSyCdgRdU-qT9RXGnIBSyEUNVvCJtGhai1Ck"
 
 class ApiController extends Component {
 
@@ -29,6 +29,15 @@ getUsuarioByMail(mail, okUsuario) {
             okUsuario(data[0]);
         }).catch((err) => alert("Intentar de nuevo2"));
 }
+getUsuarioById(id_usuario, okUsuario) {
+    let uri = url+'/usuarios/mail?mail=' + id_usuario
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => alert("Intentar de nuevo1")).
+        then(data => {
+            okUsuario(data[0]);
+        }).catch((err) => alert("Intentar de nuevo2"));
+}
 getUsuarios(okUsuarios) {
     let uri = url+'/usuarios'
     fetch(uri).then(res => {
@@ -36,6 +45,27 @@ getUsuarios(okUsuarios) {
     }).catch((err) => alert("Intentar de nuevo")).
         then(data => {
             okUsuarios(data);
+        }).catch((err) => alert("Intentar de nuevo"));
+}
+//********************** */
+//Profesores
+//********************** */
+getProfesores(okProfesor) {
+    let uri = url+'/profesores'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => alert("Intentar de nuevo")).
+        then(data => {
+            okProfesor(data);
+        }).catch((err) => alert("Intentar de nuevo"));
+}
+getComentariosByIdProfesor(id_usuario, okComentarios) {
+    let uri = url+'/profesores'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => alert("Intentar de nuevo")).
+        then(data => {
+            okComentarios(data);
         }).catch((err) => alert("Intentar de nuevo"));
 }
 //********************** */

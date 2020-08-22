@@ -18,22 +18,14 @@ class Clases extends Component {
         this.state = {
             isLoading: false,
             modalVisible: false,
-            profesores: [{ id_profesor: 1, nombre_profesor: 'Roberto', apellido: 'Gonzalez',esProfesor: true, direccion: "Narnia", rating: 5 },
-            { id_profesor: 2, nombre_profesor: 'Rodrigo', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 3, nombre_profesor: 'Lucardo', apellido: 'Gonzalez',esProfesor: true, direccion: "Narnia", rating: 5 },
-            { id_profesor: 4, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 5, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 6, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 7, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 8, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 }],
-            memory: [{ id_profesor: 1, nombre_profesor: 'Roberto', apellido: 'Gonzalez',esProfesor: true, direccion: "Narnia", rating: 5 },
-            { id_profesor: 2, nombre_profesor: 'Rodrigo', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 3, nombre_profesor: 'Lucardo', apellido: 'Gonzalez',esProfesor: true, direccion: "Narnia", rating: 5 },
-            { id_profesor: 4, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 5, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 6, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 7, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 },
-            { id_profesor: 8, nombre_profesor: 'Roberto', apellido: 'Gonzalez', direccion: "Narnia", rating: 5 }]
+            profesores: [{ id_profesor: 1, nombre_profesor: 'Roberto', apellido: 'Gonzalez',esProfesor: true, direccion: "Av. Cordoba, 111", rating: 5 },
+            { id_profesor: 2, nombre_profesor: 'Rodrigo', apellido: 'Gomez', direccion: "9 de Julio, 50", rating: 5 },
+            { id_profesor: 3, nombre_profesor: 'Juan', apellido: 'Marinelli',esProfesor: true, direccion: "Ezeiza, Canning", rating: 5 }
+        ],
+            memory: [{ id_profesor: 1, nombre_profesor: 'Roberto', apellido: 'Gonzalez',esProfesor: true, direccion: "Av. Cordoba, 111", rating: 5 },
+            { id_profesor: 2, nombre_profesor: 'Rodrigo', apellido: 'Gomez', direccion: "9 de Julio, 50", rating: 5 },
+            { id_profesor: 3, nombre_profesor: 'Carolina', apellido: 'Ramos',esProfesor: true, direccion: "Av. Rivadabia 6000", rating: 5 }
+        ]
         };
     }
     componentDidMount = async () => {

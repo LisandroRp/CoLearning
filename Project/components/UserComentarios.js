@@ -5,6 +5,7 @@ import { withNavigation } from 'react-navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ExportadorLogos from './exportadores/ExportadorLogos'
+import ApiController from '../controller/ApiController';
 
 var { height, width } = Dimensions.get('window');
 
@@ -13,24 +14,28 @@ class UserCalendario extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            perfil: {},
-            rating: 0,
-            max_rating: 5,
             isLoading: true,
-            id_idioma: 0,
-            tema: '',
-            direccion: '',
-            clases: [{ id: 1, nombre: "idiomas" }, { id: 2, nombre: "Deportes" }, { id: 3, nombre: "Estudios" }, { id: 4, nombre: "Arte" }]
+            comentarios: [{
+                id_comentario: 1,
+                id_usuarioOrigen: 1,
+                id_usuarioDestino: 2,
+                rating: 3,
+                fecha_alta: "2020-08-14",
+                des_comentario: "Terrible Gato"
+            }]
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
-    componentDidMount() {
+    componentDidMount = async () => {
+        //ApiController.getComentariosByIdProfesor(await this.props.navigation.getParam("id_usuario"), this.okComentarios.bind(this))
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
     }
-
+    okComentarios(comentariosBase){
+        this.setState({comentarios: comentariosBase})
+    }
     keyboardDidShow = () => {
         this.setState({ searchBarFocused: true })
     }
@@ -56,8 +61,8 @@ class UserCalendario extends Component {
                     onPress={this.vote.bind(this, i)}
                 >
                     <FontAwesome name={i <= rating2
-                                ? 'heart'
-                                : 'heart-o'} style={styles.heartImage} size={hp(5)} />
+                        ? 'heart'
+                        : 'heart-o'} style={styles.heartImage} size={hp(5)} />
                 </TouchableOpacity>
             );
         }
@@ -72,7 +77,34 @@ class UserCalendario extends Component {
         else {
             return (
                 <View style={styles.container}>
-              
+                    <FlatList
+                        style={styles.contentList}
+                        columnWrapperStyle={styles.listContainer}
+                        data={this.state.comentarios}
+                        initialNumToRender={50}
+                        keyExtractor={(item) => {
+                            return item.id_curso.toString();
+                        }}
+                        renderItem={({ item }) => {
+                            return (
+                                <View>
+                                    <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.props.onPressGo(item.id_curso, item.nombre_curso, item.institucion, item.direccion)}>
+                                        <View style={{ flexDirection: "row" }} >
+                                            <Image style={styles.image} source={require("../assets/icon.png")} />
+                                            <View style={styles.cardContent}>
+                                                <Text style={styles.cardTitulo}>{item.nombre_curso}</Text>
+                                            </View>
+                                            <View style={styles.starView} >
+                                                {/* <Image style={styles.StarImage} source={require("../Contenido/Logos/Star_Llena.png")} /> */}
+                                                <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()} />
+                                                <Text style={styles.rating}>{item.rating + "/5"}</Text>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                        }
+                        } />
                 </View>
             );
         }
@@ -86,21 +118,6 @@ const styles = StyleSheet.create({
         flex: 1
     },
 
-    searchContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    ContainerInside: {
-        backgroundColor: "black",
-        marginTop: hp(5),
-        padding: height * 0.04,
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: 'center',
-        height: height * 0.33,
-        width: width * 0.88
-    },
     //FlatList
     contentList: {
         flex: 1,
@@ -120,33 +137,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignContent: 'center',
         overflow: 'hidden'
-    },
-
-    bgImage: {
-        flex: 1,
-        resizeMode,
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        resizeMode: 'cover'
-    },
-    textImage: {
-        textAlign: 'center',
-        fontSize: hp(4),
-        textTransform: 'uppercase',
-        color: "#2A73E0",
-        letterSpacing: wp(1),
-        fontWeight: 'bold',
-        textShadowColor: 'black',
-        textShadowOffset: { width: 2.2, height: 2.2 },
-        textShadowRadius: 0.1
-    },
-
-    Text: {
-        fontSize: height * 0.027,
-        color: "#3399ff",
-        textAlign: "center"
     },
     //Star View
     heartView: {

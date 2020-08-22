@@ -13,19 +13,15 @@ class UsuarioEspecifico extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            perfil: {},
-            isLoading: false,
-            id_idioma: 0,
-            rating: 3,
+            isLoading: true,
             max_rating: 5,
-            tema: '',
-            direccion: '',
+            esProfesor: false,
             usuario: {
                 id_usuario: 1,
-                nombre_usuario: 'Leila',
-                apellido: 'Arcolucci',
+                nombre_usuario: 'Juan',
+                apellido: 'Marinelli',
                 src: require("../assets/leila.jpg"),
-                esProfesor: true,
+                esProfesor: false,
                 domicilio: 'Spega Ñeri',
                 dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
                 { id_dondeClases: 2, des_dondeClases: "A Domicilio" },
@@ -35,8 +31,9 @@ class UsuarioEspecifico extends React.Component {
                 { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
                 instagram: "@LisandroRp",
                 whatsApp: "1144373492",
-                materias: [{ nombre_materia: "Ingles", des_materia: "Doy clases de ingles nivel avanzado perri" },
-                { nombre_materia: "Perreo", des_materia: "Enseño perrear hasta el piso" }],
+                rating: 3,
+                materias: [{ nombre_materia: "Ingles", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
+                { nombre_materia: "Matematica", des_materia: "Clases de matematica de secundaria y universidad" }],
                 latitud: 123,
                 longitud: 123
             }
@@ -44,8 +41,13 @@ class UsuarioEspecifico extends React.Component {
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
+    componentDidMount = async () => {
+        this.setState({ esProfesor: await this.props.navigation.getParam("esProfesor"), isLoading: false })
+    }
     vote(i) {
-        this.setState({ rating: i })
+        var usuarioUpdate = this.state.usuario
+        usuarioUpdate.rating = i
+        this.setState({ usuario: usuarioUpdate })
     }
     queDondeClase(id_usuario) {
         switch (id_usuario) {
@@ -90,7 +92,7 @@ class UsuarioEspecifico extends React.Component {
         }
     }
     render() {
-        var rating2 = this.state.rating
+        var rating2 = this.state.usuario.rating
         let React_Native_Rating_Bar = [];
         for (var i = 1; i <= this.state.max_rating; i++) {
             React_Native_Rating_Bar.push(
@@ -123,39 +125,54 @@ class UsuarioEspecifico extends React.Component {
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={{ alignSelf: "center" }}>
                             <View style={styles.profileImage}>
-                                <Image source={this.state.usuario.src} style={styles.image} resizeMode="center"></Image>
+                                {/* <Image source={this.state.usuario.src} style={styles.image} resizeMode="center"></Image> */}
+                                {this.state.esProfesor ?
+                                    <Image source={require("../assets/leila.jpg")} style={styles.image} resizeMode="center"></Image>
+                                    :
+                                    <Image source={require("../assets/caca.jpg")} style={styles.image} resizeMode="center"></Image>
+                                }
                             </View>
                             <View style={styles.active}></View>
                         </View>
 
                         <View style={styles.infoContainer}>
-                            <Text style={[styles.text, { fontWeight: "200", fontSize: 28, fontWeight: 'bold', color: '#F28C0F' }]}>{this.state.usuario.nombre_usuario} {this.state.usuario.apellido}</Text>
-                            <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>{this.state.usuario.domicilio}</Text>
+                            {/* <Text style={[styles.text, { fontWeight: "200", fontSize: 28, fontWeight: 'bold', color: '#F28C0F' }]}>{this.state.usuario.nombre_usuario} {this.state.usuario.apellido}</Text>
+                            <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>{this.state.usuario.domicilio}</Text> */}
+                            {this.state.esProfesor ?
+                                <Text style={[styles.text, { fontWeight: "200", fontSize: 28, fontWeight: 'bold', color: '#F28C0F' }]}>Juan Marinelli</Text>
+                                :
+                                <Text style={[styles.text, { fontWeight: "200", fontSize: 28, fontWeight: 'bold', color: '#F28C0F' }]}>Leila Pereyra</Text>
+                            }
+                            {this.state.esProfesor ?
+                                <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Ezeiza, Canning</Text>
+                                :
+                                <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Nordelta</Text>
+                            }
                         </View>
 
                         <View style={styles.statsContainer}>
                             {
-                            this.state.usuario.esProfesor ? 
-                            <View style={[styles.statsBoxHearts]}>
-                                <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
-                                <Text style={[styles.text, styles.subText]}>Votos: 1523</Text>
-                            </View> : 
-                            <View/>
+                                this.state.esProfesor ?
+                                    <View style={[styles.statsBoxHearts]}>
+                                        <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
+                                        <Text style={[styles.text, styles.subText]}>Votos: 1523</Text>
+                                    </View> :
+                                    <View />
                             }
                             <View style={[styles.statsBoxForo]}>
-                                <View style={{ flexDirection: 'row'}}>
-                                    <FontAwesome style={[{flex: 0.5, textAlign: 'right', marginRight: wp(5)}]} name={"thumbs-up"} size={hp(3)} color="#5EC43A"/>
-                                    <Text style={[styles.text, { fontSize: wp(5), flex: 0.5}]}>302</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <FontAwesome style={[{ flex: 0.5, textAlign: 'right', marginRight: wp(5) }]} name={"thumbs-up"} size={hp(3)} color="#5EC43A" />
+                                    <Text style={[styles.text, { fontSize: wp(5), flex: 0.5 }]}>302</Text>
                                 </View>
-                                <View style={{ flexDirection: 'row'}}>
-                                    <FontAwesome style={[{flex: 0.5, textAlign: 'right', marginRight: wp(5)}]} name={"check"} size={hp(3)} color="#5EC43A"/>
-                                    <Text style={[styles.text, { fontSize: wp(5), flex: 0.5}]}>2</Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <FontAwesome style={[{ flex: 0.5, textAlign: 'right', marginRight: wp(5) }]} name={"check"} size={hp(3)} color="#5EC43A" />
+                                    <Text style={[styles.text, { fontSize: wp(5), flex: 0.5 }]}>2</Text>
                                 </View>
-                                <Text style={[styles.text, styles.subText, {marginTop: hp(1)}]}>Respuestas Foro: 111</Text>
+                                <Text style={[styles.text, styles.subText, { marginTop: hp(1) }]}>Respuestas Foro: 111</Text>
                             </View>
                         </View>
                         {/*/////////////////////////////////////////////////////////////////////////// */}
-                        {this.state.usuario.esProfesor ?
+                        {this.state.esProfesor ?
                             <View style={styles.bottomBox}>
                                 <Text style={[styles.text, { fontSize: 20 }]}>Ubicación de Clases</Text>
 
@@ -169,7 +186,7 @@ class UsuarioEspecifico extends React.Component {
                                 </View>
                             </View> : <View></View>}
 
-                        {this.state.usuario.esProfesor ?
+                        {this.state.esProfesor ?
                             <View style={styles.bottomBox}>
                                 <Text style={[styles.text, { fontSize: 20 }]}>Tipo de Clases</Text>
 
@@ -183,7 +200,7 @@ class UsuarioEspecifico extends React.Component {
                                 </View>
                             </View> : <View></View>}
 
-                        {this.state.usuario.esProfesor ?
+                        {this.state.esProfesor ?
                             <View style={styles.dropDownViewContainer}>
                                 <Text style={[styles.text, { fontSize: 20, textAlign: 'center' }]}>Materias</Text>
 
@@ -313,8 +330,7 @@ const styles = StyleSheet.create({
     },
     starImage: {
         width: hp(4),
-        height: hp(4),
-        color: "orange"
+        height: hp(4)
     },
     statsBoxHearts: {
         flex: 1,
