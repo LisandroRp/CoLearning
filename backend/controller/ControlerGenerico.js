@@ -342,6 +342,14 @@ let getProfesorByClaseByMateriaByName1 = (req, res) =>
         {$match: { $and:[{ 'nombre_usuario': { $regex:  req.params.name , $options: 'i'}},{ 'profesor': {$eq:true}}]}},
         {$lookup: 
             {
+                from: 'direccion',
+                localField: 'idDireccion',
+                foreignField: 'idDireccion',
+                as: 'domicilio'
+            }
+        } ,
+        {$lookup: 
+            {
                 from: materiaProfesor.collection.name,
                 localField: 'idUsuario',
                 foreignField: 'idProfesor',
