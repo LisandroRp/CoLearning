@@ -5,6 +5,7 @@ import {
   Text,
   View,
   Image,
+  Modal,
   Dimensions,
   ScrollView,
   ActivityIndicator,
@@ -32,7 +33,8 @@ class ForoEspecifico extends Component {
         respuestas: 114,
         rating: 5,
         fecha_inicio: "24 de Junio",
-        tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }]
+        tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }],
+        modalVisible: false
       },
 
       respuestas: [{ id_respues: 1, id_foro: 1, id_usuario: 1, nombre_usuario: "Leila Pereyra", esProfesor: false, fecha: "24 de Junio", nombre_respuesta: '5 consejos', des_respuesta: "1-2-3-4-5", ratingUp: 10, ratingDown: 4, ratingTotal: 6 }],
@@ -110,7 +112,22 @@ class ForoEspecifico extends Component {
               ))}
             </View>
           </ScrollView>
+          <TouchableOpacity  style= {styles.bubble} onPress={() => this.setState({modalVisible: true})}>
+                <FontAwesome name={"plus"} size={hp(4)} color="white"></FontAwesome>
+            </TouchableOpacity>
+
+
+            <Modal
+            animationType="fade"
+            visible={this.state.modalVisible}
+            transparent={true}
+            onRequestClose={() => this.setState({ modalVisible: false })}  >
+            <View style={styles.modal}>
+
+            </View>
+          </Modal>
         </View>
+        
       );
     }
   }
@@ -227,6 +244,42 @@ const styles = StyleSheet.create({
     fontSize: height * 0.0166,
     color: '#F28C0F',
     fontWeight: "bold"
+  },
+  bubble: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: hp(7),
+    height: hp(7),
+    margin: hp(2.2),
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F28C0F",
+    shadowColor: '#00000035',
+        shadowOffset: {
+          width: 0.01,
+          height: 0.25,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 8,
+        elevation: 2
+  },
+   /*************************************** */
+  //MODAAAAL
+  modal: {
+    height: hp(50),
+    width: hp(80),
+    position: 'absolute',
+    top: "50%",
+    left: "50%",
+    borderColor: 'black',
+    borderWidth: 2,
+    backgroundColor: 'grey',
+    shadowColor: 'black',
+    shadowOpacity: 5.0,
+    borderRadius: 22,
+    opacity: .95
   },
 })
 

@@ -5,11 +5,14 @@ import {
   View,
   TextInput,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
   TouchableOpacity,
+  Keyboard,
   Image,
   Dimensions
 } from 'react-native';
 import ApiController from '../controller/ApiController';
+import firebaseSvc from '../FirebaseSvc';
 import { SimpleLineIcons, Feather } from "@expo/vector-icons";
 import ExportadorLogos from './exportadores/ExportadorLogos'
 
@@ -20,27 +23,54 @@ class LogIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mail: "JuanMn@gmail.com",
-      password: "123",
+      email: "JuanMn@gmail.com",
+      password: "123456",
+      usuario: {}
     }
   }
 
   checkLogin() {
-
+    this.firebaseLogin()
     //ApiController.getUsuarioByMail(this.state.mail, this.checkUsuario.bind(this))
-    this.props.onPressLogin(this.state.mail);
+    //this.props.onPressLogin(this.state.mail);
   }
 
   checkUsuario(data) {
-    if (data.mail == this.state.mail && data.password == this.state.password && this.state.mail != null) {
-      this.props.onPressLogin(this.state.mail);
+    if (data.email == this.state.email && data.password == this.state.password && this.state.email != null) {
+      this.setState({usuario: data})
+      this.firebaseLogin()
     } else {
       alert("Contraseña incorrecta");
     }
   }
 
+  // using Fire.js
+  firebaseLogin = async () => {
+    console.log('pressing login... email:' + this.state.email);
+    const user = {
+      email: this.state.email,
+      password: this.state.password,
+    };
+
+    const response = firebaseSvc.login(
+      user,
+      this.loginSuccess,
+      this.loginFailed
+    );
+  };
+
+  loginSuccess = () => {
+    console.log('login successful');
+    this.props.onPressLogin(this.state.usuario.esProfesor);
+  };
+  loginFailed = () => {
+    console.log('login failed ***');
+    alert('Hubo un problema, intentelo mas tarde');
+  };
+
   render() {
     return (
+      <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(3)} enabled>
         {/* <Image style={styles.bgImage} source={{ uri: "https://lorempixel.com/900/1400/nightlife/8/" }}/> */}
         <View>
@@ -50,13 +80,13 @@ class LogIn extends Component {
         </View>
           <View style={styles.inputContainer}>
             <TextInput style={styles.inputs}
-              value={this.state.mail}
-              placeholder="Mail"
+              value={this.state.email}
+              placeholder="Email"
               underlineColorAndroid='transparent'
               onChangeText={(text) => this.setState({ mail: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(4)} color='#F28C0F'></SimpleLineIcons>
+              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(3.3)} color='#F28C0F'></SimpleLineIcons>
             </View>
           </View>
 
@@ -69,7 +99,7 @@ class LogIn extends Component {
               onChangeText={(text) => this.setState({ password: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(4)} color='#F28C0F'></Feather>
+              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(3.3)} color='#F28C0F'></Feather>
             </View>
           </View>
 
@@ -89,7 +119,7 @@ class LogIn extends Component {
             </TouchableOpacity>
           </View>
       </KeyboardAvoidingView>
-
+</TouchableWithoutFeedback>
     );
   }
 }

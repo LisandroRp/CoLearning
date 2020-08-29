@@ -42,7 +42,7 @@ class FirebaseSvc {
     }
   };
 
-  createAccount = async (user) => {
+  createAccount = async (user, okUserFireBase) => {
     firebase.auth()
       .createUserWithEmailAndPassword(user.email, user.password)
       .then(function() {
@@ -51,12 +51,12 @@ class FirebaseSvc {
         userf.updateProfile({ displayName: user.name})
         .then(function() {
           console.log("Updated displayName successfully. name:" + user.name);
-          alert("User " + user.name + " was created successfully. Please login.");
+          okUserFireBase(true)
         }, function(error) {
           console.warn("Error update displayName.");
         });
       }, function(error) {
-        console.error("got error:" + typeof(error) + " string:" + error.message);
+        //console.error("got error:" + typeof(error) + " string:" + error.message);
         alert("Create account failed. Error: "+error.message);
       });
   }

@@ -108,12 +108,16 @@ class SwitchCrearUserScreen extends React.Component {
   render() {
     return (
       <SwitchCrearUser
-        onPress={this.checkPassword.bind(this)}
+        onPressCreate={this.createAccount.bind(this)}
+        onPressCancel={this.goLogIn.bind(this)}
       />
     );
   }
-  checkPassword() {
+  createAccount() {
     this.props.navigation.navigate('SignUpClass')
+  }
+  goLogIn() {
+    this.props.navigation.navigate('switchLogIn')
   }
 }
 
@@ -932,8 +936,8 @@ class ChatEspecificoScreen extends React.Component {
 }
 const ChatListStackNavigator = createStackNavigator(
   {
-    LogInScreen: {
-      screen: LogInScreen,
+    ChatListScreen: {
+      screen: ChatListScreen,
       navigationOptions: ({ navigation }) => {
         return {
           // headerLeft: () => <SomeElement />
@@ -949,11 +953,10 @@ const ChatListStackNavigator = createStackNavigator(
       }     
     },
     CreateAccount: CreateAccountScreen,
-    ChatList: ChatListScreen,
     ChatEspecifico: ChatEspecificoScreen
   },
   {
-    initialRouteName: 'LogInScreen',
+    initialRouteName: 'ChatListScreen',
   }
 );
 //******************************************* */
