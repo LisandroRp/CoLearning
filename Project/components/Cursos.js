@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
         fontSize: wp(3),
         color: "black"
     },
-//Corazones
+//Estrellas
 starImage: {
     height: hp(4.4),
     width: hp(4.4),

@@ -248,13 +248,13 @@ const styles = StyleSheet.create({
   },
   cardInstituto: {
     color: 'black',
-    fontSize: 15,
+    fontSize: wp(4.4),
     alignSelf: 'center',
     textAlign: 'center'
   },
   cardDireccion: {
     color: 'black',
-    fontSize: 13.3,
+    fontSize: wp(3),
     alignSelf: 'center',
     marginBottom: hp(2.5)
   },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, StatusBar, Image, ActivityIndicator, Animated, Dimensions, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, Image, ActivityIndicator, Animated, Dimensions, SafeAreaView, ScrollView } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { withNavigation } from 'react-navigation';
 
@@ -21,7 +21,7 @@ var images = [
   { id: 4, src: require('../assets/2.png') },
 
 ]
-
+// { id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
 class HomeClases extends React.Component {
 
   constructor() {
@@ -34,7 +34,7 @@ class HomeClases extends React.Component {
         src: require("../assets/leila.jpg"),
         esProfesor: true,
         domicilio: 'Ezeiza, Canning',
-        rating: {rating: 5, votos: 1503},
+        rating: { rating: 5, votos: 1503 },
         dondeClases: [{ id: 1, des_domicilio: "En su casa" },
         { id: 2, des_domicilio: "A Domicilio" },
         { id: 3, des_domicilio: "En un Instituto" }],
@@ -44,7 +44,14 @@ class HomeClases extends React.Component {
         instagram: "@LisandroRp",
         whatsApp: "1144373492",
         materias: [{ nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Matematica", des_materia: "Clases avanzadas de amtematica" }]
+        { nombre_materia: "Matematica", des_materia: "Clases avanzadas de amtematica" },
+        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
+        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
+        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
+        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
+        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
+        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
+        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" }]
       },
       {
         nombre: 'Leila',
@@ -52,7 +59,7 @@ class HomeClases extends React.Component {
         src: require("../assets/caca.jpg"),
         esProfesor: false,
         domicilio: 'Nordelta',
-        rating: {rating: 2, votos: 103},
+        rating: { rating: 2, votos: 103 },
         dondeClases: [{ id: 1, des_domicilio: "En su casa" },
         { id: 2, des_domicilio: "A Domicilio" },
         { id: 3, des_domicilio: "En un Instituto" }],
@@ -64,7 +71,7 @@ class HomeClases extends React.Component {
         materias: [{ nombre_materia: "Chino", des_materia: "Examenes Internacionales" },
         { nombre_materia: "Latin", des_materia: "Clases avanzadas de amtematica" }]
       }],
-      activeImage: { id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: ''},
+      activeImage: { id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
       y: 0,
       max_rating: 5,
       isLoading: true
@@ -74,13 +81,14 @@ class HomeClases extends React.Component {
   }
   componentDidMount = async () => {
     //ApiController.getProfesores(this.okProfesores.bind(this))
-    this.setState({isLoading: false})
+    this.setState({ activeImage: this.state.clases[0] })
+    this.setState({ isLoading: false })
   }
-  okUsuarios(profesoresBase){
+  okUsuarios(profesoresBase) {
     console.log(profesoresBase)
     var profesores = [{ id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' }]
     profesores.concat(profesoresBase)
-    this.setState({clases: profesores, isLoading: false})
+    this.setState({ clases: profesores, isLoading: false })
   }
   UNSAFE_componentWillMount() {
     this.allImages = {}
@@ -296,15 +304,15 @@ class HomeClases extends React.Component {
       return 'Perfil'
     }
   }
-  inactiveTitles(id_title){
+  inactiveTitles(id_title) {
     if (this.state.activeImage != null && this.state.activeImage.id == 0) {
       return ''
     }
-    else{
-      if(id_title == 1){
+    else {
+      if (id_title == 1) {
         return "Clases: "
       }
-      else{
+      else {
         return "Tipo de Clases:"
       }
     }
@@ -344,10 +352,10 @@ class HomeClases extends React.Component {
           key={i}
         >
           {this.state.activeImage ? (i <= this.state.activeImage.rating.rating
-                     ? <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()}></Image>
-                     : <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaBorde()}></Image>)
-                     : <View/>
-                    }
+            ? <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()}></Image>
+            : <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaBorde()}></Image>)
+            : <View />
+          }
         </View>
       );
     }
@@ -370,60 +378,76 @@ class HomeClases extends React.Component {
             renderItem={this.renderCarouselItem}
             sliderWidth={Dimensions.get('window').width}
             itemWidth={wp(50)}
-            autoplay= {false}
-            delay = {1000}
-            loop = {true}
+            autoplay={false}
+            delay={1000}
+            loop={true}
             removeClippedSubviews={false}
             initialScrollIndex={0}
             onSnapToItem={(index) => this.onCarouselItemChange(index)}
           />
-         <View style={{ position: 'absolute', bottom: hp(5), left: 0, right: 0, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ position: 'absolute', bottom: hp(5), left: 0, right: 0, justifyContent: 'center', alignItems: 'center' }}>
             <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
           </View>
+
           <Animated.View
             pointerEvents={this.state.activeImage ? "auto" : "none"}
             style={[styles.cardContainer, animatedContentStyle]}
           >
-            <View style={[{ flexDirection: 'column', alignItems: 'center', backgroundColor: 'white' }]} ref={(view) => (this.viewImage = view)}>
-              <Animated.Image
-                source={this.state.activeImage ? this.state.activeImage.src : null}
-                style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth() }]}
-              >
-              </Animated.Image>
-              <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
-              <Text>{this.inactiveImageVotos()}{this.state.activeImage ? this.state.activeImage.rating.votos : ''}</Text>
-            </View>
-            <Animated.View style={[{ backgroundColor: 'white', flex: 1, padding: 20, flexDirection: 'column'}]}>
-            {this.state.activeImage ? (this.state.activeImage.id != 0 ? <Text style={styles.tituloProfesor}>{this.state.activeImage.nombre + " " + this.state.activeImage.apellido}</Text> : <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.imageTitulo}/>) : <View></View>}
-            {this.state.activeImage ? (this.state.activeImage.id != 0 ? <Text style={styles.domicilioProfesor}>{this.state.activeImage.domicilio}  </Text> : <View></View>) : <View></View>}
-              {this.state.activeImage ? ( this.state.activeImage.id == 0 ? <Text style={{textAlign: 'justify', fontSize: wp(4.4)}}>CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés. {'\n'}{'\n'} Además te da la posibilidad de visualizar cuales son los profesores más populares de la aplicación y los cercanos a tu zona actual.</Text> : <Text></Text>): <Text></Text>}
-              {/* <View style={[styles.infoContainer, { backgroundColor: this.inactiveImageButton() }]}> */}
-              
-              <Text style={styles.infoTitle}>{this.inactiveTitles(1)}</Text>
-              
-              {this.state.activeImage ? this.state.activeImage.materias.map((item, index) => (
-              <View>
-              <Text>• {item.nombre_materia}</Text>
-              </View>
-              )) : <Text ></Text>
-            }
-            {/* </View> */}
+            {this.state.activeImage ? (this.state.activeImage.id != 0 ? (
+              <View style={[styles.card]}>
+                <View style={[{ flexDirection: 'column', alignItems: 'center', padding: 10, backgroundColor: 'white' }]} ref={(view) => (this.viewImage = view)}>
+                  <Animated.Image
+                    source={this.state.activeImage.src}
+                    style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth() }]}
+                  >
+                  </Animated.Image>
+                  <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
+                  <Text style={{ fontSize: wp(3), marginTop: 5 }}>{this.inactiveImageVotos()}{this.state.activeImage ? this.state.activeImage.rating.votos : ''}</Text>
+                </View>
+                <Animated.View style={[{ backgroundColor: 'white', flex: 1, padding: 10, flexDirection: 'column' }]}>
+                  <Text style={styles.tituloProfesor} numberOfLines={2}>{this.state.activeImage.nombre + " " + this.state.activeImage.apellido}</Text>
+                  <Text style={styles.domicilioProfesor} numberOfLines={2}>{this.state.activeImage.domicilio}</Text>
+                  <View style={[styles.infoContainer]}>
 
-            {/* <View style={[styles.infoContainer, { backgroundColor: this.inactiveImageButton() }]}> */}
-            <Text style={styles.infoTitle}>{this.inactiveTitles(2)}</Text>
-            
-            {this.state.activeImage ? this.state.activeImage.tipoClases.map((item, index) => (
-              <View>
-              <Text >• {item.des_tipoClases}</Text>
+                    <Text style={styles.infoTitle}>{this.inactiveTitles(1)}</Text>
+
+                    {this.state.activeImage.materias.map((item, index) => (index < 3 ? (
+                      <View>
+                        <Text numberOfLines={1}>• {item.nombre_materia}</Text>
+                      </View>
+                    ) : <View></View>))
+                    }
+                  </View>
+
+                  <View style={[styles.infoContainer]}>
+                    <Text style={styles.infoTitle}>{this.inactiveTitles(2)}</Text>
+
+                    {this.state.activeImage.tipoClases.map((item, index) => (index < 3 ? (
+                      <View>
+                        <Text numberOfLines={1}>• {item.des_tipoClases}</Text>
+                      </View>
+                    ) : <View></View>))
+                    }
+                  </View>
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={[styles.button, { backgroundColor: this.inactiveImageButton() }]} onPress={() => this.props.onPressGo(this.state.activeImage.id, this.state.activeImage.nombre + " " + this.state.activeImage.apellido, this.state.activeImage.domicilio, this.state.activeImage.esProfesor)} >
+                      <Text style={{ color: 'white' }}>{this.inactiveImageButtonText()}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </Animated.View>
               </View>
-              )) : <Text></Text>
-            }
-            {/* </View> */}
-              <TouchableOpacity style={[styles.button, { backgroundColor: this.inactiveImageButton() }]} onPress={() => this.props.onPressGo(this.state.activeImage.id, this.state.activeImage.nombre + " " + this.state.activeImage.apellido, this.state.activeImage.domicilio, this.state.activeImage.esProfesor)} >
-                <Text style={{color: 'white'}}>{this.inactiveImageButtonText()}</Text>
-              </TouchableOpacity>
-            </Animated.View>
+            )
+              :
+              <View style={[{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 10, backgroundColor: 'white' }]} ref={(view) => (this.viewImage = view)}>
+        
+                <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.imageTitulo} />
+                <Text style={{ textAlign: 'left',fontSize: wp(4.4)}}> CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés. {'\n'}{'\n'} Además te da la posibilidad de visualizar cuales son los profesores más populares de la aplicación y los cercanos a tu zona actual.</Text>
+
+                </View>
+            )
+              : <View></View>}
           </Animated.View>
+
           <View
             pointerEvents={this.state.activeImage ? "auto" : "none"}
           >
@@ -436,18 +460,20 @@ class HomeClases extends React.Component {
     <TouchableOpacity
       key={item.id}>
       <Animated.View
-        style={{padding:10, shadowColor: '#00000015',
-        shadowOffset: {
-          width: 0,
-          height: 0,
-        },
-        shadowOpacity: 2,
-        shadowRadius: 8}}
+        style={{
+          padding: 10, shadowColor: '#00000015',
+          shadowOffset: {
+            width: 0,
+            height: 0,
+          },
+          shadowOpacity: 2,
+          shadowRadius: 8
+        }}
       >
         <Image
           ref={(item) => (this.allImages[index] = item)}
           source={item.src}
-          style={[styles.carouselImage,{ resizeMode: ((item.id == 0) ? 'contain' : 'contain')}]}
+          style={[styles.carouselImage, { resizeMode: ((item.id == 0) ? 'contain' : 'contain') }]}
         />
       </Animated.View>
     </TouchableOpacity>
@@ -461,13 +487,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  imageTitulo:{
-    alignSelf: 'center',
+  imageTitulo: {
     height: hp(5),
+    width: wp(50),
+    margin: 15,
     resizeMode: 'contain',
-    marginBottom: hp(2)
+    alignSelf: 'center'
   },
-  fondoImage:{
+  fondoImage: {
     width: wp(80),
     resizeMode: 'contain'
   },
@@ -483,18 +510,16 @@ const styles = StyleSheet.create({
   //Heart
   heartView: {
     justifyContent: 'center',
-    flexDirection: 'row',
-    marginTop: hp(1.5),
-    marginBottom: hp(1)
+    flexDirection: 'row'
   },
   starImage: {
-    height: hp(4),
-    width: hp(4),
+    height: hp(3.3),
+    width: hp(3.3),
     marginHorizontal: 1
   },
   //Details Cards
   cardContainer: {
-   backgroundColor: 'white',shadowColor: '#00000025',
+    backgroundColor: 'white', shadowColor: '#00000025',
     shadowOffset: {
       width: 3,
       height: 5,
@@ -503,47 +528,60 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 55,
     flexDirection: 'row',
-    height: hp(50),
+    width: wp(90),
+    height: hp(48),
     marginHorizontal: 10,
-    marginBottom: 10,
+    marginBottom: 20,
     padding: 10,
+    flexWrap: "wrap",
     borderRadius: 10
   },
-  tituloProfesor: { 
+  card: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    flex: 1,
+    flexWrap: "wrap"
+  },
+  tituloProfesor: {
     fontSize: 20,
     color: '#F28C0F',
     fontWeight: 'bold',
     textAlign: 'center',
-    paddingBottom: 10 
+    paddingBottom: 10
   },
-  domicilioProfesor: { 
+  domicilioProfesor: {
     fontSize: wp(3.3),
     color: 'black',
     fontWeight: 'bold',
     textAlign: 'center',
   },
   image: {
-    height: hp(37),
-    borderRadius: 10,
+    height: hp(33),
+    marginBottom: 22,
+    borderRadius: 10
   },
   infoContainer: {
     padding: 10,
-    marginBottom: hp(2.5),
-    borderRadius: 10
+    borderRadius: 10,
   },
   infoTitle: {
     fontSize: wp(3.3),
-    fontWeight: 'bold',
-    marginBottom: 3,
-    marginTop: 15,
+    fontWeight: 'bold'
   },
   //Boton
+  buttonContainer: {
+    marginRight: 10,
+    position: 'absolute',
+    bottom: 0,
+    right: 0
+  },
   button: {
-    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    marginTop: 70
+    height: hp(5),
+    width: wp(30),
+    marginTop: 10
   }
 });
 export default withNavigation(HomeClases);

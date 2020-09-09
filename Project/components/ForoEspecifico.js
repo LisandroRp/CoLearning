@@ -4,12 +4,14 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
+  TextInput,
   Modal,
+  Keyboard,
   Dimensions,
   ScrollView,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableWithoutFeedback
 } from 'react-native';
 import DropDownItem from 'react-native-drop-down-item';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -34,12 +36,11 @@ class ForoEspecifico extends Component {
         rating: 5,
         fecha_inicio: "24 de Junio",
         tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }],
-        modalVisible: false
       },
 
       respuestas: [{ id_respues: 1, id_foro: 1, id_usuario: 1, nombre_usuario: "Leila Pereyra", esProfesor: false, fecha: "24 de Junio", nombre_respuesta: '5 consejos', des_respuesta: "1-2-3-4-5", ratingUp: 10, ratingDown: 4, ratingTotal: 6 }],
-      modalVisible: false,
       isLoading: false,
+      modalVisible: false
 
     };
   }
@@ -48,8 +49,8 @@ class ForoEspecifico extends Component {
     this.setState({ nombre_curso: await this.props.navigation.getParam('nombre_curso'), institucion: await this.props.navigation.getParam('institucion'), isLoading: false })
   }
 
-  okForo(foro){
-    this.setState({foro: foro, isLoading: false})
+  okForo(foro) {
+    this.setState({ foro: foro, isLoading: false })
   }
 
   votar(voto, item, index) {
@@ -62,6 +63,9 @@ class ForoEspecifico extends Component {
       nuevasRespuestas[index].ratingTotal = nuevasRespuestas[index].ratingTotal - 1
       this.setState({ respuestas: nuevasRespuestas })
     }
+  }
+  addComment(){
+
   }
   render() {
     if (this.state.isLoading) {
@@ -92,15 +96,15 @@ class ForoEspecifico extends Component {
                           <FontAwesome style={[{ marginTop: 8 }]} name={"thumbs-down"} size={hp(3)} color="#FA5454"></FontAwesome>
                         </TouchableOpacity>
                       </View>
-                      <View style={[{ flex: 1, height: '100%'}]}>
+                      <View style={[{ flex: 1, height: '100%' }]}>
                         <View style={styles.tituloRespuestaContainer}>
-                        <Text style={styles.tituloRespuesta}>{item.nombre_respuesta}</Text>
+                          <Text style={styles.tituloRespuesta}>{item.nombre_respuesta}</Text>
                         </View>
-                          <View><Text></Text></View>
-                          <View style={[{ flexDirection: 'row', flex:1, position: 'absolute', bottom: 0, right: 0, marginRight: 10}]}>
-                            <Text style={styles.cardSubTitulo}>Preguntado el {item.fecha} por </Text>
-                            <Text style={styles.cardSubTituloUsuario} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario}</Text>
-                          </View>
+                        <View><Text></Text></View>
+                        <View style={[{ flexDirection: 'row', flex: 1, position: 'absolute', bottom: 0, right: 0, marginRight: 10 }]}>
+                          <Text style={styles.cardSubTitulo}>Preguntado el {item.fecha} por </Text>
+                          <Text style={styles.cardSubTituloUsuario} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario}</Text>
+                        </View>
                       </View>
 
                     </View>
@@ -112,22 +116,51 @@ class ForoEspecifico extends Component {
               ))}
             </View>
           </ScrollView>
-          <TouchableOpacity  style= {styles.bubble} onPress={() => this.setState({modalVisible: true})}>
-                <FontAwesome name={"plus"} size={hp(4)} color="white"></FontAwesome>
-            </TouchableOpacity>
+          <TouchableOpacity style={styles.bubble} onPress={() => this.setState({ modalVisible: true })}>
+            <FontAwesome name={"plus"} size={hp(3.3)} color="white"></FontAwesome>
+          </TouchableOpacity>
 
 
-            <Modal
+          <Modal
             animationType="fade"
             visible={this.state.modalVisible}
             transparent={true}
             onRequestClose={() => this.setState({ modalVisible: false })}  >
-            <View style={styles.modal}>
+            <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={Keyboard.dismiss}>
 
-            </View>
+              <View style={styles.modal}>
+                <TextInput style={styles.inputTitle}
+                  value={this.state.email}
+                  maxLength={33}
+                  placeholder="Titulo"
+                  placeholderTextColor="grey"
+                  underlineColorAndroid='transparent'
+                  onChangeText={(text) => this.setState({ mail: text })}
+                />
+                <TextInput style={styles.inputDescripcion}
+                  value={this.state.email}
+                  multiline={true}
+                  maxLength={660}
+                  placeholder="Respuesta"
+                  placeholderTextColor="grey"
+                  underlineColorAndroid='transparent'
+                  onChangeText={(text) => this.setState({ mail: text })}
+                />
+                <View style={[{ flexDirection: "row"}]}>
+                  <TouchableOpacity style={[styles.buttonContainerLogin]}
+                    onPress={() => this.setState({modalVisible: false})}>
+                    <Text style={styles.loginText}>Cancelar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.buttonContainerLogin]}
+                    onPress={() => this.addComment()}>
+                    <Text style={styles.loginText}>Agregar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableOpacity>
           </Modal>
         </View>
-        
+
       );
     }
   }
@@ -139,24 +172,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFF7EE'
   },
-  bannerContainer: {
-    height: height * 0.08,
-    backgroundColor: 'black'
-  },
-  bottomBanner: {
-    position: "absolute",
-    bottom: 0,
-    alignSelf: 'center',
-  },
-  bgImage: {
-    flex: 1,
-    resizeMode,
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    resizeMode: 'cover'
-  },
   todo: {
     backgroundColor: '#F5F4F4',
     marginHorizontal: wp("4"),
@@ -164,13 +179,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     opacity: 2,
     shadowColor: '#00000035',
-        shadowOffset: {
-          width: 0.01,
-          height: 0.25,
-        },
-        shadowOpacity: 2,
-        shadowRadius: 8,
-        elevation: 2
+    shadowOffset: {
+      width: 0.01,
+      height: 0.25,
+    },
+    shadowOpacity: 2,
+    shadowRadius: 8,
+    elevation: 2
   },
   backgroundTitulo: {
     backgroundColor: 'white',
@@ -190,13 +205,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     opacity: 2,
     shadowColor: '#00000035',
-        shadowOffset: {
-          width: 0.01,
-          height: 0.25,
-        },
-        shadowOpacity: 2,
-        shadowRadius: 8,
-        elevation: 2
+    shadowOffset: {
+      width: 0.01,
+      height: 0.25,
+    },
+    shadowOpacity: 2,
+    shadowRadius: 8,
+    elevation: 2
   },
   titulo: {
     fontSize: hp(2.8),
@@ -210,7 +225,7 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'left',
     justifyContent: 'center',
-    flex:1
+    flex: 1
   },
   tituloRespuesta: {
     fontSize: hp(2.5),
@@ -229,10 +244,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center'
-  },
-  image: {
-    height: height * 0.55,
-    width: width,
   },
   cardSubTitulo: {
     marginTop: 1,
@@ -257,30 +268,96 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#F28C0F",
     shadowColor: '#00000035',
-        shadowOffset: {
-          width: 0.01,
-          height: 0.25,
-        },
-        shadowOpacity: 2,
-        shadowRadius: 8,
-        elevation: 2
+    shadowOffset: {
+      width: 0.01,
+      height: 0.25,
+    },
+    shadowOpacity: 2,
+    shadowRadius: 8,
+    elevation: 2
   },
-   /*************************************** */
+  /*************************************** */
   //MODAAAAL
-  modal: {
-    height: hp(50),
-    width: hp(80),
-    position: 'absolute',
-    top: "50%",
-    left: "50%",
-    borderColor: 'black',
-    borderWidth: 2,
-    backgroundColor: 'grey',
-    shadowColor: 'black',
-    shadowOpacity: 5.0,
-    borderRadius: 22,
-    opacity: .95
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
   },
+  modal: {
+    height: hp(66),
+    width: wp(80),
+    marginTop: hp(10),
+    alignSelf: "center",
+    backgroundColor: '#FFF7EE',
+    borderRadius: 22,
+    opacity: .95,
+    alignItems: "center",
+    shadowColor: '#00000035',
+    shadowOffset: {
+      width: 0.01,
+      height: 0.25,
+    },
+    shadowOpacity: 2,
+    shadowRadius: 8,
+    elevation: 2
+  },
+  inputTitle: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    borderBottomWidth: 1,
+    width: 300,
+    height: hp(5),
+    paddingHorizontal: hp(2.2),
+    marginTop: hp(2.2),
+    flexDirection: 'column',
+    textAlign: 'center',
+
+    shadowColor: "#808080",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5
+  },
+  inputDescripcion: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    borderBottomWidth: 1,
+    width: 300,
+    flex: 1,
+    paddingTop: hp(2.2),
+    paddingHorizontal: hp(2.2),
+    textAlignVertical: "top",
+    marginTop: hp(2.2),
+    marginBottom: hp(2.2),
+    flexDirection: 'column',
+    shadowColor: "#808080",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  buttonContainerLogin: {
+    height: 45,
+    justifyContent: 'center',
+    marginHorizontal: wp(5),
+    alignItems: 'center',
+    marginBottom: hp(2.2),
+    borderRadius: 10,
+    paddingHorizontal: wp(3.3),
+    backgroundColor: "#F28C0F"
+  },
+  loginText: {
+    color: 'white'
+  }
 })
 
 export default withNavigation(ForoEspecifico);

@@ -25,6 +25,33 @@ class Chat extends React.Component {
     flag: false
   };
 
+  componentDidMount() {
+    //fireBase.refOffStart();
+    this.check(this.isOk.bind(this));
+    
+    //this.check(this.dance.bind(this))
+  }
+  check(isOk) {
+    setTimeout(function () {
+      isOk()
+    }, 500);
+  }
+
+  isOk() {
+    fireBase.refOn(chat =>
+      this.setState(previousState => ({
+        chatList: (GiftedChat.append(previousState.chatList, chat)).sort((a, b) => a.createdAt.toString().localeCompare(b.createdAt.toString())),
+        isLoading: false,
+        flag: true
+      }))
+    );
+  }
+  componentWillUnmount() {
+    fireBase.refOff(this.state.id_user, this.state.chatList);
+  }
+
+  ///////////////////////////////////////
+
   marginSize(item) {
     if (item.id_user != this.state.chatList[this.state.chatList.length - 1].id_user) {
 
@@ -125,32 +152,6 @@ class Chat extends React.Component {
         </SafeAreaView>
       );
     }
-  }
-
-  componentDidMount() {
-    fireBase.refOffStart();
-    this.check(this.isOk.bind(this));
-    
-    //this.check(this.dance.bind(this))
-  }
-
-  check(isOk) {
-    setTimeout(function () {
-      isOk()
-    }, 500);
-  }
-
-  isOk() {
-    fireBase.refOn(chat =>
-      this.setState(previousState => ({
-        chatList: (GiftedChat.append(previousState.chatList, chat)).sort((a, b) => a.createdAt.toString().localeCompare(b.createdAt.toString())),
-        isLoading: false,
-        flag: true
-      }))
-    );
-  }
-  componentWillUnmount() {
-    fireBase.refOff(this.state.id_user, this.state.chatList);
   }
 }
 const resizeMode = 'center';

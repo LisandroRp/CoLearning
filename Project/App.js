@@ -37,10 +37,13 @@ import MapaVarios from './components/MapaVarios'
 import MapaUnico from './components/MapaUnico'
 import HomeClases from './components/HomeClases'
 import HomeCursos from './components/HomeCursos'
-import DatosPersonales from './components/DatosPersonales'
+import PerfilHome from './components/PerfilHome'
+import PerfilValidation from './components/PerfilValidation'
+import PerfilEdit from './components/PerfilEdit'
 import ChatList from './components/ChatList'
 import ChatEspecifico from './components/Chat'
 import ForoMenu from './components/ForoMenu'
+import ForoNew from './components/ForoNew';
 import Foros from './components/Foros'
 import ForoEspecifico from './components/ForoEspecifico'
 
@@ -49,6 +52,7 @@ import ExportadorLogos from './components/exportadores/ExportadorLogos';
 
 
 console.disableYellowBox = true
+var esProfesorTodo = false
 
 UserDataManager.getInstance().setCurrentPositionFromReact()
 
@@ -74,8 +78,9 @@ class SwitchLogInScreen extends React.Component {
       />
     )
   }
-  checkLogin(IdUser) {
-    this.props.navigation.navigate('drawer', { IdUser: IdUser });
+  checkLogin(IdUser, esProfesor) {
+    esProfesorTodo = esProfesor
+    this.props.navigation.navigate('drawer', { pepe: "hola", esProfesor: esProfesor });
   }
 
   goPass() {
@@ -131,7 +136,7 @@ class MapaVariosScreen extends React.Component {
       title: "Mapa",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: 'white',
@@ -175,7 +180,7 @@ class MapaUnicoScreen extends React.Component {
       title: "Mapa",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: 'white',
@@ -219,7 +224,7 @@ class ClasesScreen extends React.Component {
       title: "Profesores",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         shadowColor: 'transparent'
       },
       headerRight: () => 
@@ -279,7 +284,7 @@ class UserContactoScreen extends React.Component {
       title: "Contacto",
       headerStyle: {
         backgroundColor: '#6BA8FF',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: '#A01A50',
@@ -308,7 +313,7 @@ class UserComentariosScreen extends React.Component {
       title: "Comentarios",
       headerStyle: {
         backgroundColor: '#6BA8FF',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: '#A01A50',
@@ -321,13 +326,18 @@ class UserComentariosScreen extends React.Component {
   render() {
     return (
       <UserComentarios
-        onPressSearch={this.buscarClase.bind(this)}
+      onPressGoPerfil={this.buscarUsuario.bind(this)}
       />
     );
 
   }
-  buscarClase() {
-    this.props.navigation.navigate('Profesores', {});
+  buscarUsuario(id_usuario, esProfesor) {
+    if(esProfesor){
+      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_usuario, esProfesor: esProfesor});
+    }
+    else{
+      this.props.navigation.navigate('usuarioEspecifico', {id_usuario: id_usuario, esProfesor: esProfesor});
+    }
   }
 }
 //************** */
@@ -343,7 +353,7 @@ const UsuarioTabNavigator = createBottomTabNavigator({
       title: "Detalles",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: 'white',
@@ -379,7 +389,7 @@ const ProfesorTabNavigator = createBottomTabNavigator({
       title: "Detalles",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerRight: () =>
@@ -437,7 +447,7 @@ class CursosScreen extends React.Component {
       title: "Cursos",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         shadowColor: 'transparent'
       },
       headerRight: () => 
@@ -472,7 +482,7 @@ class CursoEspecificoScreen extends React.Component {
       title: "Detalles",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerRight: () => 
@@ -518,7 +528,7 @@ const BuscarTabNavigator = createBottomTabNavigator({
       headerTintColor: 'white',
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0,
       },
     }
@@ -578,13 +588,13 @@ class PerfilScreen extends React.Component {
       title: "Detalles",
       headerStyle: {
         backgroundColor: '#6BA8FF',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: '#A01A50',
       headerStyle: {
         backgroundColor: '#6BA8FF',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       }
     };
@@ -595,7 +605,7 @@ class PerfilScreen extends React.Component {
   }
   render() {
     return (
-      <DatosPersonales
+      <PerfilHome
         onPressSearch={this.buscarClase.bind(this)}
       />
     );
@@ -605,13 +615,43 @@ class PerfilScreen extends React.Component {
     this.props.navigation.navigate('Profesores', {});
   }
 }
-const PerfilTabNavigator = createBottomTabNavigator({
+class PerfilEditScreen extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Editar",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTintColor: 'white',
+    };
+  } 
+  
+  render() {
+    return (
+      <PerfilEdit
+        goPerfil={this.goPerfil.bind(this)}
+      />
+    );
+
+  }
+  goPerfil(esProfesor) {
+    if(esProfesor){
+      this.props.navigation.navigate("PerfilProfesorStack");
+    }
+    else{
+      this.props.navigation.navigate("PerfilUsuarioStack");
+    }
+  }
+}
+const PerfilTabNavigatorUsuario = createBottomTabNavigator({
   Perfil: PerfilScreen,
-  Calendario: UserContactoScreen,
-  Comentario: UserComentariosScreen
 },
 {
-  navigationOptions: ({ navigation }) => {
+  navigationOptions: ({ navigation })  => 
+  {
     const { routeName } = navigation.state.routes[navigation.state.index]
     return {
       headerTitle: 'Perfil',
@@ -624,17 +664,9 @@ const PerfilTabNavigator = createBottomTabNavigator({
           size={30}
         />
       ,
-      headerRight: () => 
-        <View style={{ flexDirection: 'row' }}>
-          <FontAwesome name="edit" style={{ paddingRight: 20, color: 'white' }}
-            onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_curso'), direccion: navigation.getParam('direccion'), tipo: 'Unico' })}
-            size={22}
-          />
-        </View>
-      ,
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       }
     }
@@ -657,10 +689,63 @@ swipeEnabled: true,
 
   }
 });
-const PerfilStackNavigator = createStackNavigator(
+const PerfilTabNavigatorProfesor = createBottomTabNavigator({
+  Perfil: PerfilScreen,
+  Calendario: UserContactoScreen,
+  Comentario: UserComentariosScreen
+},
+{
+  navigationOptions: ({ navigation })  => 
   {
-    PerfilTabNavigator: {
-      screen: PerfilTabNavigator,
+    const { routeName } = navigation.state.routes[navigation.state.index]
+    return {
+      headerTitle: 'Perfil',
+      headerTintColor: 'white',
+      headerLeft: () =>
+        <Icon
+          style={{ paddingLeft: 10, color: '#A01A50' }}
+          onPress={() => navigation.openDrawer()}
+          name="md-menu"
+          size={30}
+        />
+      ,
+      headerRight: () => 
+        <View style={{ flexDirection: 'row' }}>
+          <FontAwesome name="edit" style={{ paddingRight: 20, color: 'white' }}
+            onPress={() => navigation.navigate("perfilEdit")}
+            size={22}
+          />
+        </View>
+      ,
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      }
+    }
+  },
+swipeEnabled: true,
+  Title: 'Ficha',
+  tabBarOptions: {
+    Title: 'Mi Plan',
+    activeTintColor: '#A7370F',
+    inactiveTintColor: 'white',
+    style: {
+      backgroundColor: '#F28C0F',
+      borderTopColor: '#F28C0F'
+
+    },
+    labelStyle: {
+      fontSize: 18,
+      paddingVertical: 10
+    }
+
+  }
+});
+const PerfilUsuarioStackNavigator = createStackNavigator(
+  {
+    PerfilTabNavigatorUsuario: {
+      screen: PerfilTabNavigatorUsuario,
       navigationOptions: ({ navigation }) => {
         return {
           // headerLeft: () => <SomeElement />
@@ -674,12 +759,69 @@ const PerfilStackNavigator = createStackNavigator(
           ,
         }
       }     
-    },
-  },
+    }
+})
+const PerfilProfesorStackNavigator = createStackNavigator(
   {
-    initialRouteName: 'PerfilTabNavigator',
-  }
+  PerfilTabNavigatorProfesor: {
+    screen: PerfilTabNavigatorProfesor,
+    navigationOptions: ({ navigation }) => {
+      return {
+        // headerLeft: () => <SomeElement />
+        headerLeft: () =>
+          <Icon
+            style={{ paddingLeft: 10, color: 'white' }}
+            onPress={() => navigation.openDrawer()}
+            name="md-menu"
+            size={30}
+          />
+        ,
+      }
+    }     
+  },
+  perfilEdit: PerfilEditScreen,
+  usuarioEspecifico: UsuarioTabNavigator,
+  profesorEspecifico: ProfesorTabNavigator,
+  mapaUnico: MapaUnicoScreen
+}
 );
+class PerfilValidationScreen extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Detalles",
+      headerStyle: {
+        backgroundColor: '#6BA8FF',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTintColor: '#A01A50',
+      headerStyle: {
+        backgroundColor: '#6BA8FF',
+        height: hp(10),
+        borderBottomWidth: 0
+      }
+    };
+  }
+  
+  render() {
+    return (
+      <PerfilValidation
+        esProfesorTodo = {esProfesorTodo}
+        goPerfil={this.goPerfil.bind(this)}
+      />
+    );
+
+  }
+  goPerfil(esProfesor) {
+    if(esProfesor){
+      this.props.navigation.navigate("PerfilProfesorStack");
+    }
+    else{
+      this.props.navigation.navigate("PerfilUsuarioStack");
+    }
+  }
+}
 
 //******************************************* */
 //******************HOME******************* */
@@ -691,7 +833,7 @@ class HomeClasesMenuScreen extends React.Component {
       title: "Clases",
       headerStyle: {
         backgroundColor: '#6BA8FF',
-        height: 66,
+        height: hp(10),
         shadowColor: 'Clases'
       },
       headerTintColor: '#A01A50',
@@ -722,7 +864,7 @@ class HomeCursosScreen extends React.Component {
       title: "Cursos",
       headerStyle: {
         backgroundColor: '#6BA8FF',
-        height: 66,
+        height: hp(10),
         shadowColor: 'transparent'
       },
       headerTintColor: '#A01A50',
@@ -752,7 +894,7 @@ const HomeTabNavigator = createBottomTabNavigator({
       headerTintColor: 'white',
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       }
     }
@@ -813,7 +955,7 @@ class LogInScreen extends React.Component {
       title: "Chats",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: 'white',
@@ -847,7 +989,7 @@ class CreateAccountScreen extends React.Component {
       title: "Chats",
       headerStyle: {
         backgroundColor: '#6BA8FF',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: '#A01A50',
@@ -881,7 +1023,7 @@ class ChatListScreen extends React.Component {
       title: "Chats",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: 'white',
@@ -911,7 +1053,7 @@ class ChatEspecificoScreen extends React.Component {
       title: navigation.getParam("nombre_chatDestino"),
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: 'white',
@@ -943,7 +1085,7 @@ const ChatListStackNavigator = createStackNavigator(
           // headerLeft: () => <SomeElement />
           headerLeft: () =>
             <Icon
-              style={{ paddingLeft: 10, color: '#A01A50' }}
+              style={{ paddingLeft: 10, color: 'white' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
               size={30}
@@ -969,7 +1111,7 @@ class ForoMenuScreen extends React.Component {
       title: "Foros",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         shadowColor: 'transparent'
       },
       headerTintColor: 'white',
@@ -1011,7 +1153,7 @@ class ForosScreen extends React.Component {
       title: "Foros",
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         shadowColor: 'transparent'
       },
       headerTintColor: 'white',
@@ -1030,6 +1172,7 @@ class ForosScreen extends React.Component {
     );
 
   }
+  
   buscarForo(id_foro, nombre_foro) {
     this.props.navigation.navigate('foroEspecifico', {id_foro: id_foro, nombre_foro: nombre_foro});
   }
@@ -1042,6 +1185,36 @@ class ForosScreen extends React.Component {
     }
   }
 }
+class ForoNewScreen extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Crear Foro",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        shadowColor: 'transparent'
+      },
+      headerTintColor: 'white',
+    };
+  }
+  
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <ForoNew
+        onPressVolver={this.volver.bind(this)}
+      />
+    );
+
+  }
+  
+  volver() {
+    this.props.navigation.navigate('ForoMenuScreen');
+  }
+}
 class ForoEspecificoScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
@@ -1049,7 +1222,7 @@ class ForoEspecificoScreen extends React.Component {
       title: navigation.getParam('nombre_foro', 'Foro'),
       headerStyle: {
         backgroundColor: '#F28C0F',
-        height: 66,
+        height: hp(10),
         borderBottomWidth: 0
       },
       headerTintColor: 'white',
@@ -1091,10 +1264,18 @@ const ForoStackNavigator = createStackNavigator(
               size={30}
             />
           ,
+          headerRight: () =>
+            <FontAwesome
+              style={{ paddingRight: 15, color: 'white' }}
+              onPress={() => navigation.navigate("foroNew")}
+              name="plus"
+              size={hp(3)}
+            />
         }
       }     
     },
     foros: ForosScreen,
+    foroNew: ForoNewScreen,
     foroEspecifico: ForoEspecificoScreen,
     usuarioEspecifico: UsuarioTabNavigator,
     mapaUnico: MapaUnicoScreen,
@@ -1126,6 +1307,13 @@ const customDrawerComponent = (props) => (
     </ScrollView>
   </View>
 )
+
+const PerfilSwitchNavigator = createSwitchNavigator({
+  PerfilValidation: PerfilValidationScreen,
+  PerfilProfesorStack: PerfilProfesorStackNavigator,
+  PerfilUsuarioStack: PerfilUsuarioStackNavigator
+});
+
 const AppDrawerNavigator = createDrawerNavigator({
   Home: {
     screen: HomeStackNavigator,
@@ -1156,7 +1344,7 @@ const AppDrawerNavigator = createDrawerNavigator({
     }
   },
   Perfil: {
-    screen: PerfilStackNavigator,
+    screen: PerfilSwitchNavigator,
     navigationOptions: {
       title: "Perfil",
       drawerIcon: ({ tintColor }) => (<FontAwesome name="user" size={24} color={tintColor} />)
@@ -1187,7 +1375,7 @@ const AppDrawerNavigator = createDrawerNavigator({
   //     drawerBackgroundColor: '#ebf0f7',
   //     contentOptions: {
   //       //Esto sirve para cambiar algunos colores
-  //       activeTintColor: '#6666ff',
+  //       activeTintColor: '#hp(10)hp(10)ff',
   //       inactiveTintColor:'#3399ff'
   //     }
   //   }
@@ -1201,7 +1389,7 @@ const AppSwitchNavigator = createSwitchNavigator({
   switchLogIn: {screen: SwitchLogInScreen},
   switchContraseña: { screen: SwitchContraseñaScreen },
   switchCrearUser: { screen: SwitchCrearUserScreen },
-  drawer: { screen: AppDrawerNavigator }
+  drawer: { screen: AppDrawerNavigator },
 });
 
 const AppContainer = createAppContainer(AppSwitchNavigator);

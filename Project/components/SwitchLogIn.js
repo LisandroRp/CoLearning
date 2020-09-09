@@ -11,6 +11,7 @@ import {
   Image,
   Dimensions
 } from 'react-native';
+import { withNavigation } from 'react-navigation';
 import ApiController from '../controller/ApiController';
 import firebaseSvc from '../FirebaseSvc';
 import { SimpleLineIcons, Feather } from "@expo/vector-icons";
@@ -25,14 +26,15 @@ class LogIn extends Component {
     this.state = {
       email: "JuanMn@gmail.com",
       password: "123456",
-      usuario: {}
+      usuario: {esProfesor: true}
     }
   }
 
   checkLogin() {
-    this.firebaseLogin()
+    //this.firebaseLogin()
     //ApiController.getUsuarioByMail(this.state.mail, this.checkUsuario.bind(this))
-    //this.props.onPressLogin(this.state.mail);
+
+    this.props.onPressLogin(this.state.mail, this.state.usuario.esProfesor);
   }
 
   checkUsuario(data) {
@@ -83,7 +85,7 @@ class LogIn extends Component {
               value={this.state.email}
               placeholder="Email"
               underlineColorAndroid='transparent'
-              onChangeText={(text) => this.setState({ mail: text })}
+              onChangeText={(text) => this.setState({ email: text })}
             />
             <View style={styles.logoSocialMedia}>
               <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(3.3)} color='#F28C0F'></SimpleLineIcons>
@@ -238,4 +240,4 @@ const styles = StyleSheet.create({
     textShadowRadius: 100
   }
 })
-export default LogIn;  
+export default withNavigation(LogIn);  

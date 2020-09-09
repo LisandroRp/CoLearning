@@ -4,7 +4,9 @@ import {
   Text,
   View,
   TextInput,
+  Keyboard,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
   TouchableOpacity,
   Image,
   Dimensions
@@ -51,7 +53,7 @@ okChange() {
         {/* <Image style={styles.bgImage} source={{ uri: "https://lorempixel.com/900/1400/nightlife/8/" }}/> */}
         <View>
           <Image
-            style={{ height: 300, width: 300, resizeMode: 'contain', }}
+            style={{ height: 300, width: 300, resizeMode: 'contain'}}
             source={ExportadorLogos.traerLogoBlanco()}></Image>
         </View>
           <View style={styles.inputContainer}>

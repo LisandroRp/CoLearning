@@ -374,17 +374,17 @@ const styles = StyleSheet.create({
   },
   cardDireccion: {
     color: 'black',
-    fontSize: 15,
+    fontSize: wp(3),
     alignSelf: 'center',
     marginBottom: wp(3)
   },
   cardDistancia: {
     color: 'black',
-    fontSize: 12
+    fontSize: wp(3)
   },
   cardTiempo: {
     color: 'black',
-    fontSize: 12
+    fontSize: wp(3)
   },
   //********************* */
   //HOME
