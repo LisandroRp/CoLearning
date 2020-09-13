@@ -17,7 +17,7 @@
     "mongoose": "^5.7.5",
     "mongoose-sequence": "^5.2.2",
     "node-cache": "^4.2.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "nodemon": "^1.19.4",
     "omdb": "^0.8.0"
   }
