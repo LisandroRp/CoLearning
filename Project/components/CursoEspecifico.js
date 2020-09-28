@@ -41,6 +41,12 @@ class CursoEspecifico extends React.Component {
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
+    componentDidMount = async () => {
+        ApiController.getCurso(await this.props.navigation.getParams("id_curso"), this.okCurso.bind(this))
+    }
+    okCurso(curso){
+        this.setState({curso: curso, isLoading: false})
+    }
     vote(i) {
         this.setState({ rating: i })
     }

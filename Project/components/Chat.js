@@ -1,5 +1,5 @@
 import React from 'react';
-import { GiftedChat } from 'react-native-gifted-chat'; // 0.3.0
+import { GiftedChat, InputToolbar, Bubble,  } from 'react-native-gifted-chat'; // 0.3.0
 import { View, Image, StyleSheet, ActivityIndicator, FlatList, Modal, TextInput, TouchableOpacity, StatusBar, TouchableWithoutFeedback, Text, Keyboard, Dimensions } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
@@ -7,6 +7,38 @@ import firebaseSvc from '../FirebaseSvc';
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
+const customtInputToolbar = props => {
+  return (
+    <InputToolbar
+      {...props}
+      containerStyle={{
+        marginLeft: 15,
+    marginRight: 15,
+    marginBottom: 10,
+    borderRadius: 25,
+    position: "absolute",
+    bottom: 5
+      }}
+    />
+  );
+};
+
+const customBubles = props => {
+  return (
+    <Bubble
+      {...props}
+      wrapperStyle={{
+        right: {
+          backgroundColor: '#F28C0F',
+          marginBottom: hp(2),
+        },
+        left: {
+          marginBottom: hp(2),
+        }
+      }}
+    />
+  );
+}
 class Chat extends React.Component {
 
   constructor(props) {
@@ -37,6 +69,9 @@ class Chat extends React.Component {
   render() {
     return (
       <GiftedChat
+      listViewProps={{style: { backgroundColor: '#FFF7EE'} }}
+        //renderInputToolbar={props => customtInputToolbar(props)}
+        renderBubble={props => customBubles(props)}
         messages={this.state.messages}
         //onSend={firebaseSvc.send}
         onSend={messages => firebaseSvc.send(messages, this.userDestino)}
@@ -86,13 +121,13 @@ class Chat extends React.Component {
 }
 const resizeMode = 'center';
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#FFEEEE"
-    },
-    StatusBar: {
-        height: hp(3),
-        backgroundColor: "black"
-    },
-  })
+  container: {
+    flex: 1,
+    backgroundColor: "#FFEEEE"
+  },
+  StatusBar: {
+    height: hp(3),
+    backgroundColor: "black"
+  },
+})
 export default withNavigation(Chat);

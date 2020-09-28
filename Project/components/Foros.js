@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { withNavigation } from 'react-navigation';
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import ApiController from '../controller/ApiController';
 
 var { height, width } = Dimensions.get('window');
 
@@ -16,27 +17,26 @@ class Foros extends Component {
             isLoading: false,
             modalVisible: false,
             foros: [
-                { id_foro: 1, nombre_foro: 'Duda Existencial', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 2, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 3, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 4, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 5, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] }
+                { id_foro: 1, nombre_foro: 'Como cambiarle el color al titulo React Native', pregunta: 'Como cambiarle el color al titulo React Native?', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
+                { id_foro: 2, nombre_foro: 'Consejos para leer mas rápido', pregunta: 'Consejos para leer mas rápido', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Leer" }, { id_tag: 2, nombre_tag: "Consejo" }] },
+                { id_foro: 3, nombre_foro: 'Resolvér Ecuacion', pregunta: 'Como resolvér esta ecuacion x^2+X-5?', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Matematica" }, { id_tag: 2, nombre_tag: "Ecuaciones" }] }
             ],
             memory: [
-                { id_foro: 1, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 2, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 3, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 4, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 5, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Lorenzo Coco", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] }
+                { id_foro: 1, nombre_foro: 'Como cambiarle el color al titulo React Native', pregunta: 'Como cambiarle el color al titulo React Native?', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
+                { id_foro: 2, nombre_foro: 'Consejos para leer mas rápido', pregunta: 'Consejos para leer mas rápido', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Leer" }, { id_tag: 2, nombre_tag: "Consejo" }] },
+                { id_foro: 3, nombre_foro: 'Resolvér Ecuacion', pregunta: 'Como resolvér esta ecuacion x^2+X-5?', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Matematica" }, { id_tag: 2, nombre_tag: "Ecuaciones" }] }
             ]
         };
     }
-    componentDidMount() {
+    componentDidMount = async () => {
+        //ApiController.getForos(await this.props.navigation.getParam("tema"), this.okForos.bind(this))
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
     }
-
+    okForos(foros){
+        this.setState({foros: foros, isLoading: false})
+    }
     keyboardDidShow = () => {
         this.setState({ searchBarFocused: true })
     }
@@ -59,8 +59,8 @@ class Foros extends Component {
     }
 
     searchForos = value => {
-        const filterDeCursos = this.state.memory.filter(foros => {
-            let profesorLowercase = (
+        const filterDeForos = this.state.memory.filter(foros => {
+            let forosLowercase = (
                 foros.nombre_foro +
                 ' ' +
                 foros.nombre_usuario +
@@ -83,7 +83,7 @@ class Foros extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
@@ -95,6 +95,7 @@ class Foros extends Component {
                     <SearchBar
                             placeholder= "Search..."
                             platform='ios'
+                            onChangeText={value => this.searchForos(value)}
                             value={this.state.value}
                             inputContainerStyle={{ backgroundColor: '#FFF7EE'}}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'

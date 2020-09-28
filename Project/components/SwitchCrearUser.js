@@ -1,153 +1,276 @@
-import React from 'react';
-import { Constants, ImagePicker, Permissions } from 'expo';
+import React, { Component } from 'react';
 import {
-  StyleSheet, Text,
-  TextInput, View,
-  Button, ImageEditor,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Image,
+  Dimensions
 } from 'react-native';
+import ApiController from '../controller/ApiController';
 import firebaseSvc from '../FirebaseSvc';
+import { SimpleLineIcons, Feather } from "@expo/vector-icons";
+import ExportadorLogos from './exportadores/ExportadorLogos'
 
-class CreateAccount extends React.Component {
-  static navigationOptions = {
-    title: 'Scv Chatter',
-  };
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+var { height, width } = Dimensions.get('window');
 
-  state = {
-    name: 'Alex B',
-    email: 'test3@gmail.com',
-    password: 'test123',
-    avatar: '',
-  };
+class SwitchCrearUser extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      nombre: "Juan",
+      apellido: "Marinelli",
+      email: "JuanMn@gmail.com",
+      password: "123456",
+      confirmPassword: "123456",
+      avatar: "",
+    }
+  }
 
-  onPressCreate = async () => {
-    console.log('create account... email:' + this.state.email);
+  checkPassword() {
+    if(this.state.password == this.state.confirmPassword)
+    {
+      this.fireBaseUserCreate()
+      //ApiController.createUser(this.okUser.bind(this), usuario)
+      //this.props.onPressCancel()
+    }
+  }
+
+  okUser(boolean) {
+    if(boolean){
+      alert("Se ha creado su usuario correctamente");
+      this.fireBaseUserCreate();
+    }
+    else{
+      alert("Hubo un problema, intentelo denuevo mas tarde");
+    }
+  }
+  fireBaseUserCreate = async () => {
     try {
       const user = {
-        name: this.state.name,
+        name: this.state.nombre + this.state.apellido,
         email: this.state.email,
         password: this.state.password,
         avatar: this.state.avatar,
       };
-      await firebaseSvc.createAccount(user);
+      await firebaseSvc.createAccount(user, this.okUserFirebase.bind(this));
     } catch ({ message }) {
       console.log('create account failed. catch error:' + message);
     }
   };
-
-  onChangeTextEmail = email => this.setState({ email });
-  onChangeTextPassword = password => this.setState({ password });
-  onChangeTextName = name => this.setState({ name });
-
-  onImageUpload = async () => {
-    const { status: cameraRollPerm } = await Permissions.askAsync(
-      Permissions.CAMERA_ROLL
-    );
-    try {
-      // only if user allows permission to camera roll
-      if (cameraRollPerm === 'granted') {
-        console.log('choosing image granted...');
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({
-          allowsEditing: true,
-          aspect: [4, 3],
-        });
-        console.log(
-          'ready to upload... pickerResult json:' + JSON.stringify(pickerResult)
-        );
-
-        var wantedMaxSize = 150;
-        var rawheight = pickerResult.height;
-        var rawwidth = pickerResult.width;
-        
-        var ratio = rawwidth / rawheight;
-        var wantedwidth = wantedMaxSize;
-        var wantedheight = wantedMaxSize/ratio;
-        // check vertical or horizontal
-        if(rawheight > rawwidth){
-            wantedwidth = wantedMaxSize*ratio;
-            wantedheight = wantedMaxSize;
-        }
-        console.log("scale image to x:" + wantedwidth + " y:" + wantedheight);
-        let resizedUri = await new Promise((resolve, reject) => {
-          ImageEditor.cropImage(pickerResult.uri,
-          {
-              offset: { x: 0, y: 0 },
-              size: { width: pickerResult.width, height: pickerResult.height },
-              displaySize: { width: wantedwidth, height: wantedheight },
-              resizeMode: 'contain',
-          },
-          (uri) => resolve(uri),
-          () => reject(),
-          );
-        });
-        let uploadUrl = await firebaseSvc.uploadImage(resizedUri);
-        //let uploadUrl = await firebaseSvc.uploadImageAsync(resizedUri);
-        await this.setState({ avatar: uploadUrl });
-        console.log(" - await upload successful url:" + uploadUrl);
-        console.log(" - await upload successful avatar state:" + this.state.avatar);
-        await firebaseSvc.updateAvatar(uploadUrl); //might failed
-      }
-    } catch (err) {
-      console.log('onImageUpload error:' + err.message);
-      alert('Upload image error:' + err.message);
+  okUserFirebase(boolean){
+    if(boolean){
+      alert("El usuario " + user.name + " fue creado correctamente. Por favor inicie sesion.");
+      this.props.onPressCancel()
     }
-  };
+  }
 
   render() {
     return (
-      <View>
-        <Text style={styles.title}>Email:</Text>
-        <TextInput
-          style={styles.nameInput}
-          placeHolder="test3@gmail.com"
-          onChangeText={this.onChangeTextEmail}
-          value={this.state.email}
-        />
-        <Text style={styles.title}>Password:</Text>
-        <TextInput
-          style={styles.nameInput}
-          onChangeText={this.onChangeTextPassword}
-          value={this.state.password}
-        />
-        <Text style={styles.title}>Name:</Text>
-        <TextInput
-          style={styles.nameInput}
-          onChangeText={this.onChangeTextName}
-          value={this.state.name}
-        />
-        <Button
-          title="Create Account"
-          style={styles.buttonText}
-          onPress={this.onPressCreate}
-        />
-        <Button
-          title="Upload Avatar Image"
-          style={styles.buttonText}
-          onPress={this.onImageUpload}
-        />
-      </View>
+      <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(3)} enabled>
+          {/* <Image style={styles.bgImage} source={{ uri: "https://lorempixel.com/900/1400/nightlife/8/" }}/> */}
+          <View>
+            <Image
+              style={{ height: 300, width: 300, resizeMode: 'contain', }}
+              source={ExportadorLogos.traerLogoBlanco()}></Image>
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput style={styles.inputs}
+              value={this.state.nombre}
+              placeholder="Nombre"
+              underlineColorAndroid='transparent'
+              onChangeText={(text) => this.setState({ nombre: text })}
+            />
+            <View style={styles.logoSocialMedia}>
+              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(3.3)} color='#F28C0F'></SimpleLineIcons>
+            </View>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput style={styles.inputs}
+              value={this.state.apellido}
+              placeholder="Apellido"
+              underlineColorAndroid='transparent'
+              onChangeText={(text) => this.setState({ apellido: text })}
+            />
+            <View style={styles.logoSocialMedia}>
+              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(3.3)} color='#F28C0F'></Feather>
+            </View>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput style={styles.inputs}
+              value={this.state.email}
+              placeholder="Email"
+              underlineColorAndroid='transparent'
+              onChangeText={(text) => this.setState({ mail: text })}
+            />
+            <View style={styles.logoSocialMedia}>
+              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(3.3)} color='#F28C0F'></Feather>
+            </View>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput style={styles.inputs}
+              value={this.state.password}
+              placeholder="Contraseña"
+              secureTextEntry={true}
+              underlineColorAndroid='transparent'
+              onChangeText={(text) => this.setState({ password: text })}
+            />
+            <View style={styles.logoSocialMedia}>
+              <Feather style={[{ textAlign: "center" }]} name={"unlock"} size={hp(3.3)} color='#F28C0F'></Feather>
+            </View>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput style={styles.inputs}
+              value={this.state.confirmPassword}
+              placeholder="Confirmar Contraseña"
+              secureTextEntry={true}
+              underlineColorAndroid='transparent'
+              onChangeText={(text) => this.setState({ confirmPassword: text })}
+            />
+            <View style={styles.logoSocialMedia}>
+              <Feather style={[{ textAlign: "center" }]} name={"unlock"} size={hp(3.3)} color='#F28C0F'></Feather>
+            </View>
+          </View>
+
+          <View style={[{ flexDirection: "row", justifyContent: "space-around" }]}>
+            <TouchableOpacity style={[styles.buttonContainerLogin]}
+              onPress={() => this.props.onPressCancel()}>
+              <Text style={styles.loginText}>Cancelar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.buttonContainerLogin]}
+              onPress={() => this.checkPassword()}>
+              <Text style={styles.loginText}>Crear Usuario</Text>
+            </TouchableOpacity>
+          </View>
+      </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+
     );
   }
 }
 
-const offset = 16;
-const styles = StyleSheet.create({
-  title: {
-    marginTop: offset,
-    marginLeft: offset,
-    fontSize: offset,
-  },
-  nameInput: {
-    height: offset * 2,
-    margin: offset,
-    paddingHorizontal: offset,
-    borderColor: '#111111',
-    borderWidth: 1,
-    fontSize: offset,
-  },
-  buttonText: {
-    marginLeft: offset,
-    fontSize: 42,
-  },
-});
+const resizeMode = 'center';
 
-export default CreateAccount;
+const styles = StyleSheet.create({
+  container: {
+    //flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#F28C0F',
+  },
+  inputContainer: {
+    borderBottomColor: '#F5FCFF',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    borderBottomWidth: 1,
+    width: 300,
+    height: 45,
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+
+    shadowColor: "#808080",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  logoSocialMedia: {
+    height: height * 0.044,
+    width: height * 0.044,
+    justifyContent: "center",
+    marginRight: width * 0.033,
+    textAlign: "center",
+  },
+  inputs: {
+    height: 45,
+    marginLeft: 16,
+    borderBottomColor: '#FFFFFF',
+    flex: 1,
+  },
+  inputIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 15,
+    justifyContent: 'center'
+  },
+  buttonContainerLogin: {
+    height: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: hp(5),
+    marginBottom: hp(3.3),
+    borderRadius: 10,
+    paddingHorizontal: wp(3.3),
+    backgroundColor: "#FFF7EE"
+  },
+  buttonContainerPass: {
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: hp(2),
+    width: 300,
+    borderRadius: 30,
+    backgroundColor: 'transparent'
+  },
+  btnByRegister: {
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
+    width: 300,
+    backgroundColor: 'transparent'
+  },
+
+  loginText: {
+    color: '#F28C0F',
+    fontWeight: 'bold',
+  },
+  bgImage: {
+    flex: 1,
+    resizeMode,
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    resizeMode: 'cover'
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover'
+  },
+  btnText: {
+    color: "black",
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+  },
+  textByRegister: {
+    color: "white",
+    fontWeight: 'bold',
+    textAlign: 'center',
+
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 100
+  }
+})
+export default SwitchCrearUser;  

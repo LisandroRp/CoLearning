@@ -25,6 +25,33 @@ class Chat extends React.Component {
     flag: false
   };
 
+  componentDidMount() {
+    //fireBase.refOffStart();
+    this.check(this.isOk.bind(this));
+    
+    //this.check(this.dance.bind(this))
+  }
+  check(isOk) {
+    setTimeout(function () {
+      isOk()
+    }, 500);
+  }
+
+  isOk() {
+    fireBase.refOn(chat =>
+      this.setState(previousState => ({
+        chatList: (GiftedChat.append(previousState.chatList, chat)).sort((a, b) => a.createdAt.toString().localeCompare(b.createdAt.toString())),
+        isLoading: false,
+        flag: true
+      }))
+    );
+  }
+  componentWillUnmount() {
+    fireBase.refOff(this.state.id_user, this.state.chatList);
+  }
+
+  ///////////////////////////////////////
+
   marginSize(item) {
     if (item.id_user != this.state.chatList[this.state.chatList.length - 1].id_user) {
 
@@ -35,7 +62,7 @@ class Chat extends React.Component {
   }
   whoSend(ultimoSender) {
     if(ultimoSender === ""){
-      return 'Mensajes no disponibles'
+      return ''
     }
     else{
       if (ultimoSender.user.id_user == this.state.id_user) {
@@ -47,11 +74,27 @@ class Chat extends React.Component {
     }
   }
   whatTime(hours, minutes){
+    var horaTotal
     if(isNaN(hours)){
       return ''
     }
     else{
-      return hours + ':' + minutes
+      if(hours < 10){
+        if(minutes < 10){
+          return "0" + hours + ':' + "0" + minutes
+        }
+        else{
+          return "0" + hours + ':' + minutes
+        }
+      }
+      else{
+        if(minutes < 10){
+          return hours + ':' + "0" + minutes
+        }
+        else{
+          return hours + ':' + minutes
+        }
+      }
     }
   }
 
@@ -59,10 +102,10 @@ class Chat extends React.Component {
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <StatusBar barStyle="black" backgroundColor="white" />
-          <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+            <StatusBar barStyle="black" backgroundColor="white" />
+            <ActivityIndicator size="large" color='#F28C0F' backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
         </View>
-      );
+    );
     }
     else {
       return (
@@ -110,116 +153,28 @@ class Chat extends React.Component {
       );
     }
   }
-
-  componentDidMount() {
-    fireBase.refOffStart();
-    this.check(this.isOk.bind(this));
-    
-    //this.check(this.dance.bind(this))
-  }
-
-  check(isOk) {
-    setTimeout(function () {
-      isOk()
-    }, 500);
-  }
-
-  isOk() {
-    fireBase.refOn(chat =>
-      this.setState(previousState => ({
-        chatList: (GiftedChat.append(previousState.chatList, chat)).sort((a, b) => a.createdAt.toString().localeCompare(b.createdAt.toString())),
-        isLoading: false,
-        flag: true
-      }))
-    );
-  }
-  componentWillUnmount() {
-    fireBase.refOff(this.state.id_user, this.state.chatList);
-  }
 }
 const resizeMode = 'center';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFEEEE"
+    backgroundColor: "#FFF7EE"
   },
   StatusBar: {
     height: hp(3),
     backgroundColor: "black"
   },
-
-  slide: {
-    backgroundColor: "black",
-    marginTop: height * 0.05,
-    marginBottom: height * 0.05,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 10,
-    opacity: .95,
-  },
-
-  slideText: {
-    textAlign: "center",
-    fontSize: height * 0.03,
-    color: "#3399ff"
-  },
-
-  bgImage: {
-    flex: 1,
-    resizeMode,
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    resizeMode: 'cover'
-  },
-  slideContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-
-  TextContainer: {
-    backgroundColor: 'grey',
-    borderRadius: 10,
-    width: wp("20"),
-    height: hp("5.5"),
-    flexDirection: 'row',
-    alignItems: 'center',
-    fontWeight: 'bold',
-    fontSize: height * 0.02,
-    textAlign: 'center',
-    marginTop: height * 0.028,
-    opacity: .95
-  },
-
-  ContainerInside: {
-    width: width,
-    height: height,
-    alignItems: "center",
-  },
-  guardarButton: {
-    backgroundColor: 'grey',
-    borderRadius: 10,
-    alignItems: 'center',
-    width: width * 0.33,
-    marginHorizontal: 22,
-    marginTop: height * 0.05,
-    alignSelf: 'center',
-    opacity: .95
-  },
-
   // FlatList
 
   card: {
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.37,
-    shadowRadius: 7.49,
-    elevation: 12,
+    shadowColor: '#00000045',
+        shadowOffset: {
+            width: 0,
+            height: 6,
+        },
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        elevation: 12,
 
     marginLeft: height * 0.028,
     marginRight: height * 0.028,
@@ -263,7 +218,7 @@ const styles = StyleSheet.create({
   },
   cardTitulo: {
     fontSize: height * 0.028,
-    color: "#3399ff",
+    color: "#F28C0F",
     fontWeight: 'bold',
     marginBottom: 5
   },
@@ -271,7 +226,7 @@ const styles = StyleSheet.create({
   cardSubTituloMessage: {
     marginTop: 1,
     fontSize: height * 0.02,
-    color: "#A01A50",
+    color: "black",
   },
   cardSubTituloMessageContainer: {
     alignSelf: 'stretch',
@@ -280,7 +235,7 @@ const styles = StyleSheet.create({
   cardSubTituloHours: {
     marginTop: 1,
     fontSize: height * 0.02,
-    color: "#A01A50",
+    color: "black",
     textAlign: 'right'
   },
   //Corazones

@@ -5,6 +5,7 @@ import { withNavigation } from 'react-navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ExportadorLogos from './exportadores/ExportadorLogos'
+import ApiController from '../controller/ApiController';
 
 var { height, width } = Dimensions.get('window');
 
@@ -13,24 +14,32 @@ class UserCalendario extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            perfil: {},
-            rating: 0,
+            isLoading: false,
             max_rating: 5,
-            isLoading: true,
-            id_idioma: 0,
-            tema: '',
-            direccion: '',
-            clases: [{ id: 1, nombre: "idiomas" }, { id: 2, nombre: "Deportes" }, { id: 3, nombre: "Estudios" }, { id: 4, nombre: "Arte" }]
+            nombre_usuario: "Pedro",
+            comentarios: [{
+                id_comentario: 1,
+                id_usuarioOrigen: "Maria Belen",
+                id_usuarioDestino: 2,
+                rating: 3,
+                fecha_alta: "2020-08-14",
+                des_comentario: "Terrible GatTerrible Gato el profe,no me responde nunca, siempre me clava visto, solo quiero aprovbar la puta madreo el profe,no me responde nunca, siempre me clava visto, solo quiero aprovbar la puta madre"
+            }],
+            esProfesor: true
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
-    componentDidMount() {
+    componentDidMount = async () => {
+        //Traer el esProfesor de los usuarios de cada comentario para mandarlo e ir al perfil de los comentarios
+        //ApiController.getComentariosByIdProfesor(await this.props.navigation.getParam("id_usuario"), this.okComentarios.bind(this))
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
     }
-
+    okComentarios(comentariosBase) {
+        this.setState({ comentarios: comentariosBase })
+    }
     keyboardDidShow = () => {
         this.setState({ searchBarFocused: true })
     }
@@ -41,26 +50,38 @@ class UserCalendario extends Component {
         this.setState({ searchBarFocused: false })
     }
 
-    vote(i) {
-        this.setState({ rating: i })
+    marginSize(index) {
+        if (index != this.state.comentarios.length - 1) {
+            return { marginBottom: hp(3), marginTop: hp(3) }
+        } else {
+            return { marginBottom: hp(3) }
+        }
     }
+    
+    starsRow(comentario_rating) {
 
-    render() {
-        var rating2 = this.state.rating
+        var rating2 = comentario_rating
         let React_Native_Rating_Bar = [];
         for (var i = 1; i <= this.state.max_rating; i++) {
             React_Native_Rating_Bar.push(
-                <TouchableOpacity
+                <View
                     activeOpacity={0.7}
                     key={i}
-                    onPress={this.vote.bind(this, i)}
                 >
-                    <FontAwesome name={i <= rating2
-                                ? 'heart'
-                                : 'heart-o'} style={styles.heartImage} size={hp(5)} />
-                </TouchableOpacity>
+                    {i <= rating2
+                        ? <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()}></Image>
+                        : <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaBorde()}></Image>
+                    }
+                    {/* <FontAwesome name={i <= rating2
+                        ? 'star'
+                        : 'star'} style={styles.heartImage} size={hp(4)} /> */}
+                </View>
             );
         }
+        return React_Native_Rating_Bar
+    }
+
+    render() {
         if (this.state.isLoading) {
             return (
                 <View style={styles.container}>
@@ -72,7 +93,42 @@ class UserCalendario extends Component {
         else {
             return (
                 <View style={styles.container}>
-              
+                    <FlatList
+                        style={styles.contentList}
+                        columnWrapperStyle={styles.listContainer}
+                        data={this.state.comentarios}
+                        initialNumToRender={50}
+                        keyExtractor={(item, index) => {
+                            return index.toString();
+                        }}
+                        renderItem={({ item }) => {
+                            return (
+                                <View>
+                                    <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.props.onPressGoPerfil(item.id_usuarioOrigen, this.state.esProfesor)}>
+                                        <View style={{ flexDirection: "row" }} >
+                                            {/* <Image style={styles.image} source={require("../assets/icon.png")} /> */}
+                                            <View style={styles.image}>
+                                                <Text style={{ fontSize: hp(5), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                                                    {item.id_usuarioOrigen.slice(0, 1).toUpperCase()}
+                                                </Text>
+                                            </View>
+                                            <View style={{ flexDirection: "column", flex: 1 }} >
+                                                <View style={styles.cardContent}>
+                                                    <Text style={styles.cardTitulo}>{item.id_usuarioOrigen}</Text>
+                                                    <View style={[styles.statsBoxStar]}>
+                                                        <View style={styles.starView}>{this.starsRow(item.rating)}</View>
+                                                    </View>
+                                                </View>
+                                                <View style={{ flexDirection: "row"}}>
+                                                    <Text style={styles.cardComentario}>{item.des_comentario}</Text>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                        }
+                        } />
                 </View>
             );
         }
@@ -86,77 +142,79 @@ const styles = StyleSheet.create({
         flex: 1
     },
 
-    searchContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    ContainerInside: {
-        backgroundColor: "black",
-        marginTop: hp(5),
-        padding: height * 0.04,
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: 'center',
-        height: height * 0.33,
-        width: width * 0.88
-    },
     //FlatList
-    contentList: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        padding: 2,
-        alignSelf: 'center'
+    card: {
+        shadowColor: '#00000055',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.37,
+        shadowRadius: 7.49,
+        elevation: 12,
+
+        marginLeft: height * 0.028,
+        marginRight: height * 0.028,
+        borderRadius: 10,
+        backgroundColor: "white",
+        padding: 10,
+        flexDirection: 'column',
+
     },
     image: {
-        width: wp(49),
-        height: hp(24.5),
-        margin: 1,
-        borderWidth: 1.5,
-        borderColor: 'black',
-        resizeMode: 'stretch',
+        width: hp("8"),
+        height: hp("8"),
+        borderWidth: 2,
+        borderColor: "#ebf0f7",
+        borderRadius: 100,
+        margin: 5,
+        marginRight: 5,
         justifyContent: 'center',
-        alignItems: 'center',
-        alignContent: 'center',
-        overflow: 'hidden'
+        alignSelf: "flex-start",
+        backgroundColor: "#F28C0F"
     },
-
-    bgImage: {
+    cardContent: {
         flex: 1,
-        resizeMode,
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        resizeMode: 'cover'
+        paddingRight: 5,
+        justifyContent: 'flex-start',
+        flexDirection: "row",
     },
-    textImage: {
-        textAlign: 'center',
-        fontSize: hp(4),
-        textTransform: 'uppercase',
-        color: "#2A73E0",
-        letterSpacing: wp(1),
+    cardTitulo: {
+        fontSize: wp(4.4),
+        color: '#F28C0F',
         fontWeight: 'bold',
-        textShadowColor: 'black',
-        textShadowOffset: { width: 2.2, height: 2.2 },
-        textShadowRadius: 0.1
+        marginHorizontal: wp(2),
+        marginTop: hp(1)
     },
 
-    Text: {
-        fontSize: height * 0.027,
-        color: "#3399ff",
-        textAlign: "center"
+    cardComentario: {
+        margin: wp(2),
+        fontSize: height * 0.015,
+        color: "black",
+        flex: 1,
+        flexWrap: 'wrap'
     },
-    //Star View
-    heartView: {
+    cardSubTituloUsuario: {
+        marginTop: 1,
+        fontSize: height * 0.0166,
+        color: '#F28C0F',
+        fontWeight: 'bold'
+    },
+    //Stars
+    starView: {
         justifyContent: 'center',
         flexDirection: 'row',
-        marginTop: hp(1.5),
-        marginBottom: hp(1)
+        marginTop: hp(1)
     },
-    heartImage: {
-        color: "#f66"
+    starImage: {
+        width: hp(3),
+        height: hp(3),
+    },
+    statsBoxStar: {
+        flex:1,
+        marginLeft: wp(3),
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
     },
     //Boton
 

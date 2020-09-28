@@ -36,14 +36,7 @@ class ChatEspecifico extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            perfil: {},
-            rating: 0,
-            max_rating: 5,
             isLoading: false,
-            id_idioma: 0,
-            tema: '',
-            direccion: '',
-            clases: [{ id: 1, nombre: "idiomas" }, { id: 2, nombre: "Deportes" }, { id: 3, nombre: "Estudios" }, { id: 4, nombre: "Arte" }]
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
@@ -76,16 +69,16 @@ class ChatEspecifico extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <ActivityIndicator size="large" color="#A01A50" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+                    <ActivityIndicator size="large" color='#F28C0F' backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
                 </View>
             );
         }
         else {
     return (
       <SafeAreaView>
-        <Chat client={chatClient}>
+        <Chat client={chatClient} style={{ backgroundColor:"red"}}>
           <Channel client={chatClient} channel={channel}>
-            <View style={{ display: 'flex', height: '100%' }}>
+            <View style={{ display: 'flex', height: '100%'}}>
               <MessageList />
               <MessageInput />
             </View>
@@ -100,7 +93,7 @@ const resizeMode = 'center';
 const styles = StyleSheet.create({
 
     container: {
-        backgroundColor: "#FFEEEE",
+        backgroundColor: "#FFF7EE",
         flex: 1
     },
 

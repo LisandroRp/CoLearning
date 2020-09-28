@@ -37,7 +37,7 @@ class ExportadorLogos extends Component {
         return require('../../contenido/logos/Instagram.png')
     }
     traerWpp(){
-        //return require('../../contenido/logos/WhatsApp.png')
+        return require('../../contenido/logos/WhatsApp.png')
     }
     traerMail(){
         //return require('../../contenido/logos/Mail.png')

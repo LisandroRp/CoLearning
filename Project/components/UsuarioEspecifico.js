@@ -13,17 +13,12 @@ class UsuarioEspecifico extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            perfil: {},
-            isLoading: false,
-            id_idioma: 0,
-            rating: 3,
+            isLoading: false,     
             max_rating: 5,
-            tema: '',
-            direccion: '',
             usuario: {
                 id_usuario: 1,
-                nombre_usuario: 'Leila',
-                apellido: 'Arcolucci',
+                nombre_usuario: 'Juan',
+                apellido: 'Marinelli',
                 src: require("../assets/leila.jpg"),
                 esProfesor: true,
                 domicilio: 'Spega Ñeri',
@@ -35,17 +30,21 @@ class UsuarioEspecifico extends React.Component {
                 { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
                 instagram: "@LisandroRp",
                 whatsApp: "1144373492",
-                materias: [{ nombre_materia: "Ingles", des_materia: "Doy clases de ingles nivel avanzado perri" },
-                { nombre_materia: "Perreo", des_materia: "Enseño perrear hasta el piso" }],
+                rating: 3,
+                materias: [{ nombre_materia: "Ingles", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
+                { nombre_materia: "Matematica", des_materia: "Clases de matematica de secundaria y universidad" }],
                 latitud: 123,
-                longitud: 123
+                longitud: 123,
+                money: {id_moneda: {id_moneda: 1, nombre: "$"}, monto: "100"}
             }
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
     vote(i) {
-        this.setState({ rating: i })
+        var usuarioUpdate = this.state.usuario
+        usuarioUpdate.rating = i
+        this.setState({ usuario: usuarioUpdate })
     }
     queDondeClase(id_usuario) {
         switch (id_usuario) {
@@ -90,14 +89,13 @@ class UsuarioEspecifico extends React.Component {
         }
     }
     render() {
-        var rating2 = this.state.rating
+        var rating2 = this.state.usuario.rating
         let React_Native_Rating_Bar = [];
         for (var i = 1; i <= this.state.max_rating; i++) {
             React_Native_Rating_Bar.push(
-                <TouchableOpacity
+                <View
                     activeOpacity={0.7}
                     key={i}
-                    onPress={this.vote.bind(this, i)}
                 >
                     {i <= rating2
                         ? <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()}></Image>
@@ -106,7 +104,7 @@ class UsuarioEspecifico extends React.Component {
                     {/* <FontAwesome name={i <= rating2
                         ? 'star'
                         : 'star'} style={styles.heartImage} size={hp(4)} /> */}
-                </TouchableOpacity>
+                </View>
             );
         }
         if (this.state.isLoading) {
@@ -121,6 +119,7 @@ class UsuarioEspecifico extends React.Component {
             return (
                 <SafeAreaView style={styles.container}>
                     <ScrollView showsVerticalScrollIndicator={false}>
+                        <View>
                         <View style={{ alignSelf: "center" }}>
                             <View style={styles.profileImage}>
                                 <Image source={this.state.usuario.src} style={styles.image} resizeMode="center"></Image>
@@ -132,12 +131,17 @@ class UsuarioEspecifico extends React.Component {
                             <Text style={[styles.text, { fontWeight: "200", fontSize: 28, fontWeight: 'bold', color: '#F28C0F' }]}>{this.state.usuario.nombre_usuario} {this.state.usuario.apellido}</Text>
                             <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>{this.state.usuario.domicilio}</Text>
                         </View>
+                        <View style={[styles.moneyView, styles.shadowMoney]}>
+                            <Text style={styles.moneyText}>{this.state.usuario.money.id_moneda.nombre}{this.state.usuario.money.monto}</Text>
+                            <Text style={styles.moneyText2}>/h</Text>
+                        </View>
+                        </View>
 
                         <View style={styles.statsContainer}>
                             {
                             this.state.usuario.esProfesor ? 
-                            <View style={[styles.statsBoxHearts]}>
-                                <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
+                            <View style={[styles.statsBoxStar]}>
+                                <View style={styles.starView}>{React_Native_Rating_Bar}</View>
                                 <Text style={[styles.text, styles.subText]}>Votos: 1523</Text>
                             </View> : 
                             <View/>
@@ -161,7 +165,7 @@ class UsuarioEspecifico extends React.Component {
 
                                 <View style={[{ flexDirection: 'row' }]}>
                                     {this.state.usuario.dondeClases.map((item) => (
-                                        <View style={[{ padding: 10, marginHorizontal: 10, marginTop: 10, alignItems: "center", borderRadius: 10 }]}>
+                                        <View style={[{ padding: 10, marginHorizontal: 10, marginTop: 10, alignItems: "center", borderRadius: 10 }]} key= {item.id_dondeClases}>
                                             {this.queDondeClase(item.id_dondeClases)}
                                             <Text style={[styles.text, styles.subText]}>{item.des_dondeClases}</Text>
                                         </View>
@@ -175,7 +179,7 @@ class UsuarioEspecifico extends React.Component {
 
                                 <View style={[{ flexDirection: 'row' }]}>
                                     {this.state.usuario.tipoClases.map((item) => (
-                                        <View style={[{ padding: 10, marginHorizontal: 10, marginTop: 10, alignItems: "center", borderRadius: 10 }]}>
+                                        <View style={[{ padding: 10, marginHorizontal: 10, marginTop: 10, alignItems: "center", borderRadius: 10 }]} key = {item.id_tipoClases}>
                                             {this.queTipoClase(item.id_tipoClases)}
                                             <Text style={[styles.text, styles.subText]}>{item.des_tipoClases}</Text>
                                         </View>
@@ -188,7 +192,7 @@ class UsuarioEspecifico extends React.Component {
                                 <Text style={[styles.text, { fontSize: 20, textAlign: 'center' }]}>Materias</Text>
 
                                 {this.state.usuario.materias.map((item, index) => (
-                                    <View style={[styles.dropDownContainer, this.marginSize(index)]}>
+                                    <View style={[styles.dropDownContainer, this.marginSize(index)]} key={item.nombre_materia}>
                                         <DropDownItem contentVisible={false}
                                             header={
                                                 <View style={styles.backgroundTitulo}><Text style={styles.titulo}>{item.nombre_materia}</Text></View>
@@ -248,6 +252,37 @@ const styles = StyleSheet.create({
         shadowRadius: 7.49,
         elevation: 20,
     },
+    //MONEY
+    moneyView: {
+        position: 'absolute',
+        flexDirection: 'row',
+        right: 0,
+        backgroundColor: '#5EC43A',
+        alignItems: "flex-end",
+        borderRadius: 10,
+        marginTop: hp(3),
+        marginRight: wp(5),
+        padding: 10
+    },
+    moneyText: {
+        color: "green",
+        fontWeight: 'bold',
+        fontSize: wp(4.4)
+    },
+    moneyText2: {
+        color: "green",
+        fontSize: wp(3.5)
+    },
+    shadowMoney: {
+        shadowColor: '#5EC43A',
+        shadowOffset: {
+            width: 0.01,
+            height: 0.25,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 3
+    },
+    //MONEY
     dm: {
         backgroundColor: "#F28C0F",
         position: "absolute",
@@ -303,8 +338,8 @@ const styles = StyleSheet.create({
         marginHorizontal: wp(8),
         marginTop: 32,
     },
-    //Heart
-    heartView: {
+    //Stars
+    starView: {
         justifyContent: 'center',
         flexDirection: 'row',
         marginTop: hp(1.5),
@@ -313,10 +348,9 @@ const styles = StyleSheet.create({
     },
     starImage: {
         width: hp(4),
-        height: hp(4),
-        color: "orange"
+        height: hp(4)
     },
-    statsBoxHearts: {
+    statsBoxStar: {
         flex: 1,
         alignSelf: "stretch",
         borderColor: "#DFD8C8",

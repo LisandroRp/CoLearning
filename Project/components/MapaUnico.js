@@ -53,9 +53,19 @@ class MapaUnico extends Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
+    //ApiController.getUsuario(await this.props.navigation.getParam("id_usuario"), this.okDatos.bind(this))
     this.cargarDatos()
     this.traerPosicion(this.okPosicion.bind(this))
+  }
+  okDatos(usuario){
+    var coordinate = []
+    coordinate.push(usuario)
+    var carousel = []
+    carousel.push(usuario)
+    carousel.push({ name: 'Posicion', latitude: UserDataManager.getInstance().getLatitude(), longitude: UserDataManager.getInstance().getLongitude() })
+    
+    this.setState({coordinate: coordinate, carousel: carousel})
   }
   cargarDatos = async () => {
     let coordinates = [
@@ -141,13 +151,13 @@ class MapaUnico extends Component {
   queTransporte() {
     switch (this.state.id_transporte) {
       case 1:
-        return "Driving"
+        return "DRIVING"
       case 2:
-        return 'Transit'
+        return 'TRANSIT'
       case 3:
-        return 'Walking'
+        return 'WALKING'
       case 4:
-        return 'Bicycle'
+        return 'BICYCLING'
     }
   }
   changeTransporte(carousel, id_transporte) {
@@ -364,17 +374,17 @@ const styles = StyleSheet.create({
   },
   cardDireccion: {
     color: 'black',
-    fontSize: 15,
+    fontSize: wp(3),
     alignSelf: 'center',
     marginBottom: wp(3)
   },
   cardDistancia: {
     color: 'black',
-    fontSize: 12
+    fontSize: wp(3)
   },
   cardTiempo: {
     color: 'black',
-    fontSize: 12
+    fontSize: wp(3)
   },
   //********************* */
   //HOME

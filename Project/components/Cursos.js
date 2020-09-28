@@ -5,6 +5,7 @@ import ExportadorLogos from './exportadores/ExportadorLogos'
 import { withNavigation } from 'react-navigation';
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import ApiController from '../controller/ApiController';
 
 var { height, width } = Dimensions.get('window');
 
@@ -28,11 +29,14 @@ class Cursos extends Component {
         };
     }
     componentDidMount() {
+        //ApiController.getCursos(this.okCursos.bind(this))
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
     }
-
+    okCursos(cursos){
+        this.setState({cursos: cursos, memory:cursos, isLoading: false})
+    }
     keyboardDidShow = () => {
         this.setState({ searchBarFocused: true })
     }
@@ -253,7 +257,7 @@ const styles = StyleSheet.create({
         fontSize: wp(3),
         color: "black"
     },
-//Corazones
+//Estrellas
 starImage: {
     height: hp(4.4),
     width: hp(4.4),
