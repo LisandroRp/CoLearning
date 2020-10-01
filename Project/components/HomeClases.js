@@ -10,25 +10,18 @@ let SCREEN_HEIGHT = Dimensions.get('window').height
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import * as Font from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
 import ApiController from '../controller/ApiController';
 
-var images = [
-  { id: 0, src: null, nombre: 'Co-Learning' },
-  { id: 1, src: require('../assets/2.png'), nombre: 'Lorenzo', tipo: 'clase', rating: 2 },
-  { id: 2, src: require('../assets/Logo.png'), nombre: 'Cruso Programacion', tipo: 'curso' },
-  { id: 3, src: require('../assets/2.png') },
-  { id: 4, src: require('../assets/2.png') },
-
-]
-// { id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
 class HomeClases extends React.Component {
 
   constructor() {
     super()
     this.state = {
-      clases: [{ id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
+      clases: [{ id_usuario: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
       {
+        id_usuario: 1,
         nombre: 'Juan',
         apellido: 'Marinelli',
         src: require("../assets/leila.jpg"),
@@ -43,6 +36,7 @@ class HomeClases extends React.Component {
         { id: 3, des_tipoClases: "Virtuales" }],
         instagram: "@LisandroRp",
         whatsApp: "1144373492",
+        money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "100" },
         materias: [{ nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
         { nombre_materia: "Matematica", des_materia: "Clases avanzadas de amtematica" },
         { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
@@ -54,6 +48,7 @@ class HomeClases extends React.Component {
         { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" }]
       },
       {
+        id_usuario: 2,
         nombre: 'Leila',
         apellido: 'Pereyra',
         src: require("../assets/caca.jpg"),
@@ -68,25 +63,34 @@ class HomeClases extends React.Component {
         { id: 3, des_tipoClases: "Virtuales" }],
         instagram: "@LisandroRp",
         whatsApp: "1144373492",
+        money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "100" },
         materias: [{ nombre_materia: "Chino", des_materia: "Examenes Internacionales" },
         { nombre_materia: "Latin", des_materia: "Clases avanzadas de amtematica" }]
       }],
-      activeImage: { id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
+      activeImage: { id_usuario: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
       y: 0,
       max_rating: 5,
-      isLoading: true
+      isLoading: true,
+      isLoadingFont: true
     }
     this.Star = ExportadorLogos.traerEstrellaLlena();
     this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
   }
   componentDidMount = async () => {
     //ApiController.getProfesores(this.okProfesores.bind(this))
+    this.loadFont()
     this.setState({ activeImage: this.state.clases[0] })
     this.setState({ isLoading: false })
   }
+  loadFont = async () => {
+    await Font.loadAsync({
+      'shakies': require('../assets/fonts/Shakies-TT.ttf'),
+    });
+    this.setState({ isLoadingFont: false })
+  }
   okUsuarios(profesoresBase) {
     console.log(profesoresBase)
-    var profesores = [{ id: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' }]
+    var profesores = [{ id_usuario: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' }]
     profesores.concat(profesoresBase)
     this.setState({ clases: profesores, isLoading: false })
   }
@@ -265,7 +269,7 @@ class HomeClases extends React.Component {
     })
   }
   inactiveImageWidth() {
-    if (this.state.activeImage != null && this.state.activeImage.id == 0) {
+    if (this.state.activeImage != null && this.state.activeImage.id_usuario == 0) {
       return 0
     }
     else {
@@ -273,7 +277,7 @@ class HomeClases extends React.Component {
     }
   }
   inactiveBorderImageWidth() {
-    if (this.state.activeImage != null && this.state.activeImage.id == 0) {
+    if (this.state.activeImage != null && this.state.activeImage.id_usuario == 0) {
       return 0
     }
     else {
@@ -281,7 +285,7 @@ class HomeClases extends React.Component {
     }
   }
   inactiveImageVotos() {
-    if (this.state.activeImage != null && this.state.activeImage.id == 0) {
+    if (this.state.activeImage != null && this.state.activeImage.id_usuario == 0) {
       return ''
     }
     else {
@@ -289,7 +293,7 @@ class HomeClases extends React.Component {
     }
   }
   inactiveImageButton() {
-    if (this.state.activeImage != null && this.state.activeImage.id == 0) {
+    if (this.state.activeImage != null && this.state.activeImage.id_usuario == 0) {
       return 'transparent'
     }
     else {
@@ -297,7 +301,7 @@ class HomeClases extends React.Component {
     }
   }
   inactiveImageButtonText() {
-    if (this.state.activeImage != null && this.state.activeImage.id == 0) {
+    if (this.state.activeImage != null && this.state.activeImage.id_usuario == 0) {
       return ''
     }
     else {
@@ -305,7 +309,7 @@ class HomeClases extends React.Component {
     }
   }
   inactiveTitles(id_title) {
-    if (this.state.activeImage != null && this.state.activeImage.id == 0) {
+    if (this.state.activeImage != null && this.state.activeImage.id_usuario == 0) {
       return ''
     }
     else {
@@ -346,7 +350,7 @@ class HomeClases extends React.Component {
       opacity: this.animation
     }
     let React_Native_Rating_Bar = [];
-    for (var i = 1; i <= this.state.max_rating && (this.state.activeImage ? this.state.activeImage.id : 2) != 0; i++) {
+    for (var i = 1; i <= this.state.max_rating && (this.state.activeImage ? this.state.activeImage.id_usuario : 2) != 0; i++) {
       React_Native_Rating_Bar.push(
         <View
           key={i}
@@ -359,7 +363,7 @@ class HomeClases extends React.Component {
         </View>
       );
     }
-    if (this.state.isLoading) {
+    if (this.state.isLoading && this.state.isLoadingFont) {
       return (
         <View style={styles.container}>
           <StatusBar barStyle="black" backgroundColor="white" />
@@ -377,7 +381,7 @@ class HomeClases extends React.Component {
             contentContainerCustomStyle={{ alignItems: 'center' }}
             renderItem={this.renderCarouselItem}
             sliderWidth={Dimensions.get('window').width}
-            itemWidth={wp(50)}
+            itemWidth={wp(55)}
             autoplay={false}
             delay={1000}
             loop={true}
@@ -385,35 +389,38 @@ class HomeClases extends React.Component {
             initialScrollIndex={0}
             onSnapToItem={(index) => this.onCarouselItemChange(index)}
           />
-          <View style={{ position: 'absolute', bottom: hp(5), left: 0, right: 0, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ position: 'absolute', top: hp(33), left: 0, right: 0, justifyContent: 'center', alignItems: 'center' }}>
             <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
           </View>
 
           <Animated.View
             pointerEvents={this.state.activeImage ? "auto" : "none"}
-            style={[styles.cardContainer, animatedContentStyle]}
+            style={[styles.cardContainer, styles.shadow, animatedContentStyle]}
           >
-            {this.state.activeImage ? (this.state.activeImage.id != 0 ? (
+            {this.state.activeImage ? (this.state.activeImage.id_usuario != 0 ? (
               <View style={[styles.card]}>
                 <View style={[{ flexDirection: 'column', alignItems: 'center', padding: 10, backgroundColor: 'white' }]} ref={(view) => (this.viewImage = view)}>
-                  <Animated.Image
-                    source={this.state.activeImage.src}
-                    style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth() }]}
-                  >
-                  </Animated.Image>
+                  <View style={styles.shadowImage}>
+                    <Animated.Image
+                      source={this.state.activeImage.src}
+                      style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth() }]}
+                    />
+                  </View>
                   <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
                   <Text style={{ fontSize: wp(3), marginTop: 5 }}>{this.inactiveImageVotos()}{this.state.activeImage ? this.state.activeImage.rating.votos : ''}</Text>
                 </View>
                 <Animated.View style={[{ backgroundColor: 'white', flex: 1, padding: 10, flexDirection: 'column' }]}>
+
+                <View style={[{flex: 1.5}]}>
                   <Text style={styles.tituloProfesor} numberOfLines={2}>{this.state.activeImage.nombre + " " + this.state.activeImage.apellido}</Text>
-                  <Text style={styles.domicilioProfesor} numberOfLines={2}>{this.state.activeImage.domicilio}</Text>
+                  <Text style={styles.domicilioProfesor} numberOfLines={2}>{this.state.activeImage.domicilio}</Text>  
                   <View style={[styles.infoContainer]}>
 
                     <Text style={styles.infoTitle}>{this.inactiveTitles(1)}</Text>
 
                     {this.state.activeImage.materias.map((item, index) => (index < 3 ? (
                       <View>
-                        <Text numberOfLines={1}>• {item.nombre_materia}</Text>
+                        <Text style={styles.infoDes} numberOfLines={1}>• {item.nombre_materia}</Text>
                       </View>
                     ) : <View></View>))
                     }
@@ -424,13 +431,20 @@ class HomeClases extends React.Component {
 
                     {this.state.activeImage.tipoClases.map((item, index) => (index < 3 ? (
                       <View>
-                        <Text numberOfLines={1}>• {item.des_tipoClases}</Text>
+                        <Text style={styles.infoDes} numberOfLines={1}>• {item.des_tipoClases}</Text>
                       </View>
                     ) : <View></View>))
                     }
                   </View>
+                  </View>
                   <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={[styles.button, { backgroundColor: this.inactiveImageButton() }]} onPress={() => this.props.onPressGo(this.state.activeImage.id, this.state.activeImage.nombre + " " + this.state.activeImage.apellido, this.state.activeImage.domicilio, this.state.activeImage.esProfesor)} >
+                    <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                      <View style={[styles.moneyView, styles.shadowMoney]}>
+                        <Text style={styles.moneyText}>{this.state.activeImage.money.id_moneda.nombre}{this.state.activeImage.money.monto}</Text>
+                        <Text style={styles.moneyText2}>/h</Text>
+                      </View>
+                    </View>
+                    <TouchableOpacity style={[styles.button, { backgroundColor: this.inactiveImageButton() }]} onPress={() => this.props.onPressGo(this.state.activeImage.id_usuario, this.state.activeImage.nombre + " " + this.state.activeImage.apellido, this.state.activeImage.domicilio, this.state.activeImage.esProfesor)} >
                       <Text style={{ color: 'white' }}>{this.inactiveImageButtonText()}</Text>
                     </TouchableOpacity>
                   </View>
@@ -439,11 +453,11 @@ class HomeClases extends React.Component {
             )
               :
               <View style={[{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 10, backgroundColor: 'white' }]} ref={(view) => (this.viewImage = view)}>
-        
-                <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.imageTitulo} />
-                <Text style={{ textAlign: 'left',fontSize: wp(4.4)}}> CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés. {'\n'}{'\n'} Además te da la posibilidad de visualizar cuales son los profesores más populares de la aplicación y los cercanos a tu zona actual.</Text>
 
-                </View>
+                <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.imageTitulo} />
+                <Text style={{ textAlign: 'left', fontSize: wp(5) }}> CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés. {'\n'}{'\n'} Además te da la posibilidad de visualizar cuales son los profesores más populares de la aplicación y los cercanos a tu zona actual.</Text>
+
+              </View>
             )
               : <View></View>}
           </Animated.View>
@@ -457,26 +471,20 @@ class HomeClases extends React.Component {
     }
   }
   renderCarouselItem = ({ item, index }) =>
-    <TouchableOpacity
-      key={item.id}>
+    <View
+      key={item.id_usuario}>
       <Animated.View
-        style={{
-          padding: 10, shadowColor: '#00000015',
-          shadowOffset: {
-            width: 0,
-            height: 0,
-          },
-          shadowOpacity: 2,
-          shadowRadius: 8
-        }}
+        style={[styles.shadow, {
+          alignSelf: "center"
+        }]}
       >
         <Image
           ref={(item) => (this.allImages[index] = item)}
           source={item.src}
-          style={[styles.carouselImage, { resizeMode: ((item.id == 0) ? 'contain' : 'contain') }]}
+          style={[styles.carouselImage, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
         />
       </Animated.View>
-    </TouchableOpacity>
+    </View>
 }
 
 
@@ -486,6 +494,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF7EE',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  shadow: {
+    shadowColor: '#00000025',
+    shadowOffset: {
+      width: 3,
+      height: 5,
+    },
+    shadowOpacity: 2,
+    shadowRadius: 8,
+    elevation: 55
+  },
+  shadowImage: {
+    shadowColor: '#00000555',
+    shadowOffset: {
+      width: 0,
+      height: -1,
+    },
+    shadowOpacity: 2,
+    shadowRadius: 5,
+    elevation: 10
   },
   imageTitulo: {
     height: hp(5),
@@ -499,13 +527,12 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   carousel: {
-    //backgroundColor: 'white',
-    marginTop: 10,
+    flex: 0.6
   },
   carouselImage: {
-    height: hp(25),
-    width: hp(25),
-    borderRadius: 100
+    height: wp(50),
+    width: wp(50),
+    borderRadius: wp(50)/2
   },
   //Heart
   heartView: {
@@ -519,17 +546,11 @@ const styles = StyleSheet.create({
   },
   //Details Cards
   cardContainer: {
-    backgroundColor: 'white', shadowColor: '#00000025',
-    shadowOffset: {
-      width: 3,
-      height: 5,
-    },
-    shadowOpacity: 2,
-    shadowRadius: 8,
-    elevation: 55,
+    backgroundColor: 'white',
+    flex: 1.4,
     flexDirection: 'row',
     width: wp(90),
-    height: hp(48),
+    height: hp(44),
     marginHorizontal: 10,
     marginBottom: 20,
     padding: 10,
@@ -543,45 +564,82 @@ const styles = StyleSheet.create({
     flexWrap: "wrap"
   },
   tituloProfesor: {
-    fontSize: 20,
+    fontSize: wp(5),
+    flexWrap: "wrap",
     color: '#F28C0F',
     fontWeight: 'bold',
     textAlign: 'center',
-    paddingBottom: 10
+    paddingBottom: 2
   },
   domicilioProfesor: {
     fontSize: wp(3.3),
     color: 'black',
     fontWeight: 'bold',
     textAlign: 'center',
+    paddingBottom: hp(1)
   },
   image: {
     height: hp(33),
     marginBottom: 22,
     borderRadius: 10
   },
+  //INFO
   infoContainer: {
-    padding: 10,
+    flexShrink: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
     borderRadius: 10,
+    paddingBottom: hp(1)
   },
   infoTitle: {
+    flexWrap: "wrap",
     fontSize: wp(3.3),
     fontWeight: 'bold'
   },
+  infoDes: {
+    flexWrap: "wrap",
+    fontSize: wp(3.3),
+    marginTop: hp(0.2)
+  },
   //Boton
   buttonContainer: {
-    marginRight: 10,
-    position: 'absolute',
-    bottom: 0,
-    right: 0
+    flex: 0.5,
+    justifyContent: "flex-end"
+    //marginRight: 10,
   },
   button: {
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    height: hp(5),
-    width: wp(30),
+    paddingVertical: hp(1.5),
     marginTop: 10
-  }
+  },
+  //MONEY
+  moneyView: {
+    flexDirection: 'row',
+    backgroundColor: '#5EC43A',
+    justifyContent: "center",
+    borderRadius: 10,
+    padding: 8
+  },
+  moneyText: {
+    color: "green",
+    fontWeight: 'bold',
+    fontSize: wp(3.3)
+  },
+  moneyText2: {
+    color: "green",
+    fontSize: wp(3)
+  },
+  shadowMoney: {
+    shadowColor: '#5EC43A',
+    shadowOffset: {
+      width: 0.01,
+      height: 0.25,
+    },
+    shadowOpacity: 2,
+    shadowRadius: 3
+  },
+  //MONEY
 });
 export default withNavigation(HomeClases);

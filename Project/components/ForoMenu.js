@@ -63,7 +63,7 @@ class ForoMenu extends Component {
                             platform='ios'
                             onChangeText={value => this.setState({tema: value})}
                             value={this.state.tema}
-                            inputContainerStyle={styles.searchShadow}
+                            inputContainerStyle={[styles.searchShadow, {height: hp(5)}]}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
                             containerStyle={styles.searchBar}
                             cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
@@ -84,6 +84,7 @@ class ForoMenu extends Component {
                         contentContainerCustomStyle={{ alignItems: 'center' }}
                         renderItem={this.renderCarouselItem}
                         sliderWidth={Dimensions.get('window').width}
+                        key={(item) => {item.id_foro}}
                         itemWidth={wp(77)}
                         removeClippedSubviews={false}
                         initialScrollIndex={0}
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     searchBar: {
         backgroundColor: "#FFF7EE",
         width: wp(90),
-            paddingHorizontal: wp(2)
+        paddingHorizontal: wp(2)
     },
     searchShadow: {
         backgroundColor: 'white',
@@ -200,12 +201,12 @@ const styles = StyleSheet.create({
 
     cardSubTitulo: {
         marginTop: 1,
-        fontSize: height * 0.015,
+        fontSize: wp(3),
         color: "black"
     },
     cardSubTituloUsuario: {
         marginTop: 1,
-        fontSize: height * 0.0166,
+        fontSize: wp(3.3),
         color: '#F28C0F',
         fontWeight: 'bold'
     },
@@ -228,18 +229,18 @@ const styles = StyleSheet.create({
 
     buscarButton: {
         backgroundColor: '#F28C0F',
+        paddingVertical: hp(1.5),
         borderRadius: 10,
         alignItems: 'center',
-        width: width * 0.33,
+        paddingHorizontal: 10,
         marginHorizontal: height * 0.025,
         marginVertical: height * 0.025,
         alignSelf: 'center',
         opacity: .95
     },
     screenButtonText: {
-        marginVertical: height * 0.02,
         color: 'white',
-        fontSize: height * 0.025
+        fontSize: wp(4.4)
     }
 
 })

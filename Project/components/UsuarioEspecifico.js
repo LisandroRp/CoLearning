@@ -21,7 +21,7 @@ class UsuarioEspecifico extends React.Component {
                 apellido: 'Marinelli',
                 src: require("../assets/leila.jpg"),
                 esProfesor: true,
-                domicilio: 'Spega Ñeri',
+                domicilio: 'Spega Ñasderi',
                 dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
                 { id_dondeClases: 2, des_dondeClases: "A Domicilio" },
                 { id_dondeClases: 3, des_dondeClases: "Instituto" }],
@@ -128,8 +128,8 @@ class UsuarioEspecifico extends React.Component {
                         </View>
 
                         <View style={styles.infoContainer}>
-                            <Text style={[styles.text, { fontWeight: "200", fontSize: 28, fontWeight: 'bold', color: '#F28C0F' }]}>{this.state.usuario.nombre_usuario} {this.state.usuario.apellido}</Text>
-                            <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>{this.state.usuario.domicilio}</Text>
+                            <Text style={[styles.text, { fontWeight: "200", fontSize: wp(6.6), fontWeight: 'bold', color: '#F28C0F' }]}>{this.state.usuario.nombre_usuario} {this.state.usuario.apellido}</Text>
+                            <Text style={[styles.text, { color: "#AEB5BC", fontSize: wp(3.3) }]}>{this.state.usuario.domicilio}</Text>
                         </View>
                         <View style={[styles.moneyView, styles.shadowMoney]}>
                             <Text style={styles.moneyText}>{this.state.usuario.money.id_moneda.nombre}{this.state.usuario.money.monto}</Text>
@@ -161,11 +161,11 @@ class UsuarioEspecifico extends React.Component {
                         {/*/////////////////////////////////////////////////////////////////////////// */}
                         {this.state.usuario.esProfesor ?
                             <View style={styles.bottomBox}>
-                                <Text style={[styles.text, { fontSize: 20 }]}>Ubicación de Clases</Text>
+                                <Text style={[styles.text, { fontSize: wp(4.8) }]}>Ubicación de Clases</Text>
 
                                 <View style={[{ flexDirection: 'row' }]}>
                                     {this.state.usuario.dondeClases.map((item) => (
-                                        <View style={[{ padding: 10, marginHorizontal: 10, marginTop: 10, alignItems: "center", borderRadius: 10 }]} key= {item.id_dondeClases}>
+                                        <View style={[{ padding: 10,flex:1, marginTop: 10, alignItems: "center", borderRadius: 10 }]} key= {item.id_dondeClases}>
                                             {this.queDondeClase(item.id_dondeClases)}
                                             <Text style={[styles.text, styles.subText]}>{item.des_dondeClases}</Text>
                                         </View>
@@ -175,11 +175,11 @@ class UsuarioEspecifico extends React.Component {
 
                         {this.state.usuario.esProfesor ?
                             <View style={styles.bottomBox}>
-                                <Text style={[styles.text, { fontSize: 20 }]}>Tipo de Clases</Text>
+                                <Text style={[styles.text, { fontSize: wp(4.8) }]}>Tipo de Clases</Text>
 
                                 <View style={[{ flexDirection: 'row' }]}>
                                     {this.state.usuario.tipoClases.map((item) => (
-                                        <View style={[{ padding: 10, marginHorizontal: 10, marginTop: 10, alignItems: "center", borderRadius: 10 }]} key = {item.id_tipoClases}>
+                                        <View style={[{ padding: 10, flex:1, marginTop: 10, alignItems: "center", borderRadius: 10 }]} key = {item.id_tipoClases}>
                                             {this.queTipoClase(item.id_tipoClases)}
                                             <Text style={[styles.text, styles.subText]}>{item.des_tipoClases}</Text>
                                         </View>
@@ -189,7 +189,7 @@ class UsuarioEspecifico extends React.Component {
 
                         {this.state.usuario.esProfesor ?
                             <View style={styles.dropDownViewContainer}>
-                                <Text style={[styles.text, { fontSize: 20, textAlign: 'center' }]}>Materias</Text>
+                                <Text style={[styles.text, { fontSize: wp(4.8), textAlign: 'center' }]}>Materias</Text>
 
                                 {this.state.usuario.materias.map((item, index) => (
                                     <View style={[styles.dropDownContainer, this.marginSize(index)]} key={item.nombre_materia}>
@@ -232,14 +232,15 @@ const styles = StyleSheet.create({
         borderRadius: 100
     },
     subText: {
-        fontSize: 12,
+        fontSize: wp(3),
         color: "#AEB5BC",
         textTransform: "uppercase",
-        fontWeight: "500"
+        fontWeight: "500",
+        flex:1
     },
     profileImage: {
-        width: hp(25),
-        height: hp(25),
+        width: wp(50),
+        height: wp(50),
         borderRadius: 100,
         marginTop: hp(5),
         backgroundColor: 'transparent',
@@ -347,8 +348,8 @@ const styles = StyleSheet.create({
         marginHorizontal: wp(2)
     },
     starImage: {
-        width: hp(4),
-        height: hp(4)
+        width: wp(7.7),
+        height: wp(7.7)
     },
     statsBoxStar: {
         flex: 1,
@@ -417,10 +418,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 2,
         shadowRadius: 8,
         elevation: 2
-    },
-    titleClasesImparte: {
-        fontSize: 24,
-        textAlign: 'center',
     },
     dropDownContainer: {
         backgroundColor: 'white',

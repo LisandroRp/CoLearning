@@ -463,6 +463,7 @@ const styles = StyleSheet.create({
     margin: wp(2.2),
     borderBottomColor: '#FFFFFF',
   },
+  
   shadowContainer:{
     shadowColor: "#808080",
   shadowOffset: {
@@ -494,16 +495,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#F28C0F',
     borderRadius: 10,
     alignItems: 'center',
-    width: width * 0.33,
+    paddingVertical: hp(1.5),
+    paddingHorizontal: wp(3.3),
     marginHorizontal: height * 0.025,
     marginVertical: height * 0.025,
     alignSelf: 'center',
     opacity: .95
 },
 screenButtonText: {
-    marginVertical: height * 0.02,
-    color: 'white',
-    fontSize: height * 0.025
+  color: 'white',
+  fontSize: wp(4.4)
 },
   // FlatList
   card: {

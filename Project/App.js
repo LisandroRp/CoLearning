@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Image, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from '@expo/vector-icons/Ionicons';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   createSwitchNavigator,
   createAppContainer
@@ -20,6 +20,7 @@ import {
   createDrawerNavigator, DrawerItems
 } from 'react-navigation-drawer';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import * as Font from 'expo-font';
 
 import LogIn from './components/LogIn'
 import SwitchLogIn from './components/SwitchLogIn'
@@ -29,8 +30,9 @@ import ClasesMenu from './components/ClasesMenu'
 import CursosMenu from './components/CursosMenu'
 import Cursos from './components/Cursos'
 import UsuarioEspecifico from './components/UsuarioEspecifico'
-import UserComentarios from './components/UserComentarios'
-import UserContacto from './components/UserContacto'
+import PerfilComentarios from './components/PerfilComentarios'
+import PerfilContacto from './components/PerfilContacto'
+import PerfilContactoEdit from './components/PerfilContactoEdit'
 import Clases from './components/Clases'
 import CursoEspecifico from './components/CursoEspecifico';
 import MapaVarios from './components/MapaVarios'
@@ -53,6 +55,9 @@ import ExportadorLogos from './components/exportadores/ExportadorLogos';
 
 console.disableYellowBox = true
 var esProfesorTodo = false
+Font.loadAsync({
+  'shakies': require('./assets/fonts/Shakies-TT.ttf'),
+});
 
 UserDataManager.getInstance().setCurrentPositionFromReact()
 
@@ -134,12 +139,16 @@ class MapaVariosScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: "Mapa",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTintColor: 'white',
+      // headerStyle: {
+      //   backgroundColor: '#F28C0F',
+      //   height: 0,
+      //   borderBottomWidth: 0
+      // },
+      // headerTitleStyle: {
+      //   fontSize: hp(2),
+      // }, 
+      // headerTintColor: 'white',
+      headerShown: false
     };
   }
 
@@ -154,6 +163,7 @@ class MapaVariosScreen extends React.Component {
         onPressGoCurso={this.pasarDetallesCurso.bind(this)}
         onPressGoProfesor={this.pasarDetallesProfesor.bind(this)}
         onPressMap={this.pasarMapaUnico.bind(this)}
+        onPressVolver={this.volver.bind(this)}
       />
     );
   }
@@ -169,7 +179,15 @@ class MapaVariosScreen extends React.Component {
     }
   }
   pasarMapaUnico(id_profesor, nombre, direccion) {
-    this.props.navigation.navigate('mapaUnico', {id_profesor: 2, nombre: nombre, direccion: direccion});
+    this.props.navigation.navigate('mapaUnico', {id_profesor: 2, nombre: nombre, direccion: direccion, mapa: true});
+  }
+  volver(curso) {
+    if(curso){
+      this.props.navigation.navigate('cursos');
+    }
+    else{
+      this.props.navigation.navigate('profesores');
+    }
   }
 }
 
@@ -178,23 +196,32 @@ class MapaUnicoScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       title: "Mapa",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTintColor: 'white',
+      // headerStyle: {
+      //   backgroundColor: '#F28C0F',
+      //   height: 0,
+      //   borderBottomWidth: 0
+      // },
+      // headerTitleStyle: {
+      //   fontSize: hp(2),
+      // }, 
+      // headerTintColor: 'white',
+      headerShown: false
     };
   }
   render() {
     return (
       <MapaUnico
-        onPressGo={this.pasarConcierto.bind(this)}
+        onPressVolver={this.volver.bind(this)}
       />
     );
   }
-  pasarConcierto(id) {
-    this.props.navigation.navigate('Detalle', { IdEvento: id });
+  volver(mapa) {
+    if(mapa){
+      this.props.navigation.navigate('mapaVarios');
+    }
+    else{
+      this.props.navigation.navigate('profesorEspecifico');
+    }
   }
 }
 //******************************************* */
@@ -202,6 +229,13 @@ class MapaUnicoScreen extends React.Component {
 //******************************************* */
 class ClasesMenuScreen extends React.Component {
   
+  static navigationOptions = ({ navigation }) => {
+    return {
+      //title: "Clases",
+      //fontSize: hp(10)
+    };
+  }
+
   constructor(props) {
     super(props)
   }
@@ -214,7 +248,7 @@ class ClasesMenuScreen extends React.Component {
   }
 
   buscarClase(nombre_profesor, tema_profesor, direccion_profesor) {
-    this.props.navigation.navigate('profesores', {nombre_profesor: nombre_profesor, tema_profesor: tema_profesor, direccion_profesor: direccion_profesor});
+    this.props.navigation.navigate('profesores', {nombre_profesor: nombre_profesor, tema_profesor: tema_profesor, direccion_profesor: direccion_profesor, curso: false});
   }
 }
 class ClasesScreen extends React.Component {
@@ -227,6 +261,9 @@ class ClasesScreen extends React.Component {
         height: hp(10),
         shadowColor: 'transparent'
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerRight: () => 
         <FontAwesome name="map" style={{ paddingRight: 20, color: 'white' }}
                 onPress={() => navigation.navigate("mapaVarios", { tipo: 'Profesor' })}
@@ -262,12 +299,27 @@ class ClasesScreen extends React.Component {
 //******************************************* */
 class UsuarioEspecificoScreen extends React.Component {
   
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Detalles",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
+    };
+  } 
+
   constructor(props) {
     super(props)
   }
   render() {
     return (
-      <UsuarioEspecifico
+      <PerfilHome
         onPressSearch={this.buscarClase.bind(this)}
       />
     );
@@ -287,6 +339,9 @@ class UserContactoScreen extends React.Component {
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: '#A01A50',
     };
   } 
@@ -296,7 +351,24 @@ class UserContactoScreen extends React.Component {
   }
   render() {
     return (
-      <UserContacto
+      <PerfilContacto
+        onPressSearch={this.buscarClase.bind(this)}
+      />
+    );
+
+  }
+  buscarClase() {
+    this.props.navigation.navigate('Profesores', {});
+  }
+}
+class UserContactoEditScreen extends React.Component {
+  
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <PerfilContactoEdit
         onPressSearch={this.buscarClase.bind(this)}
       />
     );
@@ -308,24 +380,13 @@ class UserContactoScreen extends React.Component {
 }
 class UserComentariosScreen extends React.Component {
   
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Comentarios",
-      headerStyle: {
-        backgroundColor: '#6BA8FF',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTintColor: '#A01A50',
-    };
-  } 
-  
+
   constructor(props) {
     super(props)
   }
   render() {
     return (
-      <UserComentarios
+      <PerfilComentarios
       onPressGoPerfil={this.buscarUsuario.bind(this)}
       />
     );
@@ -356,6 +417,9 @@ const UsuarioTabNavigator = createBottomTabNavigator({
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   },
@@ -378,9 +442,31 @@ swipeEnabled: true,
   }
 });
 const ProfesorTabNavigator = createBottomTabNavigator({
-  Profesor: UsuarioEspecificoScreen,
-  Calendario: UserContactoScreen,
-  Comentario: UserComentariosScreen
+  // Profesor: UsuarioEspecificoScreen,
+  // Contacto: UserContactoScreen,
+  // Comentarios: UserComentariosScreen
+  Profesor: {
+    screen: UsuarioEspecificoScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Detalles</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="account-details" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+  Contacto: {
+    screen: UserContactoScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Contacto</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="contact-mail-outline" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+  Comentarios: {
+    screen: UserComentariosScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Comentarios</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<FontAwesome name="comments-o" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+  
 },
 {
   navigationOptions: ({ navigation }) => {
@@ -392,10 +478,13 @@ const ProfesorTabNavigator = createBottomTabNavigator({
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerRight: () =>
         <View style={{ flexDirection: 'row' }}>
           <FontAwesome name="map-marker" style={{ paddingRight: 20, color: 'white' }}
-            onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_profesor'), direccion: navigation.getParam('direccion'), tipo: 'Unico' })}
+            onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_profesor'), direccion: navigation.getParam('direccion'), tipo: 'Unico', mapa: false })}
             size={22}
           />
         </View>
@@ -450,9 +539,12 @@ class CursosScreen extends React.Component {
         height: hp(10),
         shadowColor: 'transparent'
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerRight: () => 
         <FontAwesome name="map" style={{ paddingRight: 20, color: 'white' }}
-                onPress={() => navigation.navigate("mapaVarios", { tipo: 'Curso' })}
+                onPress={() => navigation.navigate("mapaVarios", { tipo: 'Curso', curso: true })}
                 size={22}
         />
       ,
@@ -473,6 +565,7 @@ class CursosScreen extends React.Component {
   }
   buscarCurso(id_curso, nombre_curso, institucion, direccion) {
     this.props.navigation.navigate('cursoEspecifico', {id_curso: id_curso, nombre_curso: nombre_curso, institucion: institucion, direccion: direccion});
+
   }
 }
 class CursoEspecificoScreen extends React.Component {
@@ -485,10 +578,13 @@ class CursoEspecificoScreen extends React.Component {
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerRight: () => 
         <View style={{ flexDirection: 'row' }}>
           <FontAwesome name="map-marker" style={{ paddingRight: 20, color: 'white' }}
-            onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_curso'), direccion: navigation.getParam('direccion'), tipo: 'Unico' })}
+            onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_curso'), direccion: navigation.getParam('direccion'), tipo: 'Unico', mapa: false })}
             size={22}
           />
         </View>
@@ -516,14 +612,27 @@ class CursoEspecificoScreen extends React.Component {
 //BuscarTab
 //************** */
 const BuscarTabNavigator = createBottomTabNavigator({
-  Clases: ClasesMenuScreen,
-  Cursos: CursosMenuScreen
+  Clases: {
+    screen: ClasesMenuScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Clases</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<FontAwesome5 name="chalkboard-teacher" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+  Cursos: {
+    screen: CursosMenuScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Cursos</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="school" size={hp(2.5)} color={tintColor} />)}
+    }
+  }
 },
 {
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index]
     return {
-      headerTitle: 'CoLearning',
+      headerTitle: (<Text style={{fontFamily: 'shakies', fontSize: wp(7), color: "white"}}>CoLearning</Text>),
+      //headerTitle: 'CoLearning',
       //(<Image source={ExportadorLogos.traerLogoBlanco()} styles={styles.imageHeader} resizeMode='contain'/>),
       headerTintColor: 'white',
       headerStyle: {
@@ -534,10 +643,8 @@ const BuscarTabNavigator = createBottomTabNavigator({
     }
   },
 swipeEnabled: true,
-  Title: 'Ficha',
   tabBarOptions: {
     Title: 'Mi Plan',
-    activeTintColor: '#A7370F',
     activeTintColor: '#A7370F',
     inactiveTintColor: 'white',
     style: {
@@ -571,7 +678,7 @@ const BuscarStackNavigator = createStackNavigator({
   },
   profesores: ClasesScreen,
   cursos: CursosScreen,
-  usuarioEspecifico: UsuarioTabNavigator,
+  usuarioEspecifico: UsuarioEspecificoScreen,
   profesorEspecifico: ProfesorTabNavigator,
   cursoEspecifico: CursoEspecificoScreen,
   mapaVarios: MapaVariosScreen, 
@@ -587,16 +694,14 @@ class PerfilScreen extends React.Component {
     return {
       title: "Detalles",
       headerStyle: {
-        backgroundColor: '#6BA8FF',
+        backgroundColor: '#F28C0F',
         height: hp(10),
         borderBottomWidth: 0
       },
-      headerTintColor: '#A01A50',
-      headerStyle: {
-        backgroundColor: '#6BA8FF',
-        height: hp(10),
-        borderBottomWidth: 0
-      }
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
     };
   }
   
@@ -619,12 +724,15 @@ class PerfilEditScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "Editar",
+      title: "Detalle",
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   } 
@@ -646,6 +754,7 @@ class PerfilEditScreen extends React.Component {
     }
   }
 }
+/////////////////////
 const PerfilTabNavigatorUsuario = createBottomTabNavigator({
   Perfil: PerfilScreen,
 },
@@ -656,6 +765,9 @@ const PerfilTabNavigatorUsuario = createBottomTabNavigator({
     return {
       headerTitle: 'Perfil',
       headerTintColor: 'white',
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerLeft: () =>
         <Icon
           style={{ paddingLeft: 10, color: '#A01A50' }}
@@ -689,10 +801,32 @@ swipeEnabled: true,
 
   }
 });
+////////////////////
 const PerfilTabNavigatorProfesor = createBottomTabNavigator({
-  Perfil: PerfilScreen,
-  Calendario: UserContactoScreen,
-  Comentario: UserComentariosScreen
+  // Perfil: PerfilScreen,
+  // Contacto: UserContactoScreen,
+  // Comentarios: UserComentariosScreen
+  Profesor: {
+    screen: UsuarioEspecificoScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Detalles</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="account-details" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+  Contacto: {
+    screen: UserContactoScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Contacto</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="contact-mail-outline" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+  Comentarios: {
+    screen: UserComentariosScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Comentarios</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<FontAwesome name="comments-o" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
 },
 {
   navigationOptions: ({ navigation })  => 
@@ -701,6 +835,9 @@ const PerfilTabNavigatorProfesor = createBottomTabNavigator({
     return {
       headerTitle: 'Perfil',
       headerTintColor: 'white',
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerLeft: () =>
         <Icon
           style={{ paddingLeft: 10, color: '#A01A50' }}
@@ -712,7 +849,7 @@ const PerfilTabNavigatorProfesor = createBottomTabNavigator({
       headerRight: () => 
         <View style={{ flexDirection: 'row' }}>
           <FontAwesome name="edit" style={{ paddingRight: 20, color: 'white' }}
-            onPress={() => navigation.navigate("perfilEdit")}
+            onPress={() => navigation.navigate("perfilEditTab")}
             size={22}
           />
         </View>
@@ -742,10 +879,65 @@ swipeEnabled: true,
 
   }
 });
+///////////////////////
+const PerfilTabNavigatorProfesorEdit = createBottomTabNavigator({
+  Perfil:{
+  screen: PerfilEditScreen,
+  navigationOptions: {
+    tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Detalles</Text>,
+    tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="account-details" size={hp(2.5)} color={tintColor} />)}
+  },
+  },
+  Contacto: {
+    screen: UserContactoEditScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Contacto</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="contact-mail-outline" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+},
+{
+  navigationOptions: ({ navigation })  => 
+  {
+    const { routeName } = navigation.state.routes[navigation.state.index]
+    return {
+      headerTitle: 'Editar',
+      headerTintColor: 'white',
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        shadowOffset: {
+          height: 0,
+      }
+      }
+    }
+  },
+swipeEnabled: true,
+  Title: 'Ficha',
+  tabBarOptions: {
+    Title: 'Mi Plan',
+    activeTintColor: '#A7370F',
+    inactiveTintColor: 'white',
+    style: {
+      backgroundColor: '#F28C0F',
+      borderTopColor: '#F28C0F'
+
+    },
+    labelStyle: {
+      fontSize: 18,
+      paddingVertical: 10
+    }
+
+  }
+});
+///////////////////////
 const PerfilUsuarioStackNavigator = createStackNavigator(
   {
     PerfilTabNavigatorUsuario: {
-      screen: PerfilTabNavigatorUsuario,
+      screen: PerfilScreen,
       navigationOptions: ({ navigation }) => {
         return {
           // headerLeft: () => <SomeElement />
@@ -757,10 +949,19 @@ const PerfilUsuarioStackNavigator = createStackNavigator(
               size={30}
             />
           ,
+          headerRight: () => 
+          <View style={{ flexDirection: 'row' }}>
+            <FontAwesome name="edit" style={{ paddingRight: 20, color: 'white' }}
+              onPress={() => navigation.navigate("perfilEdit")}
+              size={22}
+            />
+          </View>
         }
       }     
-    }
+    },
+    perfilEdit: PerfilEditScreen,
 })
+////////////////
 const PerfilProfesorStackNavigator = createStackNavigator(
   {
   PerfilTabNavigatorProfesor: {
@@ -779,8 +980,9 @@ const PerfilProfesorStackNavigator = createStackNavigator(
       }
     }     
   },
+  perfilEditTab: PerfilTabNavigatorProfesorEdit,
   perfilEdit: PerfilEditScreen,
-  usuarioEspecifico: UsuarioTabNavigator,
+  usuarioEspecifico: UsuarioEspecificoScreen,
   profesorEspecifico: ProfesorTabNavigator,
   mapaUnico: MapaUnicoScreen
 }
@@ -795,6 +997,9 @@ class PerfilValidationScreen extends React.Component {
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: '#A01A50',
       headerStyle: {
         backgroundColor: '#6BA8FF',
@@ -836,6 +1041,9 @@ class HomeClasesMenuScreen extends React.Component {
         height: hp(10),
         shadowColor: 'Clases'
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: '#A01A50',
     };
   }
@@ -867,6 +1075,9 @@ class HomeCursosScreen extends React.Component {
         height: hp(10),
         shadowColor: 'transparent'
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: '#A01A50',
     };
   }
@@ -883,8 +1094,20 @@ class HomeCursosScreen extends React.Component {
   }
 }
 const HomeTabNavigator = createBottomTabNavigator({
-  HomeClases: HomeClasesMenuScreen,
-  HomeCursos: HomeCursosScreen
+  HomeClases: {
+    screen: HomeClasesMenuScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Clases</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<FontAwesome5 name="chalkboard-teacher" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+  HomeCursos: {
+    screen: HomeCursosScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Cursos</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="school" size={hp(2.5)} color={tintColor} />)}
+    }
+  }
 },
 {
   navigationOptions: ({ navigation }) => {
@@ -896,6 +1119,9 @@ const HomeTabNavigator = createBottomTabNavigator({
         backgroundColor: '#F28C0F',
         height: hp(10),
         borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
       }
     }
   },
@@ -935,7 +1161,7 @@ const HomeStackNavigator = createStackNavigator(
         }
       }     
     },
-    usuarioEspecifico: UsuarioTabNavigator,
+    usuarioEspecifico: UsuarioEspecificoScreen,
     profesorEspecifico: ProfesorTabNavigator,
     cursoEspecifico: CursoEspecificoScreen,
     mapaUnico: MapaUnicoScreen
@@ -958,6 +1184,9 @@ class LogInScreen extends React.Component {
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   }
@@ -992,6 +1221,9 @@ class CreateAccountScreen extends React.Component {
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: '#A01A50',
     };
   }
@@ -1026,6 +1258,9 @@ class ChatListScreen extends React.Component {
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   }
@@ -1056,6 +1291,9 @@ class ChatEspecificoScreen extends React.Component {
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   }
@@ -1112,8 +1350,11 @@ class ForoMenuScreen extends React.Component {
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: hp(10),
-        shadowColor: 'transparent'
+        shadowColor: 'transparent',
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   }
@@ -1156,6 +1397,9 @@ class ForosScreen extends React.Component {
         height: hp(10),
         shadowColor: 'transparent'
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   }
@@ -1195,6 +1439,9 @@ class ForoNewScreen extends React.Component {
         height: hp(10),
         shadowColor: 'transparent'
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   }
@@ -1225,6 +1472,9 @@ class ForoEspecificoScreen extends React.Component {
         height: hp(10),
         borderBottomWidth: 0
       },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
       headerTintColor: 'white',
     };
   }
@@ -1277,7 +1527,7 @@ const ForoStackNavigator = createStackNavigator(
     foros: ForosScreen,
     foroNew: ForoNewScreen,
     foroEspecifico: ForoEspecificoScreen,
-    usuarioEspecifico: UsuarioTabNavigator,
+    usuarioEspecifico: UsuarioEspecificoScreen,
     mapaUnico: MapaUnicoScreen,
     profesorEspecifico: ProfesorTabNavigator,
   },
@@ -1299,10 +1549,10 @@ const DrawerConfig = {
 }
 const customDrawerComponent = (props) => (
   <View style={{ flex: 1 }}>
+    <ScrollView style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0 }}>
     <LinearGradient colors={['#F28C0F', '#F28C0F']} style={styles.profile}>
       <Image style={styles.imageDrawer} source={ExportadorLogos.traerLogoBlanco()}></Image>
     </LinearGradient>
-    <ScrollView style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0 }}>
       <DrawerItems {...props} style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0 }} />
     </ScrollView>
   </View>
@@ -1423,7 +1673,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imageDrawer: {
-    width: hp(28),
+    width: hp(25),
     resizeMode: 'contain'
   },
   imageHeader: {

@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import ApiController from '../controller/ApiController';
 import firebaseSvc from '../FirebaseSvc';
-import { SimpleLineIcons, Feather } from "@expo/vector-icons";
+import { SimpleLineIcons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ExportadorLogos from './exportadores/ExportadorLogos'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -88,7 +88,7 @@ class SwitchCrearUser extends Component {
               onChangeText={(text) => this.setState({ nombre: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(3.3)} color='#F28C0F'></SimpleLineIcons>
+              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(2.5)} color='#F28C0F'/>
             </View>
           </View>
 
@@ -100,7 +100,7 @@ class SwitchCrearUser extends Component {
               onChangeText={(text) => this.setState({ apellido: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(3.3)} color='#F28C0F'></Feather>
+              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(2.5)} color='#F28C0F'/>
             </View>
           </View>
 
@@ -112,7 +112,7 @@ class SwitchCrearUser extends Component {
               onChangeText={(text) => this.setState({ mail: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(3.3)} color='#F28C0F'></Feather>
+              <MaterialCommunityIcons style={[{ textAlign: "center" }]} name={"email-outline"} size={hp(2.5)} color='#F28C0F'/>
             </View>
           </View>
 
@@ -125,7 +125,7 @@ class SwitchCrearUser extends Component {
               onChangeText={(text) => this.setState({ password: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <Feather style={[{ textAlign: "center" }]} name={"unlock"} size={hp(3.3)} color='#F28C0F'></Feather>
+              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(2.5)} color='#F28C0F'></Feather>
             </View>
           </View>
 
@@ -138,7 +138,7 @@ class SwitchCrearUser extends Component {
               onChangeText={(text) => this.setState({ confirmPassword: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <Feather style={[{ textAlign: "center" }]} name={"unlock"} size={hp(3.3)} color='#F28C0F'></Feather>
+              <Feather style={[{ textAlign: "center" }]} name={"unlock"} size={hp(2.5)} color='#F28C0F'></Feather>
             </View>
           </View>
 

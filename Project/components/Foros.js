@@ -93,11 +93,11 @@ class Foros extends Component {
                     <StatusBar barStyle="black" backgroundColor="white" />
                     <View style={{backgroundColor: '#F28C0F'}}>
                     <SearchBar
-                            placeholder= "Search..."
+                            placeholder= "Buscar..."
                             platform='ios'
                             onChangeText={value => this.searchForos(value)}
                             value={this.state.value}
-                            inputContainerStyle={{ backgroundColor: '#FFF7EE'}}
+                            inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5)}}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
                             cancelButtonProps={{buttonTextStyle: {color: 'white', paddingTop: 0}}}
                             containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3)}}
@@ -120,12 +120,12 @@ class Foros extends Component {
                                         <View style={{ flexDirection: "row" }} >
 
                                             <View style={styles.cardContent}>
-                                                <Text style={styles.cardTitulo}>{item.pregunta}</Text>
+                                                <Text numberOfLines={2} style={styles.cardTitulo}>{item.pregunta}</Text>
 
                                                 <View style={[{ flexDirection: 'row', marginBottom: hp(1.5)}]}>
                                                     {(item.tags).map((item) => (
                                                         <View style={styles.tagsContainer}>
-                                                            <Text style={[styles.textTags]}>{item.nombre_tag}</Text>
+                                                            <Text numberOfLines={1} style={[styles.textTags]}>{item.nombre_tag}</Text>
                                                         </View>
                                                     ))}
 
@@ -205,12 +205,12 @@ const styles = StyleSheet.create({
         alignSelf: "center"
     },
     cardContent: {
-        marginLeft: height * 0.028,
+        marginLeft: wp(4),
         paddingRight: 5,
         justifyContent: 'center',
     },
     cardTitulo: {
-        fontSize: height * 0.028,
+        fontSize: wp(5),
         color: '#F28C0F',
         fontWeight: 'bold',
         marginBottom: 8
@@ -218,12 +218,12 @@ const styles = StyleSheet.create({
 
     cardSubTitulo: {
         marginTop: 1,
-        fontSize: height * 0.015,
+        fontSize: wp(3),
         color: "black"
     },
     cardSubTituloUsuario: {
         marginTop: 1,
-        fontSize: height * 0.0166,
+        fontSize: wp(3.3),
         color: '#F28C0F',
         fontWeight: 'bold'
     },

@@ -6,12 +6,12 @@ import {
   ActivityIndicator,
   Image,
   TouchableOpacity,
-  FlatList,
+  SafeAreaView,
   Dimensions,
   Alert,
   ScrollView
 } from 'react-native';
-import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5, AntDesign, Entypo } from '@expo/vector-icons';
 import { SearchBar } from "react-native-elements";
 import MapView from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -83,7 +83,7 @@ class MapaUnico extends Component {
     if(road.rows[0].elements[0].status == "ZERO_RESULTS"){
       carousel[0].distancia = 0
       carousel[0].tiempo = 0
-      this.setState({id_transporte: 0, carousel: carousel})
+      this.setState({id_transporte: 1, carousel: carousel})
     }
     carousel[0].distancia = road.rows[0].elements[0].distance.text
     carousel[0].tiempo = road.rows[0].elements[0].duration.text
@@ -180,6 +180,9 @@ class MapaUnico extends Component {
         break;
     }
   }
+  volver = async () => {
+    this.props.onPressVolver(await this.props.navigation.getParam("mapa"))
+  }
   render() {
     if (this.state.isLoadingPos || this.state.isLoadingData) {
       return (
@@ -231,11 +234,15 @@ class MapaUnico extends Component {
             />
 
           </MapView>
+          <View style={styles.safeArea}/>
+          <TouchableOpacity style={[styles.backBubble, styles.shadow]} onPress={() => this.volver()}>
+            <Entypo name="chevron-left" size={hp(4.4)} style={{textAlignVertical: "center"}} color={'#F28C0F'} />
+          </TouchableOpacity>
           <View style={styles.transportContainer}>
-            <TouchableOpacity style={[styles.typeTransportContainer, { backgroundColor: this.tipoDeTransporteContainer(1) }]} onPress={() => this.changeTransporte(this.state.carousel, 1)}><FontAwesome5 name="car" size={hp(3.3)} color={this.tipoDeTransporteLogo(1)} /></TouchableOpacity>
-            <TouchableOpacity style={[styles.typeTransportContainer, { backgroundColor: this.tipoDeTransporteContainer(2) }]} onPress={() => this.changeTransporte(this.state.carousel, 2)}><FontAwesome5 name="bus" size={hp(3.3)} color={this.tipoDeTransporteLogo(2)} /></TouchableOpacity>
-            <TouchableOpacity style={[styles.typeTransportContainer, { backgroundColor: this.tipoDeTransporteContainer(3) }]} onPress={() => this.changeTransporte(this.state.carousel, 3)}><FontAwesome5 name="walking" size={hp(3.3)} color={this.tipoDeTransporteLogo(3)} /></TouchableOpacity>
-            <TouchableOpacity style={[styles.typeTransportContainer, { backgroundColor: this.tipoDeTransporteContainer(4) }]} onPress={() => this.changeTransporte(this.state.carousel, 4)}><FontAwesome5 name="bicycle" size={hp(3.3)} color={this.tipoDeTransporteLogo(4)} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow, { backgroundColor: this.tipoDeTransporteContainer(1) }]} onPress={() => this.changeTransporte(this.state.carousel, 1)}><FontAwesome5 name="car" size={hp(3.3)} color={this.tipoDeTransporteLogo(1)} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow,{ backgroundColor: this.tipoDeTransporteContainer(2) }]} onPress={() => this.changeTransporte(this.state.carousel, 2)}><FontAwesome5 name="bus" size={hp(3.3)} color={this.tipoDeTransporteLogo(2)} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow,{ backgroundColor: this.tipoDeTransporteContainer(3) }]} onPress={() => this.changeTransporte(this.state.carousel, 3)}><FontAwesome5 name="walking" size={hp(3.3)} color={this.tipoDeTransporteLogo(3)} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow,{ backgroundColor: this.tipoDeTransporteContainer(4) }]} onPress={() => this.changeTransporte(this.state.carousel, 4)}><FontAwesome5 name="bicycle" size={hp(3.3)} color={this.tipoDeTransporteLogo(4)} /></TouchableOpacity>
           </View>
           <Carousel
             ref={(c) => { this._carousel = c; }}
@@ -293,6 +300,10 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: '#FFF7EE'
   },
+  safeArea: {
+    backgroundColor: '#F28C0F',
+    height: hp(5)
+  },
   map: {
     ...StyleSheet.absoluteFillObject
   },
@@ -305,11 +316,23 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontWeight: "bold"
   },
+  backBubble: {
+    position: "absolute",
+    left: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    height: hp(5.5),
+    width: hp(5.5),
+    marginTop: hp(7),
+    marginLeft: wp(4),
+    borderRadius: 50,
+    backgroundColor: 'white'
+  },
   transportContainer: {
     position: 'absolute',
     height: 0,
     right: 0,
-    marginTop: hp(2),
+    marginTop: hp(10),
     marginRight: wp(5)
   },
   typeTransportContainer: {
@@ -319,7 +342,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 100,
-    backgroundColor: 'white',
+    backgroundColor: 'white'
+  },
+  shadow:{
     shadowColor: '#00000055',
     shadowOffset: {
       width: 2,
@@ -376,7 +401,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: wp(3),
     alignSelf: 'center',
-    marginBottom: wp(3)
+    marginBottom: hp(5)
   },
   cardDistancia: {
     color: 'black',

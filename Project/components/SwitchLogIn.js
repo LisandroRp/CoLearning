@@ -14,7 +14,7 @@ import {
 import { withNavigation } from 'react-navigation';
 import ApiController from '../controller/ApiController';
 import firebaseSvc from '../FirebaseSvc';
-import { SimpleLineIcons, Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import ExportadorLogos from './exportadores/ExportadorLogos'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -26,7 +26,7 @@ class LogIn extends Component {
     this.state = {
       email: "JuanMn@gmail.com",
       password: "123456",
-      usuario: {esProfesor: true}
+      usuario: { esProfesor: true }
     }
   }
 
@@ -39,7 +39,7 @@ class LogIn extends Component {
 
   checkUsuario(data) {
     if (data.email == this.state.email && data.password == this.state.password && this.state.email != null) {
-      this.setState({usuario: data})
+      this.setState({ usuario: data })
       this.firebaseLogin()
     } else {
       alert("Contraseña incorrecta");
@@ -73,13 +73,13 @@ class LogIn extends Component {
   render() {
     return (
       <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(3)} enabled>
-        {/* <Image style={styles.bgImage} source={{ uri: "https://lorempixel.com/900/1400/nightlife/8/" }}/> */}
-        <View>
-          <Image
-            style={{ height: 300, width: 300, resizeMode: 'contain', }}
-            source={ExportadorLogos.traerLogoBlanco()}></Image>
-        </View>
+        <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(3)} enabled>
+          {/* <Image style={styles.bgImage} source={{ uri: "https://lorempixel.com/900/1400/nightlife/8/" }}/> */}
+          <View>
+            <Image
+              style={{ height: hp(40), width: wp(80), resizeMode: 'contain'}}
+              source={ExportadorLogos.traerLogoBlanco()}></Image>
+          </View>
           <View style={styles.inputContainer}>
             <TextInput style={styles.inputs}
               value={this.state.email}
@@ -88,7 +88,7 @@ class LogIn extends Component {
               onChangeText={(text) => this.setState({ email: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(3.3)} color='#F28C0F'></SimpleLineIcons>
+              <MaterialCommunityIcons style={[{ textAlign: "center" }]} name={"email-outline"} size={hp(2.5)} color='#F28C0F' />
             </View>
           </View>
 
@@ -101,7 +101,7 @@ class LogIn extends Component {
               onChangeText={(text) => this.setState({ password: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(3.3)} color='#F28C0F'></Feather>
+              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(2.5)} color='#F28C0F'></Feather>
             </View>
           </View>
 
@@ -111,17 +111,16 @@ class LogIn extends Component {
             <Text style={styles.loginText}>Iniciar Sesión</Text>
           </TouchableOpacity>
 
-
-          <TouchableOpacity style={styles.buttonContainerPass} onPress={() => this.props.onPressCreate()}>
-            <Text style={styles.btnText}>Crear Cuenta</Text>
-          </TouchableOpacity>
-          <View style={{ flexDirection: 'center', width: 100 }}>
+          <View>
+            <TouchableOpacity style={styles.buttonContainerPass} onPress={() => this.props.onPressCreate()}>
+              <Text style={styles.btnText}>Crear Cuenta</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.buttonContainerPass} onPress={() => this.props.onPressPass()}>
               <Text style={styles.btnText}>Cambiar Contraseña</Text>
             </TouchableOpacity>
           </View>
-      </KeyboardAvoidingView>
-</TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -139,12 +138,12 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     borderBottomColor: '#F5FCFF',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5FCFF',
     borderRadius: 10,
     borderBottomWidth: 1,
-    width: 300,
-    height: 45,
-    marginBottom: 20,
+    height: hp(5.5),
+    width: wp(77),
+    marginBottom: hp(2.5),
     flexDirection: 'row',
     alignItems: 'center',
 
@@ -166,19 +165,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   inputs: {
-    height: 45,
     marginLeft: 16,
-    borderBottomColor: '#FFFFFF',
     flex: 1,
   },
-  inputIcon: {
-    width: 30,
-    height: 30,
-    marginRight: 15,
-    justifyContent: 'center'
-  },
   buttonContainerLogin: {
-    height: 45,
+    paddingVertical: hp(1.5),
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: hp(5),
@@ -188,24 +179,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF7EE"
   },
   buttonContainerPass: {
-    height: 20,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: hp(2),
-    width: 300,
-    borderRadius: 30,
-    backgroundColor: 'transparent'
+    borderRadius: 30
   },
-  btnByRegister: {
-    height: 50,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 20,
-    width: 300,
-    backgroundColor: 'transparent'
-  },
-
   loginText: {
     color: '#F28C0F',
     fontWeight: 'bold',

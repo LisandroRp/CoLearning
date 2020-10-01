@@ -64,7 +64,7 @@ okChange() {
               onChangeText={(text) => this.setState({ mail: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(3.3)} color='#F28C0F'></SimpleLineIcons>
+              <SimpleLineIcons style={[{ textAlign: "center" }]} name={"user"} size={hp(2.5)} color='#F28C0F'/>
             </View>
           </View>
 
@@ -77,7 +77,7 @@ okChange() {
               onChangeText={(text) => this.setState({ password: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(3.3)} color='#F28C0F'></Feather>
+              <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(2.5)} color='#F28C0F'></Feather>
             </View>
           </View>
           <View style={styles.inputContainer}>
@@ -89,7 +89,7 @@ okChange() {
               onChangeText={(text) => this.setState({ password: text })}
             />
             <View style={styles.logoSocialMedia}>
-              <Feather style={[{ textAlign: "center" }]} name={"unlock"} size={hp(3.3)} color='#F28C0F'></Feather>
+              <Feather style={[{ textAlign: "center" }]} name={"unlock"} size={hp(2.5)} color='#F28C0F'></Feather>
             </View>
           </View>
 

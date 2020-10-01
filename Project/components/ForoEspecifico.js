@@ -17,6 +17,7 @@ import DropDownItem from 'react-native-drop-down-item';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Ionicons, SimpleLineIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import ApiController from '../controller/ApiController';
+import HomeClases from './HomeClases';
 var { height, width } = Dimensions.get('window');
 
 class ForoEspecifico extends Component {
@@ -146,7 +147,7 @@ class ForoEspecifico extends Component {
                   underlineColorAndroid='transparent'
                   onChangeText={(text) => this.setState({ mail: text })}
                 />
-                <View style={[{ flexDirection: "row"}]}>
+                <View style={[{ flexDirection: "row", justifyContent: "center"}]}>
                   <TouchableOpacity style={[styles.buttonContainerLogin]}
                     onPress={() => this.setState({modalVisible: false})}>
                     <Text style={styles.loginText}>Cancelar</Text>
@@ -214,13 +215,13 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   titulo: {
-    fontSize: hp(2.8),
+    fontSize: wp(5),
     fontWeight: 'bold',
     color: '#F28C0F',
     textAlign: 'left'
   },
   tituloRespuestaContainer: {
-    fontSize: hp(2.5),
+    fontSize: wp(2.5),
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'left',
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   tituloRespuesta: {
-    fontSize: hp(2.5),
+    fontSize: wp(4.8),
     marginLeft: 20,
     fontWeight: 'bold',
     color: 'black',
@@ -237,22 +238,22 @@ const styles = StyleSheet.create({
   descripcion: {
     color: 'black',
     marginVertical: hp("2"),
-    fontSize: hp(2),
+    fontSize: wp(4),
   },
   rating: {
-    fontSize: hp(2.2),
+    fontSize: wp(5),
     fontWeight: 'bold',
     color: 'black',
     textAlign: 'center'
   },
   cardSubTitulo: {
     marginTop: 1,
-    fontSize: height * 0.015,
+    fontSize: wp(3),
     color: "black"
   },
   cardSubTituloUsuario: {
     marginTop: 1,
-    fontSize: height * 0.0166,
+    fontSize: wp(3.3),
     color: '#F28C0F',
     fontWeight: "bold"
   },
@@ -287,10 +288,10 @@ const styles = StyleSheet.create({
     width: wp(80),
     marginTop: hp(10),
     alignSelf: "center",
+    paddingHorizontal: wp(5),
     backgroundColor: '#FFF7EE',
     borderRadius: 22,
     opacity: .95,
-    alignItems: "center",
     shadowColor: '#00000035',
     shadowOffset: {
       width: 0.01,
@@ -301,13 +302,11 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   inputTitle: {
+    flex: 0.2,
     borderBottomColor: '#F5FCFF',
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     borderBottomWidth: 1,
-    width: 300,
-    height: hp(5),
-    paddingHorizontal: hp(2.2),
     marginTop: hp(2.2),
     flexDirection: 'column',
     textAlign: 'center',
@@ -323,12 +322,11 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   inputDescripcion: {
+    flex: 1.8,
     borderBottomColor: '#F5FCFF',
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     borderBottomWidth: 1,
-    width: 300,
-    flex: 1,
     paddingTop: hp(2.2),
     paddingHorizontal: hp(2.2),
     textAlignVertical: "top",

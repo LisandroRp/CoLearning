@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
         marginTop: hp(1)
     },
     starImage: {
-        width: hp(3),
-        height: hp(3),
+        width: hp(2.5),
+        height: hp(2.5),
     },
     statsBoxStar: {
         flex:1,
