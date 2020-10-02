@@ -1,0 +1,43 @@
+GET:
+
+By Id
+localhost:8088/apiColearning/users/1
+
+By mail
+localhost:8088/apiColearning/users/mail?email=wachines@gmail.com
+
+User by Id tipo clases
+
+localhost:8088/apiColearning/users/profesor/1/tipoClases
+
+Todos los usuarios
+
+localhost:8088/apiColearning/users
+
+Profesor
+
+localhost:8088/apiColearning/users/profesor/1
+
+User by Id por materia
+
+localhost:8088/apiColearning/users/profesor/1/materias
+
+User by Id por dondeDaClases
+
+localhost:8088/apiColearning/users/profesor/1/dondeDaClases
+
+Post:
+
+ {
+     "usuario": {
+        "password": "admipepen",
+        "esProfesor": 1,
+        "nombre_usuario": "admipepen",
+        "src": "",
+        "instagram": "@LisandroRp",
+        "whatsApp": "0111566666",
+        "apellido": "Turro",
+        "telefono": "0111566666",
+        "email": "wachines@gmail.com"
+    }
+}

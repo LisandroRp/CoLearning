@@ -31,9 +31,8 @@ let findAllById = (req, res) =>
 
 let findAllByMail = (req, res) =>
 {      
-    console.log("llegue a leer Buscar usuario por mail",req.params.idMail);
-    console.log(req.params.idMail);
-    var idBusqueda = req.params.idMail;
+    console.log("llegue a leer Buscar usuario por mail" + req.query.email);
+    var idBusqueda = req.query.email;
     console.log(idBusqueda);
     var sql = 'SELECT * FROM usuario WHERE email=?';
     dbConn.query(sql,[idBusqueda], (err,rows) => {
