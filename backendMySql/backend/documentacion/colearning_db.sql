@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-09-2020 a las 00:57:33
+-- Tiempo de generación: 02-10-2020 a las 15:43:15
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de datos: `node_mysql_crud_db`
+-- Base de datos: `colearning_db`
 --
 
 -- --------------------------------------------------------
@@ -27,19 +27,19 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `clases` (
-`idClase` int(11) NOT NULL,
+`id_clase` int(11) NOT NULL,
   `nombre` varchar(150) NOT NULL,
-  `idProfesor` varchar(25) DEFAULT NULL,
-  `idDireccion` int(11) NOT NULL
+  `id_usuario` int(25) DEFAULT NULL,
+  `id_domicilio` int(11) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `clases`
 --
 
-INSERT INTO `clases` (`idClase`, `nombre`, `idProfesor`, `idDireccion`) VALUES
-(1, 'Matematicas', 'admin', 1),
-(2, 'Lenguajes', 'admin', 1);
+INSERT INTO `clases` (`id_clase`, `nombre`, `id_usuario`, `id_domicilio`) VALUES
+(1, 'Matematicas', 1, 1),
+(2, 'Lenguajes', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -50,8 +50,8 @@ INSERT INTO `clases` (`idClase`, `nombre`, `idProfesor`, `idDireccion`) VALUES
 CREATE TABLE IF NOT EXISTS `comentarios` (
 `id_comentario` int(11) NOT NULL,
   `des_comentario` varchar(250) NOT NULL,
-  `id_usuarioDestino` varchar(30) NOT NULL,
-  `id_usuarioOrigen` varchar(30) NOT NULL,
+  `id_usuarioDestino` int(30) NOT NULL,
+  `id_usuarioOrigen` int(30) NOT NULL,
   `ratingNeg` int(11) NOT NULL,
   `ratingPos` int(11) NOT NULL,
   `fecha_alta` varchar(50) NOT NULL
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
 --
 
 INSERT INTO `comentarios` (`id_comentario`, `des_comentario`, `id_usuarioDestino`, `id_usuarioOrigen`, `ratingNeg`, `ratingPos`, `fecha_alta`) VALUES
-(1, 'admin', 'bala', 'admin', 10, 15, '2020-08-14');
+(1, 'admin', 2, 1, 10, 15, '2020-08-14');
 
 -- --------------------------------------------------------
 
@@ -71,8 +71,8 @@ INSERT INTO `comentarios` (`id_comentario`, `des_comentario`, `id_usuarioDestino
 --
 
 CREATE TABLE IF NOT EXISTS `cursoporalumno` (
-  `idAlumno` varchar(30) NOT NULL,
-  `idCurso` int(11) NOT NULL,
+  `id_alumno` int(30) NOT NULL,
+  `id_curso` int(11) NOT NULL,
   `fechaDesde` varchar(50) NOT NULL,
   `fechaHasta` varchar(50) NOT NULL,
   `activo` tinyint(1) NOT NULL
@@ -82,8 +82,8 @@ CREATE TABLE IF NOT EXISTS `cursoporalumno` (
 -- Volcado de datos para la tabla `cursoporalumno`
 --
 
-INSERT INTO `cursoporalumno` (`idAlumno`, `idCurso`, `fechaDesde`, `fechaHasta`, `activo`) VALUES
-('bala', 1, '2022-03-08T03:00:00.000+00:00', '2020-09-25T03:00:00.000+00:00', 1);
+INSERT INTO `cursoporalumno` (`id_alumno`, `id_curso`, `fechaDesde`, `fechaHasta`, `activo`) VALUES
+(2, 1, '2022-03-08T03:00:00.000+00:00', '2020-09-25T03:00:00.000+00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -96,17 +96,17 @@ CREATE TABLE IF NOT EXISTS `cursos` (
   `nombre_curso` varchar(50) NOT NULL,
   `id_instituto` int(11) NOT NULL,
   `src` varchar(250) NOT NULL,
-  `idDireccion` int(11) NOT NULL,
+  `id_domicilio` int(11) NOT NULL,
   `whatsApp` varchar(50) NOT NULL,
-  `idProfesor` varchar(50) NOT NULL
+  `id_profesor` varchar(50) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 --
 -- Volcado de datos para la tabla `cursos`
 --
 
-INSERT INTO `cursos` (`id_curso`, `nombre_curso`, `id_instituto`, `src`, `idDireccion`, `whatsApp`, `idProfesor`) VALUES
-(1, 'Matematicas Y Geometrias', 1, '', 1, '12122131', 'admin');
+INSERT INTO `cursos` (`id_curso`, `nombre_curso`, `id_instituto`, `src`, `id_domicilio`, `whatsApp`, `id_profesor`) VALUES
+(1, 'Matematicas Y Geometrias', 1, '', 1, '12122131', '1');
 
 -- --------------------------------------------------------
 
@@ -115,15 +115,15 @@ INSERT INTO `cursos` (`id_curso`, `nombre_curso`, `id_instituto`, `src`, `idDire
 --
 
 CREATE TABLE IF NOT EXISTS `cursospordondedaclases` (
-  `idcurso_FK` int(11) NOT NULL,
-  `idDondeDaClase_FK` int(11) NOT NULL
+  `id_curso_fk` int(11) NOT NULL,
+  `id_dondeDaClase_fk` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `cursospordondedaclases`
 --
 
-INSERT INTO `cursospordondedaclases` (`idcurso_FK`, `idDondeDaClase_FK`) VALUES
+INSERT INTO `cursospordondedaclases` (`id_curso_fk`, `id_dondeDaClase_fk`) VALUES
 (1, 1);
 
 -- --------------------------------------------------------
@@ -133,15 +133,15 @@ INSERT INTO `cursospordondedaclases` (`idcurso_FK`, `idDondeDaClase_FK`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `cursospormaterias` (
-  `idMateria_FK` int(11) NOT NULL,
-  `idCurso_FK` int(11) NOT NULL
+  `id_materia_fk` int(11) NOT NULL,
+  `id_curso_fk` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `cursospormaterias`
 --
 
-INSERT INTO `cursospormaterias` (`idMateria_FK`, `idCurso_FK`) VALUES
+INSERT INTO `cursospormaterias` (`id_materia_fk`, `id_curso_fk`) VALUES
 (1, 1);
 
 -- --------------------------------------------------------
@@ -151,25 +151,25 @@ INSERT INTO `cursospormaterias` (`idMateria_FK`, `idCurso_FK`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `cursosportipoclases` (
-  `idClase_FK` int(11) NOT NULL,
-  `idCursos_FK` int(11) NOT NULL
+  `id_clase_fk` int(11) NOT NULL,
+  `id_curso_fk` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `cursosportipoclases`
 --
 
-INSERT INTO `cursosportipoclases` (`idClase_FK`, `idCursos_FK`) VALUES
+INSERT INTO `cursosportipoclases` (`id_clase_fk`, `id_curso_fk`) VALUES
 (1, 1);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `direccion`
+-- Estructura de tabla para la tabla `domicilio`
 --
 
-CREATE TABLE IF NOT EXISTS `direccion` (
-`idDireccion` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `domicilio` (
+`id_domicilio` int(11) NOT NULL,
   `calle` varchar(150) NOT NULL,
   `numero` varchar(10) NOT NULL,
   `localidad` varchar(150) NOT NULL,
@@ -178,10 +178,10 @@ CREATE TABLE IF NOT EXISTS `direccion` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
--- Volcado de datos para la tabla `direccion`
+-- Volcado de datos para la tabla `domicilio`
 --
 
-INSERT INTO `direccion` (`idDireccion`, `calle`, `numero`, `localidad`, `latitud`, `longitud`) VALUES
+INSERT INTO `domicilio` (`id_domicilio`, `calle`, `numero`, `localidad`, `latitud`, `longitud`) VALUES
 (1, 'Alsina', '1000', 'CABA', '13', '14'),
 (2, 'Solis', '1400', 'CABA', '13', '34');
 
@@ -211,16 +211,16 @@ INSERT INTO `dondedaclases` (`id_dondeClases`, `des_dondeClases`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `dondedaclasesporprofesor` (
-  `idDondeDaClases_Fk` int(11) NOT NULL,
-  `idProfesor` varchar(50) NOT NULL
+  `id_dondeDaClases_fk` int(11) NOT NULL,
+  `id_usuario_fk` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `dondedaclasesporprofesor`
 --
 
-INSERT INTO `dondedaclasesporprofesor` (`idDondeDaClases_Fk`, `idProfesor`) VALUES
-(1, 'admin');
+INSERT INTO `dondedaclasesporprofesor` (`id_dondeDaClases_fk`, `id_usuario_fk`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -258,7 +258,7 @@ INSERT INTO `employees` (`id`, `first_name`, `last_name`, `email`, `phone`, `org
 
 CREATE TABLE IF NOT EXISTS `foro` (
 `id_foro` int(11) NOT NULL,
-  `idUsuario` varchar(50) NOT NULL,
+  `id_usuario` int(50) NOT NULL,
   `nombre_foro` varchar(50) NOT NULL,
   `pregunta` varchar(150) NOT NULL,
   `esProfesor` tinyint(1) NOT NULL,
@@ -271,8 +271,8 @@ CREATE TABLE IF NOT EXISTS `foro` (
 -- Volcado de datos para la tabla `foro`
 --
 
-INSERT INTO `foro` (`id_foro`, `idUsuario`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`) VALUES
-(1, 'admin', 'Duda Existencial', 'Como hacer??', 1, '114', '', 1);
+INSERT INTO `foro` (`id_foro`, `id_usuario`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`) VALUES
+(1, 1, 'Duda Existencial', 'Como hacer??', 1, '114', '', 1);
 
 -- --------------------------------------------------------
 
@@ -281,15 +281,15 @@ INSERT INTO `foro` (`id_foro`, `idUsuario`, `nombre_foro`, `pregunta`, `esProfes
 --
 
 CREATE TABLE IF NOT EXISTS `foroportag` (
-  `idForo_fk` int(11) NOT NULL,
-  `idTag_fk` int(11) NOT NULL
+  `id_foro_fk` int(11) NOT NULL,
+  `id_tag_fk` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `foroportag`
 --
 
-INSERT INTO `foroportag` (`idForo_fk`, `idTag_fk`) VALUES
+INSERT INTO `foroportag` (`id_foro_fk`, `id_tag_fk`) VALUES
 (1, 1);
 
 -- --------------------------------------------------------
@@ -299,16 +299,16 @@ INSERT INTO `foroportag` (`idForo_fk`, `idTag_fk`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `instituoporprofesores` (
-  `idInstituto_FK` int(11) NOT NULL,
-  `idProfesor` varchar(50) NOT NULL
+  `id_instituto_fk` int(11) NOT NULL,
+  `id_usuario_fk` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `instituoporprofesores`
 --
 
-INSERT INTO `instituoporprofesores` (`idInstituto_FK`, `idProfesor`) VALUES
-(1, 'admin');
+INSERT INTO `instituoporprofesores` (`id_instituto_fk`, `id_usuario_fk`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -339,15 +339,15 @@ INSERT INTO `instituto` (`id_instituto`, `nombre_instituto`, `src`, `whatsApp`, 
 
 CREATE TABLE IF NOT EXISTS `materia` (
 `id_materia` int(11) NOT NULL,
-  `nombre` varchar(150) NOT NULL,
-  `descripcion` varchar(250) NOT NULL
+  `nombre_materia` varchar(150) NOT NULL,
+  `des_materia` varchar(250) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Volcado de datos para la tabla `materia`
 --
 
-INSERT INTO `materia` (`id_materia`, `nombre`, `descripcion`) VALUES
+INSERT INTO `materia` (`id_materia`, `nombre_materia`, `des_materia`) VALUES
 (1, 'Lengua', 'Dictado de Lengua'),
 (2, 'Matematica', 'Dictado de matematicas'),
 (3, 'Fisisca', 'Dictado de Fisica');
@@ -359,17 +359,17 @@ INSERT INTO `materia` (`id_materia`, `nombre`, `descripcion`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `materiaporprofesor` (
-  `idMateria_FK` int(11) NOT NULL,
-  `idProfesor` varchar(50) NOT NULL
+  `id_materia_fk` int(11) NOT NULL,
+  `id_usuario_fk` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `materiaporprofesor`
 --
 
-INSERT INTO `materiaporprofesor` (`idMateria_FK`, `idProfesor`) VALUES
-(1, 'admin'),
-(2, 'idMat');
+INSERT INTO `materiaporprofesor` (`id_materia_fk`, `id_usuario_fk`) VALUES
+(1, 1),
+(2, 1);
 
 -- --------------------------------------------------------
 
@@ -378,16 +378,16 @@ INSERT INTO `materiaporprofesor` (`idMateria_FK`, `idProfesor`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `profesorporclase` (
-  `idClase_FK` int(11) NOT NULL,
-  `idProfesor` varchar(50) NOT NULL
+  `id_clase_fk` int(11) NOT NULL,
+  `id_usuario_fk` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `profesorporclase`
 --
 
-INSERT INTO `profesorporclase` (`idClase_FK`, `idProfesor`) VALUES
-(1, 'admin');
+INSERT INTO `profesorporclase` (`id_clase_fk`, `id_usuario_fk`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -396,7 +396,7 @@ INSERT INTO `profesorporclase` (`idClase_FK`, `idProfesor`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `rating` (
-`idRating` int(11) NOT NULL,
+`id_rating` int(11) NOT NULL,
   `votos` varchar(15) NOT NULL,
   `rating` varchar(15) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
@@ -405,7 +405,7 @@ CREATE TABLE IF NOT EXISTS `rating` (
 -- Volcado de datos para la tabla `rating`
 --
 
-INSERT INTO `rating` (`idRating`, `votos`, `rating`) VALUES
+INSERT INTO `rating` (`id_rating`, `votos`, `rating`) VALUES
 (1, '56', '3'),
 (2, '40', '4'),
 (3, '67', '3');
@@ -447,9 +447,9 @@ CREATE TABLE IF NOT EXISTS `tipoclase` (
 --
 
 INSERT INTO `tipoclase` (`id_tipoClases`, `des_tipoClases`, `descripcion`) VALUES
-(1, 'Virtual', 'Clase Virtuales'),
-(2, 'Casa', 'Clase Casa'),
-(3, 'Institución', 'Clase Instituto');
+(1, 'En su Casa', 'Clase dictada en su Casa'),
+(2, 'A Domicilio', 'Clase dictada en domicilio'),
+(3, 'Instituto', 'Clase dictada en instituto');
 
 -- --------------------------------------------------------
 
@@ -458,28 +458,30 @@ INSERT INTO `tipoclase` (`id_tipoClases`, `des_tipoClases`, `descripcion`) VALUE
 --
 
 CREATE TABLE IF NOT EXISTS `usuario` (
-  `idUsuario` varchar(50) NOT NULL,
+`id_usuario` int(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `profesor` tinyint(1) NOT NULL,
+  `esProfesor` tinyint(1) NOT NULL,
   `nombre_usuario` varchar(150) NOT NULL,
-  `src` varchar(250) NOT NULL,
-  `instagram` varchar(100) NOT NULL,
-  `whatsApp` varchar(100) NOT NULL,
+  `src` varchar(250) DEFAULT NULL,
+  `instagram` varchar(100) DEFAULT NULL,
+  `whatsApp` varchar(100) DEFAULT NULL,
   `apellido` varchar(150) NOT NULL,
   `telefono` varchar(150) NOT NULL,
-  `mail` varchar(150) NOT NULL,
-  `idDireccion` int(11) NOT NULL,
-  `idTipoPerfil` int(11) NOT NULL,
-  `idRating` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `email` varchar(150) NOT NULL,
+  `id_domicilio_fk` int(11) DEFAULT NULL,
+  `id_tipoPerfil_fk` int(11) DEFAULT NULL,
+  `id_rating_fk` int(11) DEFAULT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`idUsuario`, `password`, `profesor`, `nombre_usuario`, `src`, `instagram`, `whatsApp`, `apellido`, `telefono`, `mail`, `idDireccion`, `idTipoPerfil`, `idRating`) VALUES
-('admin', 'admin', 1, 'Wachin', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', 1, 1, 1),
-('bala', 'selacome', 0, 'Licha', '', '@Licha', '0111566666', 'MeLaComo', '0111566666', 'lichan@gmail.com', 2, 2, 2);
+INSERT INTO `usuario` (`id_usuario`, `password`, `esProfesor`, `nombre_usuario`, `src`, `instagram`, `whatsApp`, `apellido`, `telefono`, `email`, `id_domicilio_fk`, `id_tipoPerfil_fk`, `id_rating_fk`) VALUES
+(1, 'admin', 1, 'Wachin', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', 1, 1, 1),
+(2, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', NULL, NULL, NULL),
+(3, 'selacome', 0, 'Licha', '', '@Licha', '0111566666', 'MeLaComo', '0111566666', 'lichan@gmail.com', 2, 2, 2),
+(4, 'lisandro', 1, 'rodriguezPradoLisandro', '', '@licha', '1111212', 'Rodriguez', '1212121', 'prado@gmail.com', 1, 1, 1);
 
 --
 -- Índices para tablas volcadas
@@ -489,7 +491,7 @@ INSERT INTO `usuario` (`idUsuario`, `password`, `profesor`, `nombre_usuario`, `s
 -- Indices de la tabla `clases`
 --
 ALTER TABLE `clases`
- ADD PRIMARY KEY (`idClase`);
+ ADD PRIMARY KEY (`id_clase`);
 
 --
 -- Indices de la tabla `comentarios`
@@ -501,7 +503,7 @@ ALTER TABLE `comentarios`
 -- Indices de la tabla `cursoporalumno`
 --
 ALTER TABLE `cursoporalumno`
- ADD PRIMARY KEY (`idAlumno`,`idCurso`);
+ ADD PRIMARY KEY (`id_alumno`,`id_curso`);
 
 --
 -- Indices de la tabla `cursos`
@@ -513,25 +515,25 @@ ALTER TABLE `cursos`
 -- Indices de la tabla `cursospordondedaclases`
 --
 ALTER TABLE `cursospordondedaclases`
- ADD PRIMARY KEY (`idcurso_FK`,`idDondeDaClase_FK`);
+ ADD PRIMARY KEY (`id_curso_fk`,`id_dondeDaClase_fk`);
 
 --
 -- Indices de la tabla `cursospormaterias`
 --
 ALTER TABLE `cursospormaterias`
- ADD PRIMARY KEY (`idMateria_FK`,`idCurso_FK`);
+ ADD PRIMARY KEY (`id_materia_fk`,`id_curso_fk`);
 
 --
 -- Indices de la tabla `cursosportipoclases`
 --
 ALTER TABLE `cursosportipoclases`
- ADD PRIMARY KEY (`idClase_FK`,`idCursos_FK`);
+ ADD PRIMARY KEY (`id_clase_fk`,`id_curso_fk`);
 
 --
--- Indices de la tabla `direccion`
+-- Indices de la tabla `domicilio`
 --
-ALTER TABLE `direccion`
- ADD PRIMARY KEY (`idDireccion`);
+ALTER TABLE `domicilio`
+ ADD PRIMARY KEY (`id_domicilio`);
 
 --
 -- Indices de la tabla `dondedaclases`
@@ -543,7 +545,7 @@ ALTER TABLE `dondedaclases`
 -- Indices de la tabla `dondedaclasesporprofesor`
 --
 ALTER TABLE `dondedaclasesporprofesor`
- ADD PRIMARY KEY (`idDondeDaClases_Fk`,`idProfesor`);
+ ADD PRIMARY KEY (`id_dondeDaClases_fk`,`id_usuario_fk`);
 
 --
 -- Indices de la tabla `employees`
@@ -561,13 +563,13 @@ ALTER TABLE `foro`
 -- Indices de la tabla `foroportag`
 --
 ALTER TABLE `foroportag`
- ADD PRIMARY KEY (`idForo_fk`,`idTag_fk`);
+ ADD PRIMARY KEY (`id_foro_fk`,`id_tag_fk`);
 
 --
 -- Indices de la tabla `instituoporprofesores`
 --
 ALTER TABLE `instituoporprofesores`
- ADD PRIMARY KEY (`idInstituto_FK`,`idProfesor`);
+ ADD PRIMARY KEY (`id_instituto_fk`,`id_usuario_fk`);
 
 --
 -- Indices de la tabla `instituto`
@@ -585,19 +587,19 @@ ALTER TABLE `materia`
 -- Indices de la tabla `materiaporprofesor`
 --
 ALTER TABLE `materiaporprofesor`
- ADD PRIMARY KEY (`idMateria_FK`,`idProfesor`);
+ ADD PRIMARY KEY (`id_materia_fk`,`id_usuario_fk`);
 
 --
 -- Indices de la tabla `profesorporclase`
 --
 ALTER TABLE `profesorporclase`
- ADD PRIMARY KEY (`idClase_FK`);
+ ADD PRIMARY KEY (`id_clase_fk`);
 
 --
 -- Indices de la tabla `rating`
 --
 ALTER TABLE `rating`
- ADD PRIMARY KEY (`idRating`);
+ ADD PRIMARY KEY (`id_rating`);
 
 --
 -- Indices de la tabla `tag`
@@ -615,7 +617,7 @@ ALTER TABLE `tipoclase`
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
- ADD PRIMARY KEY (`idUsuario`), ADD UNIQUE KEY `nombre_usuario` (`nombre_usuario`);
+ ADD PRIMARY KEY (`id_usuario`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -625,7 +627,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `clases`
 --
 ALTER TABLE `clases`
-MODIFY `idClase` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+MODIFY `id_clase` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `comentarios`
 --
@@ -637,10 +639,10 @@ MODIFY `id_comentario` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 ALTER TABLE `cursos`
 MODIFY `id_curso` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
--- AUTO_INCREMENT de la tabla `direccion`
+-- AUTO_INCREMENT de la tabla `domicilio`
 --
-ALTER TABLE `direccion`
-MODIFY `idDireccion` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+ALTER TABLE `domicilio`
+MODIFY `id_domicilio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `dondedaclases`
 --
@@ -670,7 +672,7 @@ MODIFY `id_materia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 -- AUTO_INCREMENT de la tabla `rating`
 --
 ALTER TABLE `rating`
-MODIFY `idRating` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `id_rating` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `tag`
 --
@@ -681,6 +683,11 @@ MODIFY `id_tag` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 ALTER TABLE `tipoclase`
 MODIFY `id_tipoClases` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+MODIFY `id_usuario` int(50) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -1,9 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const employeeController =   require('./controller/employee.controller');
 const usuarioController =   require('./controller/usuaurio.controller');
 const catalogoController =   require('./controller/catalogo.controller');
-// Retrieve all employees router.get('/employees', employeeController.findAll);
 
 //**************************Inicio Recursos Usuario **************************** */
 router.get('/users', (req, res) => {
@@ -17,6 +15,14 @@ router.get('/users/:id', (req, res) => {
         res.status(409).send({ msg: "El campo id usuario es requerido." });
     else
         usuarioController.findAllById(req,res);  
+});
+
+router.get('/users/user/:idMail', (req, res) => {
+    console.log("Consultar Usuarios por mail: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo mail usuario es requerido." });
+    else
+        usuarioController.findAllByMail(req,res);  
 });
 
 router.get('/users/profesor/:id', (req, res) => {
@@ -50,6 +56,16 @@ router.get('/users/profesor/:idProfesor/tipoClases', (req, res) => {
     else
         usuarioController.findByIdProfesorByClases(req,res);  
 });
+
+router.post('/users/profesor', (req, res) => {
+    console.log("Crear Profesor : ", req.body);
+    if(!req.body.usuario || req.body.usuario =='undefined' || req.body.usuario == '') 
+        res.status(409).send({ msg: "NO se puede crear el profesor requerido." });
+    else{
+        usuarioController.createUser(req,res);
+    }
+});
+
 //**************************/Fin Recursos Usuario**************************** */
 
 //**************************Inicio Recursos catalogo**************************** */
@@ -99,17 +115,6 @@ router.get('/tipoClases', (req, res) => {
 });
 
 //**************************/Fin Recursos catalogo**************************** */
-router.get('/employees', (req, res) => {
-    console.log("LLegue..........");
-    employeeController.findAll(req,res);
-});
-// Create a new employee
-router.post('/employees', employeeController.create);
-// Retrieve a single employee with id
-router.get('/employees/:id', employeeController.findById);
-// Update a employee with id
-router.put('/employees/:id', employeeController.update);
-// Delete a employee with id
-router.delete('/employees/:id', employeeController.delete);
+
 
 module.exports = router
