@@ -142,7 +142,7 @@ let createUser=(req, res)=>{
   console.log("llegue a leer comentarios con filtro");
   //Obtener id busqueda req.param.tagid
   console.log("Usuario: " , req.body.usuario);
-  var idBusqueda = req.body.usuario.idUsuario;
+  var idBusqueda = req.body.usuario.id_usuario;
   console.log(idBusqueda);
   var sql = 'SELECT * FROM usuario WHERE id_usuario=?';
   dbConn.query(sql,[idBusqueda], (err,rows) => {
@@ -172,7 +172,7 @@ let createUser=(req, res)=>{
        }  
     });
   
-}
+};
 
 module.exports = {findAll,findAllById,findByIdProfesor,findAllByIdProfesorByDondeDaClases,
   findByIdProfesorByMaterias,findByIdProfesorByClases,createUser,findAllByMail};
