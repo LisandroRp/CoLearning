@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-10-2020 a las 15:43:15
+-- Tiempo de generación: 04-10-2020 a las 22:14:20
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -174,16 +174,17 @@ CREATE TABLE IF NOT EXISTS `domicilio` (
   `numero` varchar(10) NOT NULL,
   `localidad` varchar(150) NOT NULL,
   `latitud` varchar(10) NOT NULL,
-  `longitud` varchar(10) NOT NULL
+  `longitud` varchar(10) NOT NULL,
+  `des_domicilio` varchar(150) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `domicilio`
 --
 
-INSERT INTO `domicilio` (`id_domicilio`, `calle`, `numero`, `localidad`, `latitud`, `longitud`) VALUES
-(1, 'Alsina', '1000', 'CABA', '13', '14'),
-(2, 'Solis', '1400', 'CABA', '13', '34');
+INSERT INTO `domicilio` (`id_domicilio`, `calle`, `numero`, `localidad`, `latitud`, `longitud`, `des_domicilio`) VALUES
+(1, 'Alsina', '1000', 'CABA', '13', '14', 'Alsina 1000 CABA'),
+(2, 'Solis', '1400', 'CABA', '13', '34', 'Solis 1400 CABA');
 
 -- --------------------------------------------------------
 
@@ -374,6 +375,26 @@ INSERT INTO `materiaporprofesor` (`id_materia_fk`, `id_usuario_fk`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `moneda`
+--
+
+CREATE TABLE IF NOT EXISTS `moneda` (
+`id_moneda` int(11) NOT NULL,
+  `des_moneda` varchar(20) NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Volcado de datos para la tabla `moneda`
+--
+
+INSERT INTO `moneda` (`id_moneda`, `des_moneda`) VALUES
+(1, 'Pesos'),
+(2, 'Dolar'),
+(3, 'Euro');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `profesorporclase`
 --
 
@@ -471,17 +492,38 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   `id_domicilio_fk` int(11) DEFAULT NULL,
   `id_tipoPerfil_fk` int(11) DEFAULT NULL,
   `id_rating_fk` int(11) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
 INSERT INTO `usuario` (`id_usuario`, `password`, `esProfesor`, `nombre_usuario`, `src`, `instagram`, `whatsApp`, `apellido`, `telefono`, `email`, `id_domicilio_fk`, `id_tipoPerfil_fk`, `id_rating_fk`) VALUES
-(1, 'admin', 1, 'Wachin', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', 1, 1, 1),
+(1, 'admin', 1, 'Wachin', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin1@gmail.com', 1, 1, 1),
 (2, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', NULL, NULL, NULL),
 (3, 'selacome', 0, 'Licha', '', '@Licha', '0111566666', 'MeLaComo', '0111566666', 'lichan@gmail.com', 2, 2, 2),
-(4, 'lisandro', 1, 'rodriguezPradoLisandro', '', '@licha', '1111212', 'Rodriguez', '1212121', 'prado@gmail.com', 1, 1, 1);
+(4, 'lisandro', 1, 'rodriguezPradoLisandro', '', '@licha', '1111212', 'Rodriguez', '1212121', 'prado@gmail.com', 1, 1, 1),
+(6, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachines@gmail.com', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuariopormoneda`
+--
+
+CREATE TABLE IF NOT EXISTS `usuariopormoneda` (
+  `id_usuario_fk` int(11) NOT NULL,
+  `id_moneda_fk` int(11) NOT NULL,
+  `monto` float DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `usuariopormoneda`
+--
+
+INSERT INTO `usuariopormoneda` (`id_usuario_fk`, `id_moneda_fk`, `monto`) VALUES
+(4, 2, 100),
+(1, 2, 10);
 
 --
 -- Índices para tablas volcadas
@@ -590,6 +632,12 @@ ALTER TABLE `materiaporprofesor`
  ADD PRIMARY KEY (`id_materia_fk`,`id_usuario_fk`);
 
 --
+-- Indices de la tabla `moneda`
+--
+ALTER TABLE `moneda`
+ ADD PRIMARY KEY (`id_moneda`);
+
+--
 -- Indices de la tabla `profesorporclase`
 --
 ALTER TABLE `profesorporclase`
@@ -617,7 +665,7 @@ ALTER TABLE `tipoclase`
 -- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
- ADD PRIMARY KEY (`id_usuario`);
+ ADD PRIMARY KEY (`id_usuario`), ADD UNIQUE KEY `email` (`email`), ADD UNIQUE KEY `email_2` (`email`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -669,6 +717,11 @@ MODIFY `id_instituto` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 ALTER TABLE `materia`
 MODIFY `id_materia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
+-- AUTO_INCREMENT de la tabla `moneda`
+--
+ALTER TABLE `moneda`
+MODIFY `id_moneda` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
 -- AUTO_INCREMENT de la tabla `rating`
 --
 ALTER TABLE `rating`
@@ -687,7 +740,7 @@ MODIFY `id_tipoClases` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-MODIFY `id_usuario` int(50) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+MODIFY `id_usuario` int(50) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

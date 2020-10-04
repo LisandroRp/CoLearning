@@ -13,6 +13,18 @@ let findAllMaterias = (req, res) =>
 
 };  
 
+let findAllMonedas = (req, res) =>
+{      
+    console.log("llegue todas las monedas");
+    dbConn.query('SELECT * FROM moneda', (err,rows) => {
+        if(err) throw err;      
+        console.log('Todas las monedas:');
+        console.log(rows);
+        res.send(rows);
+      });
+
+};  
+
 let findAllClases = (req, res) =>
 {      
     console.log("llegue todas las clases");
@@ -110,4 +122,4 @@ let findAllTipoclase= (req, res) =>
 
 module.exports = {findAllMaterias,findAllClases,findAllComentarios,
     findAllDondedaclases,findAllForo,
-     findAllInstituto,findAllRating,findAllTag,findAllTipoclase};
+     findAllInstituto,findAllRating,findAllTag,findAllTipoclase,findAllMonedas};

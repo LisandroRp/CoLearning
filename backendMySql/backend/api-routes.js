@@ -116,6 +116,11 @@ router.get('/tipoClases', (req, res) => {
     catalogoController.findAllTipoclase(req,res);
 });
 
+router.get('/monedas', (req, res) => {
+    console.log("findAll monedas");
+    catalogoController.findAllMonedas(req,res);
+});
+
 //**************************/Fin Recursos catalogo**************************** */
 
 //**************************/Inicio Recursos foro**************************** */
