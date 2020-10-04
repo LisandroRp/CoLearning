@@ -19,7 +19,7 @@ let findAllById = (req, res) =>
     console.log("llegue a leer Buscar usuario por id",req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.id_usuario,u.nombre_usuario, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,m.id_moneda, m.des_moneda,um.monto'
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,m.id_moneda, m.des_moneda,um.monto'
     + ' FROM usuario u' 
     +' Inner join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
     +' Inner join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
