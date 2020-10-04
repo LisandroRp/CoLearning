@@ -43,6 +43,14 @@ Post:
 }
 
 Foro
+busca foro por  id y sus tag
+
 localhost:8088/apiColearning/foros/foro/1/tags
 
+busca solo foro por nombre y sus tag
+
 localhost:8088/apiColearning/foros/foro/Duda
+
+busca foro y tag por nombre
+
+localhost:8088/apiColearning/foros/tags/Native
