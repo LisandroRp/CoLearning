@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const usuarioController =   require('./controller/usuaurio.controller');
 const catalogoController =   require('./controller/catalogo.controller');
+const foroController =   require('./controller/foro.controller');
 
 //**************************Inicio Recursos Usuario **************************** */
 router.get('/users', (req, res) => {
@@ -115,6 +116,24 @@ router.get('/tipoClases', (req, res) => {
     catalogoController.findAllTipoclase(req,res);
 });
 
+//**************************/Fin Recursos catalogo**************************** */
+
+//**************************/Inicio Recursos foro**************************** */
+router.get('/foros/foro/:id/tags', (req, res) => {
+    console.log("Consultar Foros por id: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo id foro es requerido." });
+    else
+        foroController.findTagsByIdForo(req,res);  
+});
+
+router.get('/foros/foro/:name', (req, res) => {
+    console.log("Consultar Foros por nombre: ", req.params);
+    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
+        res.status(409).send({ msg: "El campo nombre foro es requerido." });
+    else
+        foroController.findAllById(req,res);  
+});
 //**************************/Fin Recursos catalogo**************************** */
 
 

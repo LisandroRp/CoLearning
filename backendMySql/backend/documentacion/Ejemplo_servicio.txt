@@ -41,3 +41,8 @@ Post:
         "email": "wachines@gmail.com"
     }
 }
+
+Foro
+localhost:8088/apiColearning/foros/foro/1/tags
+
+localhost:8088/apiColearning/foros/foro/Duda
