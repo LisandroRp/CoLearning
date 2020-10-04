@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-10-2020 a las 22:14:20
+-- Tiempo de generación: 04-10-2020 a las 22:41:12
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -221,7 +221,8 @@ CREATE TABLE IF NOT EXISTS `dondedaclasesporprofesor` (
 --
 
 INSERT INTO `dondedaclasesporprofesor` (`id_dondeDaClases_fk`, `id_usuario_fk`) VALUES
-(1, 1);
+(1, 1),
+(2, 4);
 
 -- --------------------------------------------------------
 
@@ -370,7 +371,7 @@ CREATE TABLE IF NOT EXISTS `materiaporprofesor` (
 
 INSERT INTO `materiaporprofesor` (`id_materia_fk`, `id_usuario_fk`) VALUES
 (1, 1),
-(2, 1);
+(2, 4);
 
 -- --------------------------------------------------------
 
@@ -408,7 +409,8 @@ CREATE TABLE IF NOT EXISTS `profesorporclase` (
 --
 
 INSERT INTO `profesorporclase` (`id_clase_fk`, `id_usuario_fk`) VALUES
-(1, 1);
+(1, 1),
+(2, 4);
 
 -- --------------------------------------------------------
 
@@ -430,6 +432,28 @@ INSERT INTO `rating` (`id_rating`, `votos`, `rating`) VALUES
 (1, '56', '3'),
 (2, '40', '4'),
 (3, '67', '3');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `respuestaforo`
+--
+
+CREATE TABLE IF NOT EXISTS `respuestaforo` (
+`id_respuestaForo` int(11) NOT NULL,
+  `id_usuario_fk` int(11) NOT NULL,
+  `res_buenas` int(11) NOT NULL,
+  `res_mejores` int(11) NOT NULL,
+  `res_cantidad` int(11) NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Volcado de datos para la tabla `respuestaforo`
+--
+
+INSERT INTO `respuestaforo` (`id_respuestaForo`, `id_usuario_fk`, `res_buenas`, `res_mejores`, `res_cantidad`) VALUES
+(1, 4, 100, 54, 150),
+(2, 1, 100, 54, 150);
 
 -- --------------------------------------------------------
 
@@ -650,6 +674,12 @@ ALTER TABLE `rating`
  ADD PRIMARY KEY (`id_rating`);
 
 --
+-- Indices de la tabla `respuestaforo`
+--
+ALTER TABLE `respuestaforo`
+ ADD PRIMARY KEY (`id_respuestaForo`), ADD UNIQUE KEY `id_usuario_fk` (`id_usuario_fk`);
+
+--
 -- Indices de la tabla `tag`
 --
 ALTER TABLE `tag`
@@ -726,6 +756,11 @@ MODIFY `id_moneda` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 ALTER TABLE `rating`
 MODIFY `id_rating` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `respuestaforo`
+--
+ALTER TABLE `respuestaforo`
+MODIFY `id_respuestaForo` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `tag`
 --

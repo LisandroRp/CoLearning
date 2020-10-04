@@ -19,11 +19,12 @@ let findAllById = (req, res) =>
     console.log("llegue a leer Buscar usuario por id",req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,m.id_moneda, m.des_moneda,um.monto'
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad'
     + ' FROM usuario u' 
     +' Inner join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
     +' Inner join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
     +' Inner join moneda m on m.id_moneda = um.id_moneda_fk' 
+    +' Inner join respuestaforo rf on rf.id_usuario_fk = u.id_usuario' 
     +' WHERE id_usuario=?';
     dbConn.query(sql,[idBusqueda], (err,rows) => {
         if(err) throw err;      
