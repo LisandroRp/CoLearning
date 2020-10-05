@@ -149,7 +149,7 @@ let findAllByIdProfesorByHorarios = (req, res) =>
   console.log(req.params.idProfesor);
   var idBusqueda = req.params.idProfesor;
   console.log(idBusqueda);
-  var sql = 'SELECT hp.dias, hp.turno'  
+  var sql = 'SELECT hp.dia, hp.turno'  
               +' FROM usuario u' 
               +' Inner join horariosdelprofesor hp on hp.id_usuario_fk = u.id_usuario '
               +' WHERE u.id_usuario = ? and u.esProfesor = 1';
