@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-10-2020 a las 00:37:36
+-- Tiempo de generación: 06-10-2020 a las 01:07:48
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -302,7 +302,7 @@ INSERT INTO `foroportag` (`id_foro_fk`, `id_tag_fk`) VALUES
 
 CREATE TABLE IF NOT EXISTS `horariosdelprofesor` (
   `id_usuario_fk` int(11) NOT NULL,
-  `dias` int(11) NOT NULL,
+  `dia` int(11) NOT NULL,
   `turno` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -310,7 +310,7 @@ CREATE TABLE IF NOT EXISTS `horariosdelprofesor` (
 -- Volcado de datos para la tabla `horariosdelprofesor`
 --
 
-INSERT INTO `horariosdelprofesor` (`id_usuario_fk`, `dias`, `turno`) VALUES
+INSERT INTO `horariosdelprofesor` (`id_usuario_fk`, `dia`, `turno`) VALUES
 (4, 0, 0),
 (4, 3, 0),
 (4, 5, 2);
@@ -545,10 +545,10 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 
 INSERT INTO `usuario` (`id_usuario`, `password`, `esProfesor`, `nombre_usuario`, `src`, `instagram`, `whatsApp`, `apellido`, `telefono`, `email`, `id_domicilio_fk`, `id_tipoPerfil_fk`, `id_rating_fk`) VALUES
 (1, 'admin', 1, 'Wachin', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin1@gmail.com', 1, 1, 1),
-(2, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', NULL, NULL, NULL),
+(2, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', 2, 1, 1),
 (3, 'selacome', 0, 'Licha', '', '@Licha', '0111566666', 'MeLaComo', '0111566666', 'lichan@gmail.com', 2, 2, 2),
-(4, 'lisandro', 1, 'rodriguezPradoLisandro', '', '@licha', '1111212', 'Rodriguez', '1212121', 'prado@gmail.com', 1, 1, 1),
-(6, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachines@gmail.com', NULL, NULL, NULL);
+(4, 'lisandro', 1, 'Lisandro', '', 'lisandrorp', '1111212', 'Rodriguez', '1212121', 'prado@gmail.com', 1, 1, 1),
+(6, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachines@gmail.com', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -656,7 +656,7 @@ ALTER TABLE `foroportag`
 -- Indices de la tabla `horariosdelprofesor`
 --
 ALTER TABLE `horariosdelprofesor`
- ADD PRIMARY KEY (`id_usuario_fk`,`dias`,`turno`);
+ ADD PRIMARY KEY (`id_usuario_fk`,`dia`,`turno`);
 
 --
 -- Indices de la tabla `instituoporprofesores`
