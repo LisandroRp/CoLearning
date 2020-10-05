@@ -39,10 +39,10 @@ let findAllByNames = (req, res) =>
     console.log(idBusqueda);
     var sql = ' SELECT f.id_foro,f.id_usuario,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
     + ' FROM foro f' 
-    + ' Inner join foroportag ft on ft.id_foro_fk = f.id_foro'
-    + ' Inner join tag t on ft.id_tag_fk = t.id_tag' 
-    + ' WHERE f.nombre_foro like ?  or t.nombre_tag like  ?';
-    dbConn.query(sql,[idBusqueda,idBusqueda], (err,rows) => {
+    + ' left join foroportag ft on ft.id_foro_fk = f.id_foro'
+    + ' left join tag t on ft.id_tag_fk = t.id_tag' 
+    + ' WHERE f.nombre_foro like ?  or t.nombre_tag like  ? or f.pregunta like ?';
+    dbConn.query(sql,[idBusqueda,idBusqueda,idBusqueda], (err,rows) => {
         if(err) throw err;      
         console.log('El foro by id: ' + idBusqueda);
         console.log(rows);
