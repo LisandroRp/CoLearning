@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-10-2020 a las 03:25:16
+-- Tiempo de generación: 05-10-2020 a las 14:06:07
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -341,18 +341,17 @@ INSERT INTO `instituto` (`id_instituto`, `nombre_instituto`, `src`, `whatsApp`, 
 
 CREATE TABLE IF NOT EXISTS `materia` (
 `id_materia` int(11) NOT NULL,
-  `nombre_materia` varchar(150) NOT NULL,
-  `des_materia` varchar(250) NOT NULL
+  `nombre_materia` varchar(150) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Volcado de datos para la tabla `materia`
 --
 
-INSERT INTO `materia` (`id_materia`, `nombre_materia`, `des_materia`) VALUES
-(1, 'Lengua', 'Dictado de Lengua'),
-(2, 'Matematica', 'Dictado de matematicas'),
-(3, 'Fisisca', 'Dictado de Fisica');
+INSERT INTO `materia` (`id_materia`, `nombre_materia`) VALUES
+(1, 'Lengua'),
+(2, 'Matematica'),
+(3, 'Fisisca');
 
 -- --------------------------------------------------------
 
@@ -362,16 +361,17 @@ INSERT INTO `materia` (`id_materia`, `nombre_materia`, `des_materia`) VALUES
 
 CREATE TABLE IF NOT EXISTS `materiaporprofesor` (
   `id_materia_fk` int(11) NOT NULL,
-  `id_usuario_fk` int(50) NOT NULL
+  `id_usuario_fk` int(50) NOT NULL,
+  `des_materia` varchar(150) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `materiaporprofesor`
 --
 
-INSERT INTO `materiaporprofesor` (`id_materia_fk`, `id_usuario_fk`) VALUES
-(1, 1),
-(2, 4);
+INSERT INTO `materiaporprofesor` (`id_materia_fk`, `id_usuario_fk`, `des_materia`) VALUES
+(1, 1, 'Dictado de Lengua'),
+(2, 4, 'Dictado de matematicas');
 
 -- --------------------------------------------------------
 

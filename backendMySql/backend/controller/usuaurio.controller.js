@@ -78,7 +78,7 @@ let findByIdProfesorByMaterias= (req, res) =>
     console.log(req.params.idProfesor);
     var idBusqueda = req.params.idProfesor;
     console.log(idBusqueda);
-    var sql = 'SELECT u.nombre_usuario, m.id_materia,  m.nombre_materia,m.des_materia  '  
+    var sql = 'SELECT u.nombre_usuario, m.id_materia,  m.nombre_materia,mp.des_materia  '  
                 +' FROM usuario u' 
                 +' Inner join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
                 +' Inner join materia m on m.id_materia = mp.id_materia_fk' 
