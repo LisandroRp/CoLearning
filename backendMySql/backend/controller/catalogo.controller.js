@@ -39,10 +39,10 @@ let findAllClases = (req, res) =>
 
 let findAllComentarios = (req, res) =>
 {      
-    console.log("llegue todos los comnetarios");
-    dbConn.query('SELECT * FROM comnetarios', (err,rows) => {
+    console.log("llegue todos los comentarios");
+    dbConn.query('SELECT * FROM comentarios', (err,rows) => {
         if(err) throw err;      
-        console.log('Todas las comnetarios:');
+        console.log('Todas las comentarios:');
         console.log(rows);
         res.send(rows);
       });

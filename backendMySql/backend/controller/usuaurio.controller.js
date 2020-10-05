@@ -40,7 +40,7 @@ let findAllByMail = (req, res) =>
     console.log("llegue a leer Buscar usuario por mail" + req.query.email);
     var idBusqueda = req.query.email;
     console.log(idBusqueda);
-    var sql = 'SELECT * FROM usuario WHERE email=?';
+    var sql = 'SELECT id_usuario,password,esProfesor,nombre_usuario,src,instagram,whatsApp,telefono,email,id_domicilio_fk,id_tipoPerfil_fk,id_rating_fk FROM usuario WHERE email=?';
     dbConn.query(sql,[idBusqueda], (err,rows) => {
         if(err) throw err;      
         console.log('El usuario by mail: ' + idBusqueda);
@@ -78,7 +78,7 @@ let findByIdProfesorByMaterias= (req, res) =>
     console.log(req.params.idProfesor);
     var idBusqueda = req.params.idProfesor;
     console.log(idBusqueda);
-    var sql = 'SELECT u.nombre_usuario, m.id_materia,  m.nombre_materia '  
+    var sql = 'SELECT u.nombre_usuario, m.id_materia,  m.nombre_materia,m.des_materia  '  
                 +' FROM usuario u' 
                 +' Inner join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
                 +' Inner join materia m on m.id_materia = mp.id_materia_fk' 

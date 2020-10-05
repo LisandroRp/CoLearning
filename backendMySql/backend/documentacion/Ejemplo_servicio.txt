@@ -54,3 +54,39 @@ localhost:8088/apiColearning/foros/foro/Duda
 busca foro y tag por nombre
 
 localhost:8088/apiColearning/foros/tags/Native
+
+
+Catalogos:
+
+Todas las materias
+
+localhost:8088/apiColearning/materias
+
+Todas las monedas
+
+localhost:8088/apiColearning/monedas
+
+Todos lo instiutos
+
+localhost:8088/apiColearning/institutos
+
+Todos lo foros
+
+localhost:8088/apiColearning/foros
+
+Todos lo dondeDaClases
+
+localhost:8088/apiColearning/dondeDaClases
+
+Todas las clases dictadas
+
+localhost:8088/apiColearning/clases
+
+Todos los comentarios
+
+localhost:8088/apiColearning/comentarios
+
+Todos los tags
+
+localhost:8088/apiColearning/tags
+
