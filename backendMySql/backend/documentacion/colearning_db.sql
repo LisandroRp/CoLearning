@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-10-2020 a las 22:41:12
+-- Tiempo de generación: 05-10-2020 a las 03:25:16
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -389,9 +389,9 @@ CREATE TABLE IF NOT EXISTS `moneda` (
 --
 
 INSERT INTO `moneda` (`id_moneda`, `des_moneda`) VALUES
-(1, 'Pesos'),
-(2, 'Dolar'),
-(3, 'Euro');
+(1, '$'),
+(2, 'US$'),
+(3, '€');
 
 -- --------------------------------------------------------
 
