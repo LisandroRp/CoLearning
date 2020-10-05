@@ -42,6 +42,10 @@ Post:
     }
 }
 
+Profesor y horarios:
+
+localhost:8088/apiColearning/users/profesor/4/horarios
+
 Foro
 busca foro por  id y sus tag
 

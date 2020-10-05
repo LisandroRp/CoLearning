@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-10-2020 a las 14:06:07
+-- Tiempo de generación: 06-10-2020 a las 00:37:36
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -293,6 +293,27 @@ CREATE TABLE IF NOT EXISTS `foroportag` (
 
 INSERT INTO `foroportag` (`id_foro_fk`, `id_tag_fk`) VALUES
 (1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `horariosdelprofesor`
+--
+
+CREATE TABLE IF NOT EXISTS `horariosdelprofesor` (
+  `id_usuario_fk` int(11) NOT NULL,
+  `dias` int(11) NOT NULL,
+  `turno` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `horariosdelprofesor`
+--
+
+INSERT INTO `horariosdelprofesor` (`id_usuario_fk`, `dias`, `turno`) VALUES
+(4, 0, 0),
+(4, 3, 0),
+(4, 5, 2);
 
 -- --------------------------------------------------------
 
@@ -630,6 +651,12 @@ ALTER TABLE `foro`
 --
 ALTER TABLE `foroportag`
  ADD PRIMARY KEY (`id_foro_fk`,`id_tag_fk`);
+
+--
+-- Indices de la tabla `horariosdelprofesor`
+--
+ALTER TABLE `horariosdelprofesor`
+ ADD PRIMARY KEY (`id_usuario_fk`,`dias`,`turno`);
 
 --
 -- Indices de la tabla `instituoporprofesores`

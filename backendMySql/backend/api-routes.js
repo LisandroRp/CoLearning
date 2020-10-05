@@ -59,6 +59,14 @@ router.get('/users/profesor/:idProfesor/tipoClases', (req, res) => {
         usuarioController.findByIdProfesorByClases(req,res);  
 });
 
+router.get('/users/profesor/:idProfesor/horarios', (req, res) => {
+    console.log("Consultar Profesor por id por horarios: ", req.params);
+    if(!req.params.idProfesor || req.params.idProfesor =='undefined' || req.params.idProfesor == '') 
+        res.status(409).send({ msg: "El campo id Profesor es requerido." });
+    else
+        usuarioController.findAllByIdProfesorByHorarios(req,res);  
+});
+
 router.post('/users/profesor', (req, res) => {
     console.log("Crear Profesor : ", req.body);
     if(!req.body.usuario || req.body.usuario =='undefined' || req.body.usuario == '') 

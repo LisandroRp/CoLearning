@@ -19,7 +19,7 @@ let findAllById = (req, res) =>
     console.log("llegue a leer Buscar usuario por id",req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad'
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad'
     + ' FROM usuario u' 
     +' Inner join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
     +' Inner join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
@@ -122,7 +122,7 @@ let findByIdProfesor= (req, res) =>
     console.log(req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.nombre_usuario, u.instagram, u.whatsApp, u.telefono, u.email, d.calle, d.numero, d.localidad, d.latitud, d.longitud, m.nombre_materia, do.des_dondeClases,tp.des_tipoClases,id_rating_fk'  
+    var sql = 'SELECT u.nombre_usuario,u.apellido, u.instagram, u.whatsApp, u.telefono, u.email, d.calle, d.numero, d.localidad, d.latitud, d.longitud, m.nombre_materia, do.des_dondeClases,tp.des_tipoClases,id_rating_fk'  
                 +' FROM usuario u' 
                 +' Inner join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
                 +' Inner join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
@@ -140,7 +140,27 @@ let findByIdProfesor= (req, res) =>
         res.send(rows);
       });
 
-};  
+};
+
+let findAllByIdProfesorByHorarios = (req, res) =>
+{      
+  console.log("llegue a leer findAllByIdProfesorByHorarios con filtro");
+  //Obtener id busqueda req.param.tagid
+  console.log(req.params.idProfesor);
+  var idBusqueda = req.params.idProfesor;
+  console.log(idBusqueda);
+  var sql = 'SELECT hp.dias, hp.turno'  
+              +' FROM usuario u' 
+              +' Inner join horariosdelprofesor hp on hp.id_usuario_fk = u.id_usuario '
+              +' WHERE u.id_usuario = ? and u.esProfesor = 1';
+  console.log(sql);
+  dbConn.query(sql,[idBusqueda], (err,rows) => {
+      if(err) throw err;      
+      console.log('El usuario by id: ' + idBusqueda);
+      console.log(rows);
+      res.send(rows);
+    });
+}; 
 
 let createUser=(req, res)=>{
 
@@ -181,4 +201,4 @@ let createUser=(req, res)=>{
 };
 
 module.exports = {findAll,findAllById,findByIdProfesor,findAllByIdProfesorByDondeDaClases,
-  findByIdProfesorByMaterias,findByIdProfesorByClases,createUser,findAllByMail};
+  findByIdProfesorByMaterias,findByIdProfesorByClases,createUser,findAllByMail,findAllByIdProfesorByHorarios};
