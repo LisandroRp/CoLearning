@@ -165,13 +165,16 @@ router.get('/foros/tags/:name', (req, res) => {
         foroController.findAllByNames(req,res);  
 });
 
-router.get('/foros/foro/:name', (req, res) => {
-    console.log("Consultar Foros por nombre: ", req.params);
-    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo nombre foro es requerido." });
+router.get('/foros/foro', (req, res) => {
+    console.log("Consultar Foros id o nombre: ", req.query);
+    
+    if((!req.query.name && !req.query.id) || (req.query.name =='undefined' 
+        && req.query.id =='undefined') || (req.query.id == '' && req.query.name == '')) 
+        res.status(409).send({ msg: "El campo nombre o id del foro es requerido." });
     else
-        foroController.findForosByName(req,res);  
+        foroController.findForosByIdAndName(req,res);  
 });
+
 //**************************/Fin Recursos catalogo**************************** */
 
 

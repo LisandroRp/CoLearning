@@ -14,6 +14,28 @@ let findForosByName = (req, res) =>
       });
 };
 
+let findForosByIdAndName = (req, res) =>
+{      
+    console.log("llegue a leer Buscar foro por id",req.query);
+    var sql = 'SELECT u.nombre_usuario,u.apellido, f.* FROM foro f inner join usuario u on f.id_usuario_fk = u.id_usuario WHERE ';
+    var idBusqueda;
+    if(req.query.id !='undefined' && req.query.id != '' && req.query.id){
+      idBusqueda  =  req.query.id;
+      sql =  sql +'id_foro = ?'; 
+    }else if(req.query.name !='undefined' && req.query.name != '' && req.query.name){
+      idBusqueda = '%'+req.query.name+ '%';
+      sql = sql +'nombre_foro like ?';
+    }
+    console.log("Parametro de busqueda: ",idBusqueda);
+    console.log("Consulta a realizar: ",sql);
+    dbConn.query(sql,idBusqueda, (err,rows) => {
+        if(err) throw err;      
+        console.log('El foro by id: ' + idBusqueda);
+        console.log(rows);
+        res.send(rows);
+      });
+};
+
 let findRespuestaByIdForo = (req, res) =>
 {      
     console.log("llegue a leer Buscar respuesta por foro por id",req.params.id);
@@ -69,4 +91,4 @@ let findAllByNames = (req, res) =>
       });
 };
 
-module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo};
+module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName};

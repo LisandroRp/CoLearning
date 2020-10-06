@@ -67,7 +67,11 @@ localhost:8088/apiColearning/foros/foro/1/tags
 
 busca solo foro por nombre y sus tag
 
-localhost:8088/apiColearning/foros/foro/Duda
+localhost:8088/apiColearning/foros/foro?name=du
+
+busca solo foro por nombre y sus tag
+
+localhost:8088/apiColearning/foros/foro?id=1
 
 busca foro y tag por nombre
 
