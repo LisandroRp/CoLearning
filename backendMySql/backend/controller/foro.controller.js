@@ -14,6 +14,22 @@ let findForosByName = (req, res) =>
       });
 };
 
+let findRespuestaByIdForo = (req, res) =>
+{      
+    console.log("llegue a leer Buscar respuesta por foro por id",req.params.id);
+    var idBusqueda =  req.params.id;
+    console.log(idBusqueda);
+    var sql = ' SELECT *'
+            + ' FROM respuesta r' 
+            + ' WHERE r.id_foro_fk = ?';
+    dbConn.query(sql,[idBusqueda], (err,rows) => {
+        if(err) throw err;      
+        console.log('El foro by id: ' + idBusqueda);
+        console.log(rows);
+        res.send(rows);
+      });
+};
+
 let findTagsByIdForo = (req, res) =>
 {      
     console.log("llegue a leer Buscar foro por id",req.params.id);
@@ -35,7 +51,8 @@ let findTagsByIdForo = (req, res) =>
 let findAllByNames = (req, res) =>
 {      
     console.log("llegue a leer Buscar foro por name",req.params.name);
-    var idBusqueda =  '%'+req.params.name+ '%';
+    //var idBusqueda =  '%'+req.params.name+ '%';
+    var idBusqueda = '%'.concat(req.params.name.concat('%'));
     console.log(idBusqueda);
     var sql = ' SELECT f.id_foro,f.id_usuario,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
     + ' FROM foro f' 
@@ -50,4 +67,4 @@ let findAllByNames = (req, res) =>
       });
 };
 
-module.exports ={findForosByName,findAllByNames,findTagsByIdForo};
+module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo};

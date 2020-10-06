@@ -163,6 +163,26 @@ let findAllByIdProfesorByHorarios = (req, res) =>
     });
 }; 
 
+let findByIdUsuarioByComentarios = (req, res) =>
+{      
+  console.log("llegue a leer findByIdUsuarioByComentarios con filtro");
+  //Obtener id busqueda req.param.tagid
+  console.log(req.params.id);
+  var idBusqueda = req.params.id;
+  console.log(idBusqueda);
+  var sql =    'SELECT *'  
+              +' FROM comentarios c' 
+              +' WHERE c.id_usuarioDestino = ? ';
+  console.log(sql);
+  dbConn.query(sql,[idBusqueda], (err,rows) => {
+      if(err) throw err;      
+      console.log('El usuario by id: ' + idBusqueda);
+      console.log(rows);
+      res.send(rows);
+    });
+}; 
+
+
 let createUser=(req, res)=>{
 
 
@@ -202,4 +222,5 @@ let createUser=(req, res)=>{
 };
 
 module.exports = {findAll,findAllById,findByIdProfesor,findAllByIdProfesorByDondeDaClases,
-  findByIdProfesorByMaterias,findByIdProfesorByClases,createUser,findAllByMail,findAllByIdProfesorByHorarios};
+  findByIdProfesorByMaterias,findByIdProfesorByClases,createUser,findAllByMail,
+  findAllByIdProfesorByHorarios,findByIdUsuarioByComentarios};

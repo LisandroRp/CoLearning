@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-10-2020 a las 01:07:48
+-- Tiempo de generación: 06-10-2020 a las 03:14:59
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -52,8 +52,7 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
   `des_comentario` varchar(250) NOT NULL,
   `id_usuarioDestino` int(30) NOT NULL,
   `id_usuarioOrigen` int(30) NOT NULL,
-  `ratingNeg` int(11) NOT NULL,
-  `ratingPos` int(11) NOT NULL,
+  `rating_comentario` int(11) NOT NULL,
   `fecha_alta` varchar(50) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
@@ -61,8 +60,8 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
 -- Volcado de datos para la tabla `comentarios`
 --
 
-INSERT INTO `comentarios` (`id_comentario`, `des_comentario`, `id_usuarioDestino`, `id_usuarioOrigen`, `ratingNeg`, `ratingPos`, `fecha_alta`) VALUES
-(1, 'admin', 2, 1, 10, 15, '2020-08-14');
+INSERT INTO `comentarios` (`id_comentario`, `des_comentario`, `id_usuarioDestino`, `id_usuarioOrigen`, `rating_comentario`, `fecha_alta`) VALUES
+(1, 'admin', 4, 1, 10, '2020-08-14');
 
 -- --------------------------------------------------------
 
@@ -267,14 +266,15 @@ CREATE TABLE IF NOT EXISTS `foro` (
   `respuestasCant` varchar(10) NOT NULL,
   `fecha_alta` varchar(50) NOT NULL,
   `resuelto` tinyint(1) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `foro`
 --
 
 INSERT INTO `foro` (`id_foro`, `id_usuario`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`) VALUES
-(1, 1, 'Duda Existencial', 'Como hacer??', 1, '114', '', 1);
+(1, 1, 'Duda Existencial', 'Como hacer??', 1, '114', '', 1),
+(2, 4, 'Pedro', 'Baila', 1, '45', '2020-08-14', 0);
 
 -- --------------------------------------------------------
 
@@ -441,8 +441,8 @@ INSERT INTO `profesorporclase` (`id_clase_fk`, `id_usuario_fk`) VALUES
 
 CREATE TABLE IF NOT EXISTS `rating` (
 `id_rating` int(11) NOT NULL,
-  `votos` varchar(15) NOT NULL,
-  `rating` varchar(15) NOT NULL
+  `votos` int(15) NOT NULL,
+  `rating` float NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
@@ -450,9 +450,31 @@ CREATE TABLE IF NOT EXISTS `rating` (
 --
 
 INSERT INTO `rating` (`id_rating`, `votos`, `rating`) VALUES
-(1, '56', '3'),
-(2, '40', '4'),
-(3, '67', '3');
+(1, 56, 3),
+(2, 40, 4),
+(3, 67, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `respuesta`
+--
+
+CREATE TABLE IF NOT EXISTS `respuesta` (
+`id_respuesta` int(11) NOT NULL,
+  `id_foro_fk` int(11) NOT NULL,
+  `titulo_respuesta` varchar(100) NOT NULL,
+  `des_respuesta` varchar(150) NOT NULL,
+  `esMejorRespuesta` tinyint(1) NOT NULL,
+  `votos` int(11) NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- Volcado de datos para la tabla `respuesta`
+--
+
+INSERT INTO `respuesta` (`id_respuesta`, `id_foro_fk`, `titulo_respuesta`, `des_respuesta`, `esMejorRespuesta`, `votos`) VALUES
+(1, 1, 'El saber', 'Ley de la relatividad', 1, 56);
 
 -- --------------------------------------------------------
 
@@ -701,6 +723,12 @@ ALTER TABLE `rating`
  ADD PRIMARY KEY (`id_rating`);
 
 --
+-- Indices de la tabla `respuesta`
+--
+ALTER TABLE `respuesta`
+ ADD PRIMARY KEY (`id_respuesta`);
+
+--
 -- Indices de la tabla `respuestaforo`
 --
 ALTER TABLE `respuestaforo`
@@ -762,7 +790,7 @@ MODIFY `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 -- AUTO_INCREMENT de la tabla `foro`
 --
 ALTER TABLE `foro`
-MODIFY `id_foro` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id_foro` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `instituto`
 --
@@ -783,6 +811,11 @@ MODIFY `id_moneda` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 ALTER TABLE `rating`
 MODIFY `id_rating` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `respuesta`
+--
+ALTER TABLE `respuesta`
+MODIFY `id_respuesta` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `respuestaforo`
 --

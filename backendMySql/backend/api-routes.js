@@ -27,6 +27,15 @@ router.get('/users/:id', (req, res) => {
 });
 
 
+
+router.get('/users/user/:id/comentarios', (req, res) => {
+    console.log("Consultar Usuarios por comentario id: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo id usuario es requerido." });
+    else
+        usuarioController.findByIdUsuarioByComentarios(req,res);  
+});
+
 router.get('/users/profesor/:id', (req, res) => {
     console.log("Consultar Profesor por id: ", req.params);
     if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
@@ -138,6 +147,14 @@ router.get('/foros/foro/:id/tags', (req, res) => {
         res.status(409).send({ msg: "El campo id foro es requerido." });
     else
         foroController.findTagsByIdForo(req,res);  
+});
+
+router.get('/foros/foro/:id/respuestas', (req, res) => {
+    console.log("Consultar Foros por id y sus respuestas: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo id foro es requerido." });
+    else
+        foroController.findRespuestaByIdForo(req,res);  
 });
 
 router.get('/foros/tags/:name', (req, res) => {
