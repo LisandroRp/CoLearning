@@ -19,9 +19,11 @@ let findRespuestaByIdForo = (req, res) =>
     console.log("llegue a leer Buscar respuesta por foro por id",req.params.id);
     var idBusqueda =  req.params.id;
     console.log(idBusqueda);
-    var sql = ' SELECT *'
-            + ' FROM respuesta r' 
-            + ' WHERE r.id_foro_fk = ?';
+    var sql = ' SELECT u.id_usuario,u.nombre_usuario,u.apellido, r.*'
+            + ' FROM foro f'
+            + ' Inner join respuesta r on r.id_foro_fk = f.id_foro'
+            + ' Inner join usuario u on u.id_usuario = r.id_usuario_fk'  
+            + ' WHERE f.id_foro = ?';
     dbConn.query(sql,[idBusqueda], (err,rows) => {
         if(err) throw err;      
         console.log('El foro by id: ' + idBusqueda);

@@ -21,11 +21,11 @@ let findAllById = (req, res) =>
     console.log(idBusqueda);
     var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
     + ' FROM usuario u' 
-    +' Inner join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
-    +' Inner join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
-    +' Inner join moneda m on m.id_moneda = um.id_moneda_fk'
+    +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
+    +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
+    +' left join moneda m on m.id_moneda = um.id_moneda_fk'
     +' left join rating r on r.id_rating = u.id_rating_fk' 
-    +' Inner join respuestaforo rf on rf.id_usuario_fk = u.id_usuario' 
+    +' left join respuestaforo rf on rf.id_usuario_fk = u.id_usuario' 
     +' WHERE id_usuario=?';
     dbConn.query(sql,[idBusqueda], (err,rows) => {
         if(err) throw err;      
@@ -170,9 +170,10 @@ let findByIdUsuarioByComentarios = (req, res) =>
   console.log(req.params.id);
   var idBusqueda = req.params.id;
   console.log(idBusqueda);
-  var sql =    'SELECT *'  
-              +' FROM comentarios c' 
-              +' WHERE c.id_usuarioDestino = ? ';
+  var sql =    'SELECT u.nombre_usuario,u.apellido, u.esProfesor, c.*'  
+              + ' FROM usuario u'  
+              + ' Inner join comentarios c on c.id_usuarioDestino = u.id_usuario' 
+              + ' WHERE u.id_usuario = ? ';
   console.log(sql);
   dbConn.query(sql,[idBusqueda], (err,rows) => {
       if(err) throw err;      

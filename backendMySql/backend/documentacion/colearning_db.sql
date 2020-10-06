@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-10-2020 a las 03:14:59
+-- Tiempo de generación: 06-10-2020 a las 14:38:10
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -463,18 +463,20 @@ INSERT INTO `rating` (`id_rating`, `votos`, `rating`) VALUES
 CREATE TABLE IF NOT EXISTS `respuesta` (
 `id_respuesta` int(11) NOT NULL,
   `id_foro_fk` int(11) NOT NULL,
-  `titulo_respuesta` varchar(100) NOT NULL,
+  `id_usuario_fk` int(11) NOT NULL,
+  `nombre_respuesta` varchar(100) NOT NULL,
   `des_respuesta` varchar(150) NOT NULL,
   `esMejorRespuesta` tinyint(1) NOT NULL,
-  `votos` int(11) NOT NULL
+  `votos` int(11) NOT NULL,
+  `fecha_alta` varchar(11) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 --
 -- Volcado de datos para la tabla `respuesta`
 --
 
-INSERT INTO `respuesta` (`id_respuesta`, `id_foro_fk`, `titulo_respuesta`, `des_respuesta`, `esMejorRespuesta`, `votos`) VALUES
-(1, 1, 'El saber', 'Ley de la relatividad', 1, 56);
+INSERT INTO `respuesta` (`id_respuesta`, `id_foro_fk`, `id_usuario_fk`, `nombre_respuesta`, `des_respuesta`, `esMejorRespuesta`, `votos`, `fecha_alta`) VALUES
+(1, 1, 2, 'El saber', 'Ley de la relatividad', 1, 56, '2020-10-01');
 
 -- --------------------------------------------------------
 
