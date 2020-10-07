@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-10-2020 a las 14:38:10
+-- Tiempo de generación: 07-10-2020 a las 02:46:06
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -194,7 +194,7 @@ INSERT INTO `domicilio` (`id_domicilio`, `calle`, `numero`, `localidad`, `latitu
 CREATE TABLE IF NOT EXISTS `dondedaclases` (
 `id_dondeClases` int(11) NOT NULL,
   `des_dondeClases` varchar(150) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Volcado de datos para la tabla `dondedaclases`
@@ -202,7 +202,8 @@ CREATE TABLE IF NOT EXISTS `dondedaclases` (
 
 INSERT INTO `dondedaclases` (`id_dondeClases`, `des_dondeClases`) VALUES
 (1, 'En casas'),
-(2, 'En Instituto');
+(2, 'En Instituto'),
+(3, 'Virtual');
 
 -- --------------------------------------------------------
 
@@ -221,7 +222,9 @@ CREATE TABLE IF NOT EXISTS `dondedaclasesporprofesor` (
 
 INSERT INTO `dondedaclasesporprofesor` (`id_dondeDaClases_fk`, `id_usuario_fk`) VALUES
 (1, 1),
-(2, 4);
+(1, 4),
+(2, 4),
+(3, 4);
 
 -- --------------------------------------------------------
 
@@ -259,22 +262,23 @@ INSERT INTO `employees` (`id`, `first_name`, `last_name`, `email`, `phone`, `org
 
 CREATE TABLE IF NOT EXISTS `foro` (
 `id_foro` int(11) NOT NULL,
-  `id_usuario` int(50) NOT NULL,
+  `id_usuario_fk` int(50) NOT NULL,
   `nombre_foro` varchar(50) NOT NULL,
   `pregunta` varchar(150) NOT NULL,
   `esProfesor` tinyint(1) NOT NULL,
   `respuestasCant` varchar(10) NOT NULL,
   `fecha_alta` varchar(50) NOT NULL,
-  `resuelto` tinyint(1) NOT NULL
+  `resuelto` tinyint(1) NOT NULL,
+  `anonimo` double NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `foro`
 --
 
-INSERT INTO `foro` (`id_foro`, `id_usuario`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`) VALUES
-(1, 1, 'Duda Existencial', 'Como hacer??', 1, '114', '', 1),
-(2, 4, 'Pedro', 'Baila', 1, '45', '2020-08-14', 0);
+INSERT INTO `foro` (`id_foro`, `id_usuario_fk`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`, `anonimo`) VALUES
+(1, 1, 'Duda Existencial', 'Como hacer??', 1, '114', '', 1, 0),
+(2, 4, 'Pedro', 'Baila', 1, '45', '2020-08-14', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -591,8 +595,8 @@ CREATE TABLE IF NOT EXISTS `usuariopormoneda` (
 --
 
 INSERT INTO `usuariopormoneda` (`id_usuario_fk`, `id_moneda_fk`, `monto`) VALUES
-(4, 2, 100),
-(1, 2, 10);
+(1, 2, 10),
+(4, 2, 100);
 
 --
 -- Índices para tablas volcadas
@@ -716,7 +720,7 @@ ALTER TABLE `moneda`
 -- Indices de la tabla `profesorporclase`
 --
 ALTER TABLE `profesorporclase`
- ADD PRIMARY KEY (`id_clase_fk`);
+ ADD PRIMARY KEY (`id_clase_fk`,`id_usuario_fk`);
 
 --
 -- Indices de la tabla `rating`
@@ -755,6 +759,12 @@ ALTER TABLE `usuario`
  ADD PRIMARY KEY (`id_usuario`), ADD UNIQUE KEY `email` (`email`), ADD UNIQUE KEY `email_2` (`email`);
 
 --
+-- Indices de la tabla `usuariopormoneda`
+--
+ALTER TABLE `usuariopormoneda`
+ ADD PRIMARY KEY (`id_usuario_fk`,`id_moneda_fk`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -782,7 +792,7 @@ MODIFY `id_domicilio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 -- AUTO_INCREMENT de la tabla `dondedaclases`
 --
 ALTER TABLE `dondedaclases`
-MODIFY `id_dondeClases` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+MODIFY `id_dondeClases` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `employees`
 --

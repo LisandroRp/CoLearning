@@ -36,6 +36,18 @@ router.get('/users/user/:id/comentarios', (req, res) => {
         usuarioController.findByIdUsuarioByComentarios(req,res);  
 });
 
+router.get('/users/profesor/find', (req, res) => {
+    console.log("Consultar Profesor por id: ", req.query);
+    var notengoDomicilio = (req.query.domicilio =='undefined' || req.query.domicilio == '' || !req.query.domicilio);
+    var notengoNombre = (req.query.nameProfesor =='undefined' || req.query.nameProfesor == '' || !req.query.nameProfesor);
+    var notengoMateria = (req.query.nameMateria =='undefined' || req.query.nameMateria == '' || !req.query.nameMateria);
+    var notengoRating = (req.query.valueRating =='undefined' || req.query.valueRating == '' || !req.query.valueRating);
+    if(notengoRating && notengoDomicilio && notengoMateria && notengoNombre) 
+        res.status(409).send({ msg: "Debe ingresar un campo de busqueda." });
+    else
+        usuarioController.findProfesorMateriaDomicilioRating(req,res);  
+});
+
 router.get('/users/profesor/:id', (req, res) => {
     console.log("Consultar Profesor por id: ", req.params);
     if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 

@@ -19,6 +19,25 @@ usuario por comentarios:
 
 localhost:8088/apiColearning/users/user/2/comentarios
 
+Buscar por todos
+
+A medida que el usuario selecciona se concatena el valor a buscar:
+
+Ejemplo aca tiene todos
+
+localhost:8088/apiColearning/users/profesor/find?domicilio=du&nameMateria=ma&nameProfesor=pe&valueRating=4
+
+Por materia
+Aca por materia
+
+localhost:8088/apiColearning/users/profesor/find?nameMateria=ma
+
+Prodesor
+
+localhost:8088/apiColearning/users/profesor/find?nameProfesor=pe&valueRating=4
+
+
+
 ************************* Profesor *********************************************************
 
 Profesor By Id
@@ -65,11 +84,11 @@ busca foro por  id y sus tag
 
 localhost:8088/apiColearning/foros/foro/1/tags
 
-busca solo foro por nombre y sus tag
+busca solo foro por nombre 
 
 localhost:8088/apiColearning/foros/foro?name=du
 
-busca solo foro por nombre y sus tag
+busca solo foro por id
 
 localhost:8088/apiColearning/foros/foro?id=1
 

@@ -123,16 +123,18 @@ let findByIdProfesor= (req, res) =>
     console.log(req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.nombre_usuario,u.apellido, u.instagram, u.whatsApp, u.telefono, u.email, d.calle, d.numero, d.localidad, d.latitud, d.longitud, m.nombre_materia, do.des_dondeClases,tp.des_tipoClases,id_rating_fk'  
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'  
                 +' FROM usuario u' 
-                +' Inner join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
-                +' Inner join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
-                +' Inner join materia m on m.id_materia = mp.id_materia_fk' 
-                +' Inner join dondedaclasesporprofesor dp on dp.id_usuario_fk = u.id_usuario '
-                +' Inner join dondedaclases do on do.id_dondeClases = dp.id_dondeDaClases_fk' 
-                +' Inner join profesorporclase cp on cp.id_usuario_fk = u.id_usuario' 
-                +' Inner join tipoclase tp on tp.id_tipoClases = cp.id_clase_fk' 
-                +' WHERE id_usuario = ? and esProfesor = 1';
+                +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
+                +' left join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
+                +' left join materia m on m.id_materia = mp.id_materia_fk' 
+                +' left join dondedaclasesporprofesor dp on dp.id_usuario_fk = u.id_usuario '
+                +' left join dondedaclases do on do.id_dondeClases = dp.id_dondeDaClases_fk' 
+                +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
+                +' left join moneda mo on mo.id_moneda = um.id_moneda_fk'
+                +' left join rating r on r.id_rating = u.id_rating_fk'
+                +' WHERE u.id_usuario = ? and u.esProfesor = 1'
+                +' Order by 1,6,8 desc';
     console.log(sql);
     dbConn.query(sql,[idBusqueda], (err,rows) => {
         if(err) throw err;      
@@ -183,6 +185,66 @@ let findByIdUsuarioByComentarios = (req, res) =>
     });
 }; 
 
+let findProfesorMateriaDomicilioRating = (req, res) =>
+{      
+  console.log("llegue a leer Buscar varios valores a busacar",req.query);
+  var values = [];
+  var sql = 'SELECT  u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, d.des_domicilio, m.des_moneda,um.monto,r.votos,r.rating' 
+            +' FROM usuario u'
+            +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
+            +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
+            +' left join moneda m on m.id_moneda = um.id_moneda_fk'
+            +' left join rating r on r.id_rating = u.id_rating_fk'
+            +' left join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
+            +' left join materia ma on ma.id_materia = mp.id_materia_fk'   
+            +' WHERE u.esProfesor = 1 or ';
+  var habroParentesis = false;
+  if(req.query.nameProfesor !='undefined' && req.query.nameProfesor != '' && req.query.nameProfesor){
+    console.log("Buscos por nombre profesor: ", req.query.nameProfesor);
+    if(!habroParentesis){
+      sql = sql.concat(' ( ');
+      habroParentesis = true;
+    }
+     sql = sql.concat('u.nombre_usuario like ?'); 
+    values.push('%'.concat(req.query.nameProfesor).concat('%'));
+  }
+  if(req.query.domicilio !='undefined' && req.query.domicilio != '' && req.query.domicilio){
+    console.log("Buscos por nombre domicilio: ", req.query.domicilio);
+    if(!habroParentesis){
+      sql = sql.concat(' ( ')
+      habroParentesis = true;
+    }else{
+      sql = sql.concat(' or ');
+    } 
+    sql = sql.concat('d.des_domicilio like ?');
+    values.push('%'.concat(req.query.domicilio).concat('%'));
+  }
+  if(req.query.nameMateria !='undefined' && req.query.nameMateria != '' && req.query.nameMateria){
+    console.log("Buscos por nombre materia: ", req.query.nameMateria);
+    if(!habroParentesis){
+      sql = sql.concat(' ( ');
+      habroParentesis = true;
+    }else{
+      sql = sql.concat(' or ');
+    } 
+    sql = sql.concat('ma.nombre_materia like ?');
+    values.push('%'.concat(req.query.nameMateria).concat('%'));
+  }
+  if(habroParentesis)
+    sql = sql.concat(' ) ');
+  if(req.query.valueRating !='undefined' && req.query.valueRating != '' && req.query.valueRating){
+    console.log("Buscos por nombre value: ", req.query.valueRating);
+    sql = sql.concat(' and ').concat('r.rating >= ?');
+    values.push(req.query.valueRating);
+  }
+  console.log("Consulta a realizar: ",sql);
+  dbConn.query(sql,values, (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+    res.send(rows);
+   });
+}; 
+
 
 let createUser=(req, res)=>{
 
@@ -224,4 +286,4 @@ let createUser=(req, res)=>{
 
 module.exports = {findAll,findAllById,findByIdProfesor,findAllByIdProfesorByDondeDaClases,
   findByIdProfesorByMaterias,findByIdProfesorByClases,createUser,findAllByMail,
-  findAllByIdProfesorByHorarios,findByIdUsuarioByComentarios};
+  findAllByIdProfesorByHorarios,findByIdUsuarioByComentarios,findProfesorMateriaDomicilioRating};
