@@ -223,8 +223,8 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
   var tieneMateria = (req.query.nameMateria !='undefined' && req.query.nameMateria != '' && req.query.nameMateria);
   var tieneRating = (req.query.valueRating !='undefined' && req.query.valueRating != '' && req.query.valueRating);
   var cruzarDomicilio = ((tieneDomicilio)?' Inner':' left') ;
-  var cruzarMateria = ((tieneDomicilio)?' Inner':' left') ;
-  var cruzarRating = ((tieneDomicilio)?' Inner':' left') ;
+  var cruzarMateria = ((tieneMateria)?' Inner':' left') ;
+  var cruzarRating = ((tieneRating)?' Inner':' left') ;
 
   var sql = 'SELECT  u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, d.des_domicilio, m.des_moneda,um.monto,r.votos,r.rating' 
             +' FROM usuario u'
@@ -234,21 +234,26 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
             + cruzarRating + ' join rating r on r.id_rating = u.id_rating_fk'
             +' left join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
             + cruzarMateria +' join materia ma on ma.id_materia = mp.id_materia_fk'   
-            +' WHERE u.esProfesor = 1 or ';
+            +' WHERE u.esProfesor = 1  ';
   var habroParentesis = false;
+  if(tieneRating){
+    console.log("Buscos por nombre value: ", req.query.valueRating);
+    sql = sql.concat(' and ').concat('r.rating >= ?');
+    values.push(req.query.valueRating);
+  }
   if(tieneProfesor){
     console.log("Buscos por nombre profesor: ", req.query.nameProfesor);
     if(!habroParentesis){
-      sql = sql.concat(' ( ');
+      sql = sql.concat(' and ( ');
       habroParentesis = true;
     }
-     sql = sql.concat('u.nombre_usuario like ?'); 
+     sql = sql.concat(' u.nombre_usuario like ?'); 
     values.push('%'.concat(req.query.nameProfesor).concat('%'));
   }
   if(tieneDomicilio){
     console.log("Buscos por nombre domicilio: ", req.query.domicilio);
     if(!habroParentesis){
-      sql = sql.concat(' ( ')
+      sql = sql.concat(' and ( ')
       habroParentesis = true;
     }else{
       sql = sql.concat(' or ');
@@ -259,7 +264,7 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
   if(tieneMateria){
     console.log("Buscos por nombre materia: ", req.query.nameMateria);
     if(!habroParentesis){
-      sql = sql.concat(' ( ');
+      sql = sql.concat(' and ( ');
       habroParentesis = true;
     }else{
       sql = sql.concat(' or ');
@@ -269,12 +274,8 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
   }
   if(habroParentesis)
     sql = sql.concat(' ) ');
-  if(tieneRating){
-    console.log("Buscos por nombre value: ", req.query.valueRating);
-    sql = sql.concat(' and ').concat('r.rating >= ?');
-    values.push(req.query.valueRating);
-  }
   console.log("Consulta a realizar: ",sql);
+  console.log("Consulta a realizar: ",values);
   dbConn.query(sql,values, (err,rows) => {
       if(err) throw err;      
       console.log(rows);
