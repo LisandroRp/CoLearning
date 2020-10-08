@@ -145,6 +145,35 @@ let findByIdProfesor= (req, res) =>
 
 };
 
+let findAllProfesores= (req, res) =>
+{      
+    console.log("llegue a leer findByIdProfesor con filtro");
+    //Obtener id busqueda req.param.tagid
+    console.log(req.params.id);
+    var idBusqueda = req.params.id;
+    console.log(idBusqueda);
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'  
+                +' FROM usuario u' 
+                +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
+                +' left join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
+                +' left join materia m on m.id_materia = mp.id_materia_fk' 
+                +' left join dondedaclasesporprofesor dp on dp.id_usuario_fk = u.id_usuario '
+                +' left join dondedaclases do on do.id_dondeClases = dp.id_dondeDaClases_fk' 
+                +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
+                +' left join moneda mo on mo.id_moneda = um.id_moneda_fk'
+                +' left join rating r on r.id_rating = u.id_rating_fk'
+                +' WHERE u.esProfesor = 1'
+                +' Order by 1,6,8 desc';
+    console.log(sql);
+    dbConn.query(sql,[idBusqueda], (err,rows) => {
+        if(err) throw err;      
+        console.log('El usuario by id: ' + idBusqueda);
+        console.log(rows);
+        res.send(rows);
+      });
+
+};
+
 let findAllByIdProfesorByHorarios = (req, res) =>
 {      
   console.log("llegue a leer findAllByIdProfesorByHorarios con filtro");
@@ -174,8 +203,8 @@ let findByIdUsuarioByComentarios = (req, res) =>
   console.log(idBusqueda);
   var sql =    'SELECT u.nombre_usuario,u.apellido, u.esProfesor, c.*'  
               + ' FROM usuario u'  
-              + ' Inner join comentarios c on c.id_usuarioDestino = u.id_usuario' 
-              + ' WHERE u.id_usuario = ? ';
+              + ' Inner join comentarios c on c.id_usuarioOrigen = u.id_usuario' 
+              + ' WHERE c.id_usuarioDestino = ? ';
   console.log(sql);
   dbConn.query(sql,[idBusqueda], (err,rows) => {
       if(err) throw err;      
@@ -189,17 +218,25 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
 {      
   console.log("llegue a leer Buscar varios valores a busacar",req.query);
   var values = [];
+  var tieneProfesor = (req.query.nameProfesor !='undefined' && req.query.nameProfesor != '' && req.query.nameProfesor);
+  var tieneDomicilio = (req.query.domicilio !='undefined' && req.query.domicilio != '' && req.query.domicilio);
+  var tieneMateria = (req.query.nameMateria !='undefined' && req.query.nameMateria != '' && req.query.nameMateria);
+  var tieneRating = (req.query.valueRating !='undefined' && req.query.valueRating != '' && req.query.valueRating);
+  var cruzarDomicilio = ((tieneDomicilio)?' Inner':' left') ;
+  var cruzarMateria = ((tieneDomicilio)?' Inner':' left') ;
+  var cruzarRating = ((tieneDomicilio)?' Inner':' left') ;
+
   var sql = 'SELECT  u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, d.des_domicilio, m.des_moneda,um.monto,r.votos,r.rating' 
             +' FROM usuario u'
-            +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
+            +  cruzarDomicilio +' join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
             +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
             +' left join moneda m on m.id_moneda = um.id_moneda_fk'
-            +' left join rating r on r.id_rating = u.id_rating_fk'
+            + cruzarRating + ' join rating r on r.id_rating = u.id_rating_fk'
             +' left join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
-            +' left join materia ma on ma.id_materia = mp.id_materia_fk'   
+            + cruzarMateria +' join materia ma on ma.id_materia = mp.id_materia_fk'   
             +' WHERE u.esProfesor = 1 or ';
   var habroParentesis = false;
-  if(req.query.nameProfesor !='undefined' && req.query.nameProfesor != '' && req.query.nameProfesor){
+  if(tieneProfesor){
     console.log("Buscos por nombre profesor: ", req.query.nameProfesor);
     if(!habroParentesis){
       sql = sql.concat(' ( ');
@@ -208,7 +245,7 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
      sql = sql.concat('u.nombre_usuario like ?'); 
     values.push('%'.concat(req.query.nameProfesor).concat('%'));
   }
-  if(req.query.domicilio !='undefined' && req.query.domicilio != '' && req.query.domicilio){
+  if(tieneDomicilio){
     console.log("Buscos por nombre domicilio: ", req.query.domicilio);
     if(!habroParentesis){
       sql = sql.concat(' ( ')
@@ -219,7 +256,7 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
     sql = sql.concat('d.des_domicilio like ?');
     values.push('%'.concat(req.query.domicilio).concat('%'));
   }
-  if(req.query.nameMateria !='undefined' && req.query.nameMateria != '' && req.query.nameMateria){
+  if(tieneMateria){
     console.log("Buscos por nombre materia: ", req.query.nameMateria);
     if(!habroParentesis){
       sql = sql.concat(' ( ');
@@ -232,7 +269,7 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
   }
   if(habroParentesis)
     sql = sql.concat(' ) ');
-  if(req.query.valueRating !='undefined' && req.query.valueRating != '' && req.query.valueRating){
+  if(tieneRating){
     console.log("Buscos por nombre value: ", req.query.valueRating);
     sql = sql.concat(' and ').concat('r.rating >= ?');
     values.push(req.query.valueRating);
@@ -286,4 +323,4 @@ let createUser=(req, res)=>{
 
 module.exports = {findAll,findAllById,findByIdProfesor,findAllByIdProfesorByDondeDaClases,
   findByIdProfesorByMaterias,findByIdProfesorByClases,createUser,findAllByMail,
-  findAllByIdProfesorByHorarios,findByIdUsuarioByComentarios,findProfesorMateriaDomicilioRating};
+  findAllByIdProfesorByHorarios,findByIdUsuarioByComentarios,findProfesorMateriaDomicilioRating,findAllProfesores};

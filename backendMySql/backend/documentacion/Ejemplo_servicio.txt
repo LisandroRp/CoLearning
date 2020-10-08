@@ -40,6 +40,11 @@ localhost:8088/apiColearning/users/profesor/find?nameProfesor=pe&valueRating=4
 
 ************************* Profesor *********************************************************
 
+Todos los profesores
+
+localhost:8088/apiColearning/users/profesores
+
+
 Profesor By Id
 
 localhost:8088/apiColearning/users/profesor/1

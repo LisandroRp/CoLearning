@@ -18,6 +18,11 @@ router.get('/users/mail', (req, res) => {
         usuarioController.findAllByMail(req,res);  
 });
 
+router.get('/users/profesores', (req, res) => {
+    console.log("Consultar Profesor todos los profesores: ", req.params);
+    usuarioController.findAllProfesores(req,res);  
+});
+
 router.get('/users/:id', (req, res) => {
     console.log("Consultar Usuarios por id: ", req.params);
     if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
@@ -25,8 +30,6 @@ router.get('/users/:id', (req, res) => {
     else
         usuarioController.findAllById(req,res);  
 });
-
-
 
 router.get('/users/user/:id/comentarios', (req, res) => {
     console.log("Consultar Usuarios por comentario id: ", req.params);
@@ -47,6 +50,7 @@ router.get('/users/profesor/find', (req, res) => {
     else
         usuarioController.findProfesorMateriaDomicilioRating(req,res);  
 });
+
 
 router.get('/users/profesor/:id', (req, res) => {
     console.log("Consultar Profesor por id: ", req.params);
