@@ -201,7 +201,7 @@ let findByIdUsuarioByComentarios = (req, res) =>
   console.log(req.params.id);
   var idBusqueda = req.params.id;
   console.log(idBusqueda);
-  var sql =    'SELECT u.nombre_usuario,u.apellido, u.esProfesor, c.*'  
+  var sql =    'SELECT u.nombre_usuario,u.apellido,u.src, u.esProfesor, c.*'  
               + ' FROM usuario u'  
               + ' Inner join comentarios c on c.id_usuarioOrigen = u.id_usuario' 
               + ' WHERE c.id_usuarioDestino = ? ';
