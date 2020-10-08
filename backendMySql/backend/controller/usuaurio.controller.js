@@ -19,7 +19,7 @@ let findAllById = (req, res) =>
     console.log("llegue a leer Buscar usuario por id",req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,d.latitud,d.longitud, m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
     + ' FROM usuario u' 
     +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
     +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
@@ -123,7 +123,7 @@ let findByIdProfesor= (req, res) =>
     console.log(req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'  
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.scr, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'  
                 +' FROM usuario u' 
                 +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
                 +' left join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
@@ -152,7 +152,7 @@ let findAllProfesores= (req, res) =>
     console.log(req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'  
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.scr, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'  
                 +' FROM usuario u' 
                 +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
                 +' left join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
@@ -226,7 +226,7 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
   var cruzarMateria = ((tieneMateria)?' Inner':' left') ;
   var cruzarRating = ((tieneRating)?' Inner':' left') ;
 
-  var sql = 'SELECT  u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, d.des_domicilio, m.des_moneda,um.monto,r.votos,r.rating' 
+  var sql = 'SELECT  u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, u.src, d.des_domicilio,d.latitud,d.longitud, m.des_moneda,um.monto,r.votos,r.rating' 
             +' FROM usuario u'
             +  cruzarDomicilio +' join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
             +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
@@ -247,8 +247,9 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
       sql = sql.concat(' and ( ');
       habroParentesis = true;
     }
-     sql = sql.concat(' u.nombre_usuario like ?'); 
+     sql = sql.concat(' u.nombre_usuario like ? or u.nombre_usuario like ? '); 
     values.push('%'.concat(req.query.nameProfesor).concat('%'));
+    values.push('%'.concat(req.query.nameProfesor.trim()).concat('%'));
   }
   if(tieneDomicilio){
     console.log("Buscos por nombre domicilio: ", req.query.domicilio);
@@ -258,8 +259,9 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
     }else{
       sql = sql.concat(' or ');
     } 
-    sql = sql.concat('d.des_domicilio like ?');
+    sql = sql.concat('d.des_domicilio like ? or d.des_domicilio like ?');
     values.push('%'.concat(req.query.domicilio).concat('%'));
+    values.push('%'.concat(req.query.domicilio.trim()).concat('%'));
   }
   if(tieneMateria){
     console.log("Buscos por nombre materia: ", req.query.nameMateria);
@@ -269,8 +271,9 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
     }else{
       sql = sql.concat(' or ');
     } 
-    sql = sql.concat('ma.nombre_materia like ?');
+    sql = sql.concat('ma.nombre_materia like ? or ma.nombre_materia like ?');
     values.push('%'.concat(req.query.nameMateria).concat('%'));
+    values.push('%'.concat(req.query.nameMateria.trim()).concat('%'));
   }
   if(habroParentesis)
     sql = sql.concat(' ) ');
