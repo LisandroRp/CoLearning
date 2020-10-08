@@ -152,7 +152,7 @@ let findAllProfesores= (req, res) =>
     console.log(req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.scr, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'  
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'  
                 +' FROM usuario u' 
                 +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
                 +' left join materiaporprofesor mp on mp.id_usuario_fk = u.id_usuario' 
