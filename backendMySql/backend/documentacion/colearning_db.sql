@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-10-2020 a las 02:46:06
+-- Tiempo de generación: 09-10-2020 a las 02:14:03
 -- Versión del servidor: 5.5.39
 -- Versión de PHP: 5.4.31
 
@@ -269,14 +269,14 @@ CREATE TABLE IF NOT EXISTS `foro` (
   `respuestasCant` varchar(10) NOT NULL,
   `fecha_alta` varchar(50) NOT NULL,
   `resuelto` tinyint(1) NOT NULL,
-  `anonimo` double NOT NULL
+  `esAnonimo` double NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `foro`
 --
 
-INSERT INTO `foro` (`id_foro`, `id_usuario_fk`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`, `anonimo`) VALUES
+INSERT INTO `foro` (`id_foro`, `id_usuario_fk`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`, `esAnonimo`) VALUES
 (1, 1, 'Duda Existencial', 'Como hacer??', 1, '114', '', 1, 0),
 (2, 4, 'Pedro', 'Baila', 1, '45', '2020-08-14', 0, 0);
 
@@ -572,11 +572,11 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 --
 
 INSERT INTO `usuario` (`id_usuario`, `password`, `esProfesor`, `nombre_usuario`, `src`, `instagram`, `whatsApp`, `apellido`, `telefono`, `email`, `id_domicilio_fk`, `id_tipoPerfil_fk`, `id_rating_fk`) VALUES
-(1, 'admin', 1, 'Wachin', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin1@gmail.com', 1, 1, 1),
-(2, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', 2, 1, 1),
-(3, 'selacome', 0, 'Licha', '', '@Licha', '0111566666', 'MeLaComo', '0111566666', 'lichan@gmail.com', 2, 2, 2),
-(4, 'lisandro', 1, 'Lisandro', '', 'lisandrorp', '1111212', 'Rodriguez', '1212121', 'prado@gmail.com', 1, 1, 1),
-(6, 'admipepen', 1, 'admipepen', '', '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachines@gmail.com', 1, 1, 1);
+(1, 'admin', 1, 'Wachin', NULL, '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin1@gmail.com', 1, 1, 1),
+(2, 'admipepen', 1, 'admipepen', NULL, '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachin@gmail.com', 2, 1, 1),
+(3, 'selacome', 0, 'Licha', NULL, '@Licha', '0111566666', 'MeLaComo', '0111566666', 'lichan@gmail.com', 2, 2, 2),
+(4, 'lisandro', 1, 'Lisandro', NULL, 'lisandrorp', '1111212', 'Rodriguez', '1212121', 'prado@gmail.com', 1, 1, 1),
+(6, 'admipepen', 1, 'admipepen', NULL, '@LisandroRp', '0111566666', 'Turro', '0111566666', 'wachines@gmail.com', 1, 1, 1);
 
 -- --------------------------------------------------------
 

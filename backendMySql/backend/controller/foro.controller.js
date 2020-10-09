@@ -78,7 +78,7 @@ let findAllByNames = (req, res) =>
     //var idBusqueda =  '%'+req.params.name+ '%';
     var idBusqueda = '%'.concat(req.params.name.concat('%'));
     console.log(idBusqueda);
-    var sql = ' SELECT f.id_foro,f.id_usuario,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
+    var sql = ' SELECT f.id_foro,f.id_usuario_fk as id_usuario,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
     + ' FROM foro f' 
     + ' left join foroportag ft on ft.id_foro_fk = f.id_foro'
     + ' left join tag t on ft.id_tag_fk = t.id_tag' 
