@@ -78,10 +78,11 @@ let findAllByNames = (req, res) =>
     //var idBusqueda =  '%'+req.params.name+ '%';
     var idBusqueda = '%'.concat(req.params.name.concat('%'));
     console.log(idBusqueda);
-    var sql = ' SELECT f.id_foro,f.id_usuario_fk as id_usuario,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
+    var sql = ' SELECT u.nombre_usuario,u.apellido, f.id_foro,f.id_usuario_fk as id_usuario,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
     + ' FROM foro f' 
     + ' left join foroportag ft on ft.id_foro_fk = f.id_foro'
-    + ' left join tag t on ft.id_tag_fk = t.id_tag' 
+    + ' left join tag t on ft.id_tag_fk = t.id_tag'
+    + ' left join usuario u on f.id_usuario_fk = u.id_usuario'    
     + ' WHERE f.nombre_foro like ?  or t.nombre_tag like  ? or f.pregunta like ?';
     dbConn.query(sql,[idBusqueda,idBusqueda,idBusqueda], (err,rows) => {
         if(err) throw err;      
