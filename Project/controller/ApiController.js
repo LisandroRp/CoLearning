@@ -1,72 +1,156 @@
 import { Component } from 'react';
 
 //  var ip = '172.20.10.5';
-var ip = '192.168.1.105';
+var ip = '192.168.1.20';
 //var ip = '172.20.10.8';
-var url = 'http://'+ip+':8080/apiColearning';
+var url = 'http://'+ip+':8088/apiColearning';
 const key ="AIzaSyCdgRdU-qT9RXGnIBSyEUNVvCJtGhai1Ck"
 
 class ApiController extends Component {
 
-    getEventos(okEventos) {
-        let uri = url+'/getEventos'
-        fetch(uri).then(res => {
-            return res.json()
-        }).catch((err) => alert("Intentar de nuevo")).
-            then(data => {
-                okEventos(data);
-            }).catch((err) => alert("Intentar de nuevo"));
-    }
 //********************** */
 //Usuarios
 //********************** */
 getUsuarioByMail(mail, okUsuario) {
-    let uri = url+'/usuarios/mail?mail=' + mail
+    let uri = url+'/users/mail?email=' + mail
     fetch(uri).then(res => {
         return res.json()
-    }).catch((err) => alert("Intentar de nuevo1")).
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
         then(data => {
             okUsuario(data[0]);
-        }).catch((err) => alert("Intentar de nuevo2"));
+        })
 }
 getUsuarioById(id_usuario, okUsuario) {
-    let uri = url+'/usuarios/mail?mail=' + id_usuario
+    let uri = url+'/users/' + id_usuario
     fetch(uri).then(res => {
         return res.json()
-    }).catch((err) => alert("Intentar de nuevo1")).
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
         then(data => {
             okUsuario(data[0]);
-        }).catch((err) => alert("Intentar de nuevo2"));
+        })
 }
-getUsuarios(okUsuarios) {
-    let uri = url+'/usuarios'
+getDondeClases(usuario, okDondeClases) {
+    let uri = url+'/users/profesor/' + usuario.id_usuario + '/dondeDaClases'
     fetch(uri).then(res => {
         return res.json()
-    }).catch((err) => alert("Intentar de nuevo")).
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
         then(data => {
-            okUsuarios(data);
-        }).catch((err) => alert("Intentar de nuevo"));
+            okDondeClases(usuario, data);
+        })
+}
+getTipoClases(usuario, okTipoClases) {
+    let uri = url+'/users/profesor/' + usuario.id_usuario + '/tipoClases'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okTipoClases(usuario, data);
+        })
+}
+getMateriasProfesor(usuario, okMaterias) {
+    let uri = url+'/users/profesor/' + usuario.id_usuario + '/materias'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okMaterias(usuario, data);
+        })
+}
+getHorarios(usuario, okHorarios) {
+    let uri = url+'/users/profesor/' + usuario.id_usuario + '/horarios'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okHorarios(usuario, data);
+        })
+}
+getMaterias(okMaterias) {
+    let uri = url+'/materias'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okMaterias(data);
+        })
+}
+getMonedas(okMonedas) {
+    let uri = url+'/monedas'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okMonedas(data);
+        })
+}
+getTags(okTags) {
+    let uri = url+'/tags'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okTags(data);
+        })
 }
 //********************** */
 //Profesores
 //********************** */
-getProfesores(okProfesor) {
-    let uri = url+'/profesores'
-    fetch(uri).then(res => {
-        return res.json()
-    }).catch((err) => alert("Intentar de nuevo")).
-        then(data => {
-            okProfesor(data);
-        }).catch((err) => alert("Intentar de nuevo"));
-}
 getComentariosByIdProfesor(id_usuario, okComentarios) {
-    let uri = url+'/profesores'
+    let uri = url+'/users/user/' + id_usuario + '/comentarios'
     fetch(uri).then(res => {
         return res.json()
-    }).catch((err) => alert("Intentar de nuevo")).
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
         then(data => {
             okComentarios(data);
-        }).catch((err) => alert("Intentar de nuevo"));
+        })
+}
+getProfesoresHome(okProfesores) {
+    let uri = url+'/users/profesores'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okProfesores(data);
+        })
+}
+getProfesoresFilter(nombre, materia, domicilio, rating, okProfesores) {
+    let uri = url+'/users/profesor/find?domicilio=' + domicilio + '&nameMateria=' + materia + '&nameProfesor=' + nombre + '&valueRating=' + rating
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okProfesores(data);
+        })
+}
+//********************** */
+//Foro
+//********************** */
+getForo(id_foro, okForo) {
+    let uri = url+'/foros/foro?id=' + id_foro
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okForo(data);
+        })
+}
+getFiltroForo(tema, okForo) {
+    let uri = url+'/foros/tags/'+ tema
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okForo(data);
+        })
+}
+getRespuestasForo(id_foro, okForo) {
+    let uri = url+'/foros/foro/' + id_foro + '/respuestas'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okForo(data);
+        })
 }
 //********************** */
 //Apis
@@ -94,8 +178,8 @@ getComentariosByIdProfesor(id_usuario, okComentarios) {
         fetch(urigoogle).then(res => {
             return res.json()
         }).catch((err) => {
-            console.log(err)
-
+            console.log(err),
+            alert("No Existe Ruta con el Transporte Seleccionado");
         }).
             then(data => {
                 okRoad(direccion, data);

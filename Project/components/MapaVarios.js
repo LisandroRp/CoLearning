@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, Dimensions, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, Dimensions, Image } from "react-native";
 import { Entypo } from '@expo/vector-icons';
 import MapView from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import Carousel from 'react-native-snap-carousel';
 import { withNavigation } from 'react-navigation';
+
 import UserDataManager from './UserDataManager';
-
-
-import { Components } from 'expo';
+import ApiController from '../controller/ApiController';
+import ExportadorObjetos from './exportadores/ExportadorObjetos';
 
 //const MapView = Components.MapView;
 
@@ -30,23 +30,7 @@ const CARD_WIDTH = width * 0.9;
 class MapaVarios extends Component {
   state = {
     markers: [],
-    coordinates: [
-      { name: 'Matematica', direccion: 'Jujuy 3000', institucion: 'instituto locas organizadas', distancia: '100km', tiempo: "8hs", latitude: -34.901978, longitude: -58.621620, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "100" } },
-      { name: 'Piano', direccion: 'Cordoba 565', latitude: -34.911988, longitude: -58.621620, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "100" } },
-      { name: 'Guitarra', direccion: 'Giribone 909', latitude: -34.905988, longitude: -58.621620, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "100" } },
-      // { name: 'Centro', latitude: -34.896500, longitude: -58.621620},
-      // { name: 'Izquierda', latitude: -34.896500, longitude: -58.631620},
-      // { name: 'Izquierda2', latitude: -34.896500, longitude: -58.641620},
-      // { name: 'IzquierdaArriba', latitude: -34.890500, longitude: -58.641620},
-      // { name: 'Derecha', latitude: -34.896500, longitude: -58.611620},
-      // { name: 'Derecha2', latitude: -34.896500, longitude: -58.601620},
-      // { name: 'DerechaAbajo', latitude: -34.901500, longitude: -58.601620},
-      // { name: 'Ping Pong', latitude: -34.891988, longitude: -58.621620},
-      // { name: 'Magia', latitude: -34.881988, longitude: -58.621620},
-      // { name: 'Fortine', latitude: -34.886988, longitude: -58.621620},
-      // { name: 'Play Station', latitude: -34.881988, longitude: -58.611620},
-      // { name: 'Futbol', latitude: -34.911988, longitude: -58.631620},
-    ],
+    coordinates: [],
     region: {
       latitude: 45.52220671242907,
       longitude: -122.6653281029795,
@@ -60,15 +44,11 @@ class MapaVarios extends Component {
   };
 
   componentDidMount = async () => {
-    this.setState({ tipoMapa: this.props.navigation.getParam('tipo'), isLoading: false })
-    //this.obtenerPos(this.okPos.bind(this))
+    ApiController.getProfesoresFilter(await this.props.navigation.getParam("nombre_profesor"), await this.props.navigation.getParam("materia"), await this.props.navigation.getParam("des_domicilio"), await this.props.navigation.getParam("rating"), this.okProfesores.bind(this))
   }
-  obtenerPos(okPos) {
-    //this.setState({ miLongitude: UserDataManager.getInstance().getLongitude(), miLatitude: UserDataManager.getInstance().getLatitude() })
-    okPos()
-  }
-  okPos() {
-    this.setState({ isLoading: false })
+  okProfesores(profesoresBase) {
+    console.log(profesoresBase)
+    this.setState({ miLongitude: UserDataManager.getInstance().getLongitude(), miLatitude: UserDataManager.getInstance().getLatitude(), tipoMapa: this.props.navigation.getParam('tipo'), coordinates: profesoresBase, isLoading: false })
   }
 
   onCarouselItemChange = (index) => {
@@ -101,11 +81,11 @@ class MapaVarios extends Component {
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+          <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }} />
         </View>
       );
     } else {
-      return (  
+      return (
         <View style={styles.container}>
           <MapView
             ref={map => this._map = map}
@@ -120,13 +100,13 @@ class MapaVarios extends Component {
             {
               this.state.coordinates.map((marker, index) => (
                 <Marker
-                  key={marker.name}
+                  key={(this.state.tipoMapa == "Curso" ? marker.id_curso : marker.id_usuario)}
                   ref={ref => this.state.markers[index] = ref}
                   onPress={() => this.onMarkerPressed(marker, index)}
                   coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
                 >
                   <Callout>
-                    <Text>{marker.name}</Text>
+                    <Text>{(this.state.tipoMapa == "Curso" ? marker.nombre_curso : marker.nombre_usuario)}</Text>
                   </Callout>
 
                 </Marker>
@@ -135,14 +115,15 @@ class MapaVarios extends Component {
 
 
           </MapView>
-          <View style={styles.safeArea}/>
+          <View style={styles.safeArea} />
           <TouchableOpacity style={[styles.backBubble, styles.shadow]} onPress={() => this.volver()}>
-            <Entypo name="chevron-left" size={hp(4.4)} style={{textAlignVertical: "center"}} color={'#F28C0F'} />
+            <Entypo name="chevron-left" size={hp(4.4)} style={{ textAlignVertical: "center" }} color={'#F28C0F'} />
           </TouchableOpacity>
           <Carousel
             ref={(c) => { this._carousel = c; }}
             data={this.state.coordinates}
             containerCustomStyle={styles.carousel}
+            key={(item) => (this.state.tipoMapa == 'Curso' ? item.id_curso : item.id_usuario)}
             contentContainerCustomStyle={{ alignItems: 'center' }}
             renderItem={this.renderCarouselItem}
             sliderWidth={Dimensions.get('window').width}
@@ -158,42 +139,58 @@ class MapaVarios extends Component {
   renderCarouselItem = ({ item }) =>
     (this.state.tipoMapa == 'Curso') ?
       <View style={[styles.cardContainer, styles.shadow]}>
-        <TouchableOpacity style={styles.cardContainer2} onPress={() => this.props.onPressGoCurso(item.id_curso, item.nombre, item.direccion)}>
+        <TouchableOpacity style={styles.cardContainer2} onPress={() => this.props.onPressGoCurso(item.id_curso, item.nombre_curso, item.des_domicilio)}>
 
           <View style={styles.cardImage}>
             <Text style={{ fontSize: hp(5), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
-              {item.name.slice(0, 1).toUpperCase()}
+              {item.nombre_curso.slice(0, 1).toUpperCase()}
             </Text>
           </View>
 
-          <View style={{ flexDirection: 'column', width: 0, flexGrow: 1 }}>
-            <Text style={styles.cardTitle}>{item.name}</Text>
+          <View style={{ flexDirection: 'column', flex: 1 }}>
+            <Text style={styles.cardTitle}>{item.nombre_curso}</Text>
             <Text style={styles.cardInstituto}>{item.institucion}</Text>
-            <Text style={styles.cardDireccion}>{item.direccion}</Text>
-            <TouchableOpacity style={styles.cardButton} onPress={() => this.props.onPressMap(item.id_profesor, item.nombre, item.direccion)}><Text style={styles.cardButtonText}>Calcular Recorrido</Text></TouchableOpacity>
+            <Text style={styles.cardDireccion}>{item.des_domicilio}</Text>
+            <TouchableOpacity style={styles.cardButton} onPress={() => this.props.onPressMap(item.id_curso, item.nombre_curso, item.des_domicilio)}><Text style={styles.cardButtonText}>Calcular Recorrido</Text></TouchableOpacity>
           </View>
         </TouchableOpacity>
       </View>
+      /////////////////////
       :
+      /////////////////////
       <View style={[styles.cardContainer, styles.shadow]}>
-        <TouchableOpacity style={styles.cardContainer2} onPress={() => this.props.onPressGoProfesor(item.id_profesor, item.nombre, item.direccion)}>
+        <View style={{ justifyContent: "center" }}>
+          
+            {ExportadorObjetos.profileImage(item.id_usuario) ?
+              <View style={[styles.cardImageContainer, {borderWidth: 0}]}>
+              <Image
+                source={ExportadorObjetos.profileImage(item.id_usuario)}
+                style={[styles.cardImage, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
+              />
+              </View>
+              :
+              <View style={[styles.cardImageContainer, {borderWidth: 1.5}]}>
+              <Text style={{ fontSize: hp(5), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
+                {item.nombre_usuario.slice(0, 1).toUpperCase()}
+              </Text>
+              </View>
+            } 
+        </View>
 
-          <View style={styles.cardImage}>
-            <Text style={{ fontSize: hp(5), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
-              {item.name.slice(0, 1).toUpperCase()}
-            </Text>
+        <View style={{ flexDirection: 'column', flex: 1 }}>
+          <Text style={styles.cardTitle} numberOfLines={2}>{item.nombre_usuario}{item.apellido ? ('\n' + item.apellido) : ""}</Text>
+          <Text style={styles.cardDireccion}>{item.des_domicilio}</Text>
+          <View style={styles.cardMoneyContainer}>
+            <Text style={styles.cardSubTituloMoney}>A partir de: </Text>
+            <Text style={styles.cardSubTituloMoneyMonto}>{item.des_moneda}{item.monto}/h</Text>
           </View>
-
-          <View style={{ flexDirection: 'column', width: 0, flexGrow: 1 }}>
-            <Text style={styles.cardTitle}>{item.name}</Text>
-            <Text style={styles.cardDireccion}>{item.direccion}</Text>
-            <View style={styles.cardMoneyContainer}>
-              <Text style={styles.cardSubTituloMoney}>A partir de: </Text>
-              <Text style={styles.cardSubTituloMoneyMonto}>{item.money.id_moneda.nombre}{item.money.monto}/h</Text>
-            </View>
-            <TouchableOpacity style={styles.cardButton} onPress={() => this.props.onPressMap(item.id_profesor, item.name, item.direccion)}><Text style={styles.cardButtonText}>Calcular Recorrido</Text></TouchableOpacity>
+          <View style={{ flexDirection: 'row', justifyContent: "center" }}>
+            <TouchableOpacity style={styles.cardButton} onPress={() => this.props.onPressMap(item.id_usuario, item.nombre_usuario, item.apellido, item.des_domicilio, this.state.tipoMapa)}><Text style={styles.cardButtonText}>Calcular Recorrido</Text></TouchableOpacity>
+            <TouchableOpacity style={{ justifyContent: 'center', flex: 1, paddingLeft: wp(4) }} onPress={() => this.props.onPressGoProfesor(item.id_usuario, item.nombre_usuario, item.des_domicilio, true)}>
+              <Entypo name="info-with-circle" size={hp(3.3)} color={"#F28C0F"} />
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </View>
       </View>
 }
 
@@ -218,18 +215,13 @@ const styles = StyleSheet.create({
     paddingVertical: hp(4.4)
   },
   cardContainer: {
-    //backgroundColor: 'rgba(0, 0, 0, 0.6)',
     backgroundColor: 'white',
-    height: hp(20),
-    width: wp(80),
+    flex: 1,
+    padding: hp(2),
     borderRadius: 24,
     flexDirection: 'row',
-    alignItems: 'center',
-    alignContent: 'center',
-    flexWrap: 'wrap'
   },
   cardContainer2: {
-    //backgroundColor: 'rgba(0, 0, 0, 0.6)',
     backgroundColor: 'white',
     height: hp(20),
     width: wp(80),
@@ -239,20 +231,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
   },
-  cardImage: {
+  cardImageContainer: {
     height: hp(10),
     width: hp(10),
     backgroundColor: '#FFF7EE',
+    borderColor: "#F28C0F",
     marginRight: wp(5),
-    borderRadius: 100,
+    borderRadius: hp(10) / 2,
     justifyContent: "center"
+  },
+  cardImage: {
+    resizeMode: "contain",
+    height: "100%",
+    width: "100%",
+    borderRadius: hp(10) / 2,
   },
   cardTitle: {
     color: '#F28C0F',
     fontSize: wp(5.5),
     alignSelf: 'center',
-    textAlign: 'center',
-    marginTop: hp(2.5)
+    textAlign: 'center'
   },
   cardInstituto: {
     color: 'black',
@@ -263,15 +261,14 @@ const styles = StyleSheet.create({
   cardDireccion: {
     color: 'black',
     fontSize: wp(3),
-    alignSelf: 'center',
-    marginBottom: hp(2)
+    textAlign: 'center',
+    marginBottom: hp(2),
+    marginTop: hp(0.5)
   },
   cardButton: {
     backgroundColor: '#F28C0F',
-    alignSelf: 'center',
-    padding: hp(1.5 ),
-    borderRadius: 10,
-    marginBottom: hp(2)
+    padding: hp(1.5),
+    borderRadius: 10
   },
   cardButtonText: {
     textAlign: 'center',
@@ -283,34 +280,39 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   cardMoneyContainer: {
-flexDirection: "row",
-justifyContent:"center",
-marginBottom: hp(2)
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: hp(2)
   },
   cardSubTituloMoney: {
     marginTop: 1,
     fontSize: wp(3),
     color: "black"
-},
-cardSubTituloMoneyMonto: {
+  },
+  cardSubTituloMoneyMonto: {
     fontWeight: "bold",
     marginTop: 1,
     fontSize: wp(3),
     color: "green"
-},
-backBubble: {
-  alignItems: "center",
-  justifyContent: "center",
-  height: hp(5.5),
-  width: hp(5.5),
-  marginBottom: hp(5),
-  marginTop: hp(2),
-  marginLeft: wp(4),
-  borderRadius: 50,
-  backgroundColor: 'white'
-},
-shadow:{
-  shadowColor: '#00000021',
+  },
+  backBubble: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: hp(5.5),
+    width: hp(5.5),
+    marginBottom: hp(5),
+    marginTop: hp(2),
+    marginLeft: wp(4),
+    borderRadius: 50,
+    backgroundColor: 'white'
+  },
+  backBubbleLoading: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+  },
+  shadow: {
+    shadowColor: '#00000021',
     shadowOffset: {
       width: 0,
       height: 10,
@@ -318,7 +320,7 @@ shadow:{
     shadowOpacity: 2,
     shadowRadius: 8,
     elevation: 55,
-}
+  }
 });
 
 export default withNavigation(MapaVarios);

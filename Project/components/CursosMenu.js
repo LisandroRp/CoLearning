@@ -81,7 +81,7 @@ class CursosMenu extends Component {
                             platform='ios'
                             onChangeText={value => this.setState({nombre_curso: value})}
                             value={this.state.nombre_curso}
-                            inputContainerStyle={styles.searchShadow}
+                            inputContainerStyle={[styles.searchShadow, {height: hp(5)} ]}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
                             containerStyle={styles.searchBar}
                             cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
@@ -93,7 +93,7 @@ class CursosMenu extends Component {
                             platform='ios'
                             onChangeText={value => this.setState({tema: value})}
                             value={this.state.tema}
-                            inputContainerStyle={styles.searchShadow}
+                            inputContainerStyle={[styles.searchShadow, {height: hp(5)} ]}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
                             containerStyle={styles.searchBar}
                             cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
@@ -105,7 +105,7 @@ class CursosMenu extends Component {
                             platform='ios'
                             onChangeText={value => this.setState({direccion: value})}
                             value={this.state.direccion}
-                            inputContainerStyle={styles.searchShadow}
+                            inputContainerStyle={[styles.searchShadow, {height: hp(5)}]}
                             placeholderTextColor= 'rgba(0, 0, 0, 0.3)'
                             containerStyle={styles.searchBar}
                             cancelButtonProps={{buttonTextStyle: {color: '#F28C0F'}}}
@@ -113,7 +113,7 @@ class CursosMenu extends Component {
                             searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
                         />
                         <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
-                        <Text>Votos: {this.state.rating}</Text>
+                        <Text>Minima Puntuación: {this.state.rating}</Text>
 
                         <TouchableOpacity style={styles.buscarButton} onPress={() => { this.props.onPressSearch() }}>
                             <Text style={styles.screenButtonText}>
@@ -166,48 +166,6 @@ const styles = StyleSheet.create({
         height: height * 0.33,
         width: width * 0.88
     },
-    //FlatList
-    contentList: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        padding: 2,
-        alignSelf: 'center'
-    },
-    image: {
-        width: wp(49),
-        height: hp(24.5),
-        margin: 1,
-        borderWidth: 1.5,
-        borderColor: 'black',
-        resizeMode: 'stretch',
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignContent: 'center',
-        overflow: 'hidden'
-    },
-
-    bgImage: {
-        flex: 1,
-        resizeMode,
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        resizeMode: 'cover'
-    },
-    textImage: {
-        textAlign: 'center',
-        fontSize: hp(4),
-        textTransform: 'uppercase',
-        color: "#2A73E0",
-        letterSpacing: wp(1),
-        fontWeight: 'bold',
-        textShadowColor: 'black',
-        textShadowOffset: { width: 2.2, height: 2.2 },
-        textShadowRadius: 0.1
-    },
-
     Text: {
         fontSize: height * 0.027,
         color: "#3399ff",
@@ -226,22 +184,20 @@ const styles = StyleSheet.create({
         color: "orange"
     },
     //Boton
-
     buscarButton: {
         backgroundColor: '#F28C0F',
         borderRadius: 10,
         alignItems: 'center',
-        width: width * 0.33,
-        marginHorizontal: height * 0.025,
         marginVertical: height * 0.025,
         alignSelf: 'center',
-        opacity: .95
+        opacity: .95,
+        paddingHorizontal: 10
     },
     screenButtonText: {
-        marginVertical: height * 0.02,
+        marginVertical: hp(1.5),
         color: 'white',
-        fontSize: height * 0.025
-    },
+        fontSize: wp(4.4)
+    }
 
 })
 export default withNavigation(CursosMenu);

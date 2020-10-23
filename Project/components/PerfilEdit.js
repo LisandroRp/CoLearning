@@ -7,8 +7,9 @@ import DropDownItem from 'react-native-drop-down-item';
 
 import RNPickerSelect from 'react-native-picker-select';
 
+import ApiController from "../controller/ApiController";
 import ExportadorLogos from './exportadores/ExportadorLogos'
-import ExportadorContacto from './exportadores/ExportadorContacto'
+import ExportadorObjetos from './exportadores/ExportadorObjetos'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Picker from "react-native-picker-select";
@@ -16,7 +17,7 @@ import Picker from "react-native-picker-select";
 function createData(item) {
     return {
         key: item.id_moneda,
-        label: item.nombre_moneda,
+        label: item.des_moneda,
         value: item.id_moneda
     };
 }
@@ -30,27 +31,8 @@ class PerfilEdit extends React.Component {
             cambios: false,
             modalDescripcionVisible: false,
             modalVisible: false,
-            materia: {},
-            usuario: {
-                id_usuario: 1,
-                nombre_usuario: 'Juan',
-                apellido: 'Marinelli',
-                src: require("../assets/leila.jpg"),
-                esProfesor: true,
-                domicilio: 'Narnia',
-                dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
-                { id_dondeClases: 3, des_dondeClases: "Instituto" }],
-                tipoClases: [{ id_tipoClases: 1, des_tipoClases: "Particulares" },
-                { id_tipoClases: 2, des_tipoClases: "Grupales" }],
-                instagram: "juanmarinelli",
-                telefono: "1144373492",
-                email: "1144373492",
-                whatsApp: "1144373492",
-                rating: 3,
-                materias: [{ id_materia: 1, nombre_materia: "Ingles", des_materia: "ClasesdeInglesavanzadasparaexamenesinternacionalesClasesdeInglesavanzadasparaexamenesinternacionalesClasesdeInglesavanzadasparaexamenesinternacionales" },
-                { id_materia: 2, nombre_materia: "Matematica", des_materia: "Clases de matematica de secundaria y universidad" }],
-                money: { id_moneda: { id_moneda: 1, nombre_moneda: "$" }, monto: "100" }
-            },
+            materia: "",
+            usuario: {},
             nuevoNombre: "",
             nuevoApellido: "",
             nuevoDomicilio: "",
@@ -82,8 +64,8 @@ class PerfilEdit extends React.Component {
             { id_tipoClases: 2, des_tipoClases: "Grupales" },
             { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
 
-            monedaBase: [{ id_moneda: 1, nombre_moneda: "$" },
-            { id_moneda: 2, nombre_moneda: "U$" }],
+            monedasBase: [{ id_moneda: 1, des_moneda: "$" },
+            { id_moneda: 2, des_moneda: "US$" }],
             flag: 0,
 
             startValue: new Animated.Value(0),
@@ -97,47 +79,77 @@ class PerfilEdit extends React.Component {
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
     componentDidMount() {
+        ApiController.getUsuarioById(this.props.id_usuario, this.okUsuario.bind(this))
+    }
+    okUsuario(usuario) {
+        if (usuario.esProfesor) {
+            ApiController.getDondeClases(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
+        }
+        else {
+            this.setState({ usuario: usuario, contactoNuevo: this.contactoList(usuario), isLoading: false })
+        }
+    }
+    okDondeClases(usuario, dondeClases) {
+        usuario.dondeClases = dondeClases
+        ApiController.getTipoClases(usuario, this.okTipoClases.bind(this))
+    }
+    okTipoClases(usuario, tipoClases) {
+        usuario.tipoClases = tipoClases
+        ApiController.getMateriasProfesor(usuario, this.okMateriasProfesor.bind(this))
+
+    }
+    okMateriasProfesor(usuario, materias) {
+        usuario.materias = materias
         this.setState({
-            contactoNuevo: this.contactoList(),
-            nuevasMaterias: this.state.usuario.materias,
-            nuevasTipoClases: this.state.usuario.tipoClases,
-            nuevasDondeClases: this.state.usuario.dondeClases,
-            nuevaMoney: this.state.usuario.money,
-            nuevoNombre: this.state.usuario.nombre_usuario,
-            nuevoApellido: this.state.usuario.apellido,
-            nuevoDomicilio: this.state.usuario.domicilio
+            usuario: usuario,
+            contactoNuevo: this.contactoList(usuario),
+            nuevasMaterias: usuario.materias,
+            nuevasTipoClases: usuario.tipoClases,
+            nuevasDondeClases: usuario.dondeClases,
+            nuevaMoney: usuario.money,
+            nuevaMoneda: usuario.money.id_moneda,
+            nuevoNombre: usuario.nombre_usuario,
+            nuevoApellido: usuario.apellido,
+            nuevoDomicilio: usuario.domicilio,
         })
-        this.setState({ isLoading: false })
+        ApiController.getMaterias(this.okMaterias.bind(this))
+    }
+    okMaterias(materias){
+        this.setState({materiasBase: materias, memory: materias})
+        ApiController.getMonedas(this.okMonedas.bind(this))
+    }
+    okMonedas(monedas){
+        this.setState({monedasBase: monedas, isLoading: false})
     }
     //************************ */
     //Contacto
     //************************ */
-    contactoList(){
+    contactoList(usuario) {
         var contactoList = []
 
-        if(this.state.usuario.instagram != "" && this.state.usuario.instagram){
-            contactoList.push({ id_contacto: 0, des_contacto: this.state.usuario.instagram })
+        if (usuario.instagram != "" && usuario.instagram) {
+            contactoList.push({ id_contacto: 0, des_contacto: usuario.instagram })
         }
-        if(this.state.usuario.telefono != "" && this.state.usuario.telefono){
-            contactoList.push({ id_contacto: 1, des_contacto: this.state.usuario.telefono })
+        if (usuario.telefono != "" && usuario.telefono) {
+            contactoList.push({ id_contacto: 1, des_contacto: usuario.telefono })
         }
-        if(this.state.usuario.email != "" && this.state.usuario.email){
-            contactoList.push({ id_contacto: 2, des_contacto: this.state.usuario.email })
+        if (usuario.email != "" && usuario.email) {
+            contactoList.push({ id_contacto: 2, des_contacto: usuario.email })
         }
-        if(this.state.usuario.whatsApp != "" && this.state.usuario.whatsApp){
-            contactoList.push({ id_contacto: 3, des_contacto: this.state.usuario.whatsApp })
+        if (usuario.whatsApp != "" && usuario.whatsApp) {
+            contactoList.push({ id_contacto: 3, des_contacto: usuario.whatsApp })
         }
         return contactoList
     }
-    cambiarContacto(index, des_contacto){
+    cambiarContacto(index, des_contacto) {
         var contactoNuevo = this.state.contactoNuevo
         contactoNuevo[index].des_contacto = des_contacto
-        this.setState({contactoNuevo: contactoNuevo, cambios: true})
+        this.setState({ contactoNuevo: contactoNuevo, cambios: true })
     }
-    sacarContacto(index){
+    sacarContacto(index) {
         var contactoNuevo = this.state.contactoNuevo
         contactoNuevo.splice(index, 1)
-        this.setState({contactoNuevo: contactoNuevo, cambios: true})
+        this.setState({ contactoNuevo: contactoNuevo, cambios: true })
     }
     contactoEdit(index, item) {
 
@@ -146,95 +158,96 @@ class PerfilEdit extends React.Component {
             case 0:
 
                 return (
-                <View style={[{ flex: 1  }]}>
-                    <View style={styles.socialMediaContainer}>
-                    <TouchableOpacity style={[{marginRight: wp(11)}]} onPress={() => this.sacarContacto(index)}>
-                        <Entypo name={"cross"} size={hp(2.2)} color="#E76921"></Entypo>
-                    </TouchableOpacity>
-                        {/* <Image style={styles.logoSocialMediaImage} source={ExportadorLogos.traerInstagram()} /> */}
-                        <View style={styles.logoSocialMedia}>
-                            <Fontisto style={{ textAlign: "center", paddingBottom: hp(1.5) }} name={"instagram"} size={hp(2.5)} color='#F28C0F' />
-                        </View>
-                        <View style={{ flexDirection: 'row'}}>
-                        <TextInput style={styles.socialMedia} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.instagram = input }}>{item.des_contacto}</TextInput>
-                        <TouchableOpacity style={styles.pencilButton} onPress={() => this.instagram.focus()}>
-                                <FontAwesome style={{ textAlign: 'center'}} name={"pencil"} size={wp(4)} color="black"/>
-                        </TouchableOpacity>
+                    <View style={[{ flex: 1 }]}>
+                        <View style={styles.socialMediaContainer}>
+                            <TouchableOpacity style={[{ marginRight: wp(11) }]} onPress={() => this.sacarContacto(index)}>
+                                <Entypo name={"cross"} size={hp(2.2)} color="#E76921"></Entypo>
+                            </TouchableOpacity>
+                            {/* <Image style={styles.logoSocialMediaImage} source={ExportadorLogos.traerInstagram()} /> */}
+                            <View style={styles.logoSocialMedia}>
+                                <Fontisto style={{ textAlign: "center", paddingBottom: hp(1.5) }} name={"instagram"} size={hp(2.5)} color='#F28C0F' />
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={styles.arroba}>@</Text>
+                                <TextInput style={styles.socialMedia} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.instagram = input }}>{item.des_contacto}</TextInput>
+                                <TouchableOpacity style={styles.pencilButton} onPress={() => this.instagram.focus()}>
+                                    <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(4)} color="black" />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
                 )
 
             case 1:
 
                 return (
-                <View style={[{ flex: 1 }]}>
-                    <View style={styles.socialMediaContainer}>
-                    <TouchableOpacity style={[{marginRight: wp(11)}]} onPress={() => this.sacarContacto(index)}>
-                        <Entypo name={"cross"} size={hp(2.2)} color="#E76921"></Entypo>
-                    </TouchableOpacity>
-                        <View style={styles.logoSocialMedia}>
-                            <Feather style={{ textAlign: "center", paddingBottom: hp(1.5) }} name={"phone"} size={hp(2.5)} color='#F28C0F' />
-                        </View>
-                        <View style={{ flexDirection: 'row'}}>
-                        <TextInput style={styles.socialMedia} keyboardType={'numeric'} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.telefono = input }}>{item.des_contacto}</TextInput>
-                        <TouchableOpacity style={styles.pencilButton} onPress={() => this.telefono.focus()}>
-                                <FontAwesome style={{ textAlign: 'center'}} name={"pencil"} size={wp(4)} color="black"/>
-                        </TouchableOpacity>
+                    <View style={[{ flex: 1 }]}>
+                        <View style={styles.socialMediaContainer}>
+                            <TouchableOpacity style={[{ marginRight: wp(11) }]} onPress={() => this.sacarContacto(index)}>
+                                <Entypo name={"cross"} size={hp(2.2)} color="#E76921"></Entypo>
+                            </TouchableOpacity>
+                            <View style={styles.logoSocialMedia}>
+                                <Feather style={{ textAlign: "center", paddingBottom: hp(1.5) }} name={"phone"} size={hp(2.5)} color='#F28C0F' />
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <TextInput style={styles.socialMedia} keyboardType={'numeric'} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.telefono = input }}>{item.des_contacto}</TextInput>
+                                <TouchableOpacity style={styles.pencilButton} onPress={() => this.telefono.focus()}>
+                                    <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(4)} color="black" />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
-                </View>
                 )
 
-            case 2: 
-            return (
-            <View style={[{ flex: 1 }]}>
-                <View style={styles.socialMediaContainer}>
-                <TouchableOpacity style={[{marginRight: wp(11)}]} onPress={() => this.sacarContacto(index)}>
-                        <Entypo name={"cross"} size={hp(2.2)} color="#E76921"></Entypo>
-                </TouchableOpacity>
-                    <View style={styles.logoSocialMedia}>
-                        <MaterialCommunityIcons style={{ textAlign: "center", paddingBottom: hp(1.2) }} name={"email-outline"} size={hp(2.5)} color='#F28C0F' />
+            case 2:
+                return (
+                    <View style={[{ flex: 1 }]}>
+                        <View style={styles.socialMediaContainer}>
+                            <TouchableOpacity style={[{ marginRight: wp(11) }]} onPress={() => this.sacarContacto(index)}>
+                                <Entypo name={"cross"} size={hp(2.2)} color="#E76921"></Entypo>
+                            </TouchableOpacity>
+                            <View style={styles.logoSocialMedia}>
+                                <MaterialCommunityIcons style={{ textAlign: "center", paddingBottom: hp(1.2) }} name={"email-outline"} size={hp(2.5)} color='#F28C0F' />
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <TextInput style={styles.socialMedia} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.email = input }}>{item.des_contacto}</TextInput>
+                                <TouchableOpacity style={styles.pencilButton} onPress={() => this.email.focus()}>
+                                    <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(4)} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
-                    <View style={{ flexDirection: 'row'}}>
-                    <TextInput style={styles.socialMedia} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.email = input }}>{item.des_contacto}</TextInput>
-                    <TouchableOpacity style={styles.pencilButton} onPress={() => this.email.focus()}>
-                                <FontAwesome style={{ textAlign: 'center'}} name={"pencil"} size={wp(4)} color="black"/>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-            )
+                )
 
-            case 3: 
-            return (
-            <View style={[{ flex: 1 }]}>
-                <View style={styles.socialMediaContainer}>
-                <TouchableOpacity style={[{marginRight: wp(11)}]} onPress={() => this.sacarContacto(index)}>
-                        <Entypo name={"cross"} size={hp(2.2)} color="#E76921"></Entypo>
-                </TouchableOpacity>
-                    <View style={styles.logoSocialMedia}>
-                        <Fontisto style={{ textAlign: "center", paddingBottom: hp(1.5) }} name={"whatsapp"} size={hp(2.5)} color='#F28C0F' />
+            case 3:
+                return (
+                    <View style={[{ flex: 1 }]}>
+                        <View style={styles.socialMediaContainer}>
+                            <TouchableOpacity style={[{ marginRight: wp(11) }]} onPress={() => this.sacarContacto(index)}>
+                                <Entypo name={"cross"} size={hp(2.2)} color="#E76921"></Entypo>
+                            </TouchableOpacity>
+                            <View style={styles.logoSocialMedia}>
+                                <Fontisto style={{ textAlign: "center", paddingBottom: hp(1.5) }} name={"whatsapp"} size={hp(2.5)} color='#F28C0F' />
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <TextInput style={styles.socialMedia} keyboardType={'numeric'} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.whatsApp = input }}>{item.des_contacto}</TextInput>
+                                <TouchableOpacity style={styles.pencilButton} onPress={() => this.whatsApp.focus()}>
+                                    <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(4)} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
-                    <View style={{ flexDirection: 'row'}}>
-                    <TextInput style={styles.socialMedia} keyboardType={'numeric'} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.whatsApp = input }}>{item.des_contacto}</TextInput>
-                    <TouchableOpacity style={styles.pencilButton} onPress={() => this.whatsApp.focus()}>
-                                <FontAwesome style={{ textAlign: 'center'}} name={"pencil"} size={wp(4)} color="black"/>
-                    </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-            )
+                )
         }
-}
-   //************************ */
+    }
+    //************************ */
     //Contacto
     //************************ */
     marginSize(index) {
         if (index != this.state.nuevasMaterias.length - 1) {
-            return { marginBottom: hp(3), marginTop: hp(3) }
+            return { marginBottom: hp(1.5), marginTop: hp(1.5) }
         } else {
-            return { marginBottom: hp(3) }
+            return { marginBottom: hp(1.5) }
         }
     }
     //************************ */
@@ -511,17 +524,24 @@ class PerfilEdit extends React.Component {
         this.setState({ materia: value })
     };
     addNewMoney() {
+        if(this.state.nuevaMoneda != 0){
+        var nuevaMoneda = this.buscarMoneda()
         var newMoney = {
-            id_moneda: this.buscarMoneda(),
+            id_moneda: nuevaMoneda.id_moneda,
+            des_moneda: nuevaMoneda.des_moneda,
             monto: this.state.nuevoMonto
         }
         this.setState({ nuevaMoney: newMoney, cambios: true, modalVisible: false })
+        }
+        else{
+            alert("Debe seleccionarse un tipo de moneda")
+        }
     }
     buscarMoneda() {
         var contador = 0;
-        while (contador < this.state.monedaBase.length) {
-            if (this.state.monedaBase[contador].id_moneda == this.state.nuevaMoneda) {
-                return this.state.monedaBase[contador]
+        while (contador < this.state.monedasBase.length) {
+            if (this.state.monedasBase[contador].id_moneda == this.state.nuevaMoneda) {
+                return this.state.monedasBase[contador]
             }
             contador++;
         }
@@ -545,22 +565,22 @@ class PerfilEdit extends React.Component {
         materiasNuevas[this.state.editableIndex].des_materia = this.state.nuevaDescripcion
         this.setState({ nuevasMaterias: materiasNuevas, cambios: true, modalDescripcionVisible: false, isLoading: false })
     }
-    changeNombre(){
-        if(this.state.nuevoNombre != this.state.usuario.nombre_usuario ){
-            this.setState({cambios: true})
+    changeNombre() {
+        if (this.state.nuevoNombre != this.state.usuario.nombre_usuario) {
+            this.setState({ cambios: true })
         }
     }
-    changeApellido(){
-        if(this.state.nuevoApellido != this.state.usuario.apellido){
-            this.setState({cambios: true})
+    changeApellido() {
+        if (this.state.nuevoApellido != this.state.usuario.apellido) {
+            this.setState({ cambios: true })
         }
     }
-    changeDomicilio(){
-        if(this.state.nuevoDomicilio != this.state.usuario.domicilio){
-            this.setState({cambios: true})
+    changeDomicilio() {
+        if (this.state.nuevoDomicilio != this.state.usuario.domicilio) {
+            this.setState({ cambios: true })
         }
     }
-    
+
     showButton() {
         if (this.state.cambios) {
             return (
@@ -584,42 +604,49 @@ class PerfilEdit extends React.Component {
         }
         else {
             return (
-                <SafeAreaView style={styles.container}>
+                <View style={styles.container}>
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View>
                             <View style={{ alignSelf: "center" }}>
-                                <View style={styles.profileImage}>
+                            <View style={[styles.profileImage, {backgroundColor: (this.state.usuario.src == null ? "#F28C0F" : "transparent")}]}>
+                                    {this.state.usuario.src == null ?
+                                        <Text style={{ fontSize: wp(25), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                                            {this.state.usuario.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.usuario.apellido.slice(0, 1).toUpperCase()}
+                                        </Text>
+                                        :
                                     <Image source={this.state.usuario.src} style={styles.image} resizeMode="center"></Image>
+                                    }
                                 </View>
                             </View>
 
                             <View style={styles.infoContainer}>
                                 <View style={{ flexDirection: "row", paddingHorizontal: wp(8) }}>
-                                    <TextInput style={[styles.text, styles.titleName]} onEndEditing={() => this.changeNombre()} onChangeText={(value) => this.setState({ nuevoNombre: value })} ref={(input) => { this.nombre = input }}>{this.state.usuario.nombre_usuario}</TextInput>
+                                    <TextInput style={[styles.text, styles.titleName]} placeholder={"Nombre"} onEndEditing={() => this.changeNombre()} onChangeText={(value) => this.setState({ nuevoNombre: value })} ref={(input) => { this.nombre = input }}>{this.state.usuario.nombre_usuario}</TextInput>
                                     <TouchableOpacity style={{ alignSelf: "center", position: "absolute", right: 0 }} onPress={() => this.nombre.focus()}>
                                         <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(5)} color="#E76921" />
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ flexDirection: "row", paddingHorizontal: wp(8) }}>
-                                    <TextInput style={[styles.text, styles.titleName]} onEndEditing={() => this.changeApellido()} onChangeText={(value) => this.setState({ nuevoApellido: value })} ref={(input) => { this.apellido = input }}>{this.state.usuario.apellido}</TextInput>
+                                    <TextInput style={[styles.text, styles.titleName]} placeholder={"Apellido"} onEndEditing={() => this.changeApellido()} onChangeText={(value) => this.setState({ nuevoApellido: value })} ref={(input) => { this.apellido = input }}>{this.state.usuario.apellido}</TextInput>
                                     <TouchableOpacity style={{ alignSelf: "center", position: "absolute", right: 0 }} onPress={() => this.apellido.focus()}>
                                         <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(5)} color="#E76921" />
                                     </TouchableOpacity>
                                 </View>
-                                {this.state.usuario.esProfesor ? 
-                                <View style={{ flexDirection: "row", paddingHorizontal: wp(6), marginTop: hp(1) }}>
-                                    <TextInput style={[styles.text, styles.titleDomicilio]} onEndEditing={() => this.changeDomicilio()} onChangeText={(value) => this.setState({ nuevoDomicilio: value })} ref={(input) => { this.direccion = input }}>{this.state.usuario.domicilio}</TextInput>
-                                    <TouchableOpacity style={{ alignSelf: "center", position: "absolute", right: 0 }} onPress={() => this.direccion.focus()}>
-                                        <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(4)} color="#AEB5BC" />
-                                    </TouchableOpacity>
-                                </View>
-                                :
-                                <View/>
+                                {this.state.usuario.esProfesor ?
+                                    <View style={{ flexDirection: "row", paddingHorizontal: wp(6), marginTop: hp(1) }}>
+                                        <TextInput style={[styles.text, styles.titleDomicilio]} placeholder={"Domicilio"} onEndEditing={() => this.changeDomicilio()} onChangeText={(value) => this.setState({ nuevoDomicilio: value })} ref={(input) => { this.domicilio = input }}>{this.state.usuario.domicilio}</TextInput>
+                                        <TouchableOpacity style={{ alignSelf: "center", position: "absolute", right: 0 }} onPress={() => this.domicilio.focus()}>
+                                            <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(4)} color="#AEB5BC" />
+                                        </TouchableOpacity>
+                                    </View>
+                                    :
+                                    <View />
                                 }
                             </View>
                             {this.state.usuario.esProfesor ?
-                                <TouchableOpacity style={[styles.moneyView, styles.shadowMoney]} onPress={() => [this.setState({ modalVisible: true }), console.log(this.state.usuario.domicilio)]} >
-                                    <Text style={styles.moneyText}>{this.state.nuevaMoney.id_moneda.nombre_moneda}{this.state.nuevaMoney.monto}</Text>
+                                <TouchableOpacity style={[styles.moneyView, styles.shadowMoney]} onPress={() => [this.setState({ modalVisible: true })]} >
+                                    <Text style={styles.moneyText}>{this.state.nuevaMoney.des_moneda ? this.state.nuevaMoney.des_moneda : "$"}</Text>
+                                    <Text style={styles.moneyText}>{this.state.nuevaMoney.monto ? this.state.nuevaMoney.monto : 0}</Text>
                                     <Text style={styles.moneyText2}>/h</Text>
                                 </TouchableOpacity>
                                 :
@@ -687,13 +714,13 @@ class PerfilEdit extends React.Component {
                                                             <Entypo name={"circle-with-cross"} size={hp(3)} color="white"></Entypo>
                                                         </TouchableOpacity>
                                                         <Text style={styles.dropDownTitulo}>{item.nombre_materia}</Text>
-                                                        <View >
+                                                        <View style={{ marginVertical: hp(1.9) }}>
                                                             <AntDesign style={{ textAlign: 'center', marginRight: wp(3.3) }} name={"caretdown"} size={wp(3.3)} color="white" />
                                                         </View>
                                                     </View>
                                                 }
                                             >
-                                                <View style={{width: wp(78.4)}}>
+                                                <View style={{ width: wp(78.4) }}>
                                                     {(item.des_materia == "" || item.des_materia == undefined) ?
 
                                                         <TouchableOpacity style={styles.agregarButton} onPress={() => { this.activeEditabel(index) }}>
@@ -736,25 +763,25 @@ class PerfilEdit extends React.Component {
                             :
                             /////////////////// 
                             (this.state.contactoNuevo.length != 0 ?
-                            <View style={styles.bottomBox}>
-                                <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center" }]}>Contacto</Text>
-                                <FlatList
-                                    data={this.state.contactoNuevo}
-                                    numColumns={2}
-                                    scrollEnabled= {false}
-                                    initialNumToRender={50}
-                                    keyExtractor={(item) => {
-                                        return item.id_contacto.toString();
-                                    }}
-                                    renderItem={({ index, item }) => {
-                                        return (
-                                            this.contactoEdit(index, item)
-                                        )
-                                    }
-                                    } />
-                            </View>
-                            :
-                            <View/>
+                                <View style={styles.bottomBox}>
+                                    <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center" }]}>Contacto</Text>
+                                    <FlatList
+                                        data={this.state.contactoNuevo}
+                                        numColumns={2}
+                                        scrollEnabled={false}
+                                        initialNumToRender={50}
+                                        keyExtractor={(item) => {
+                                            return item.id_contacto.toString();
+                                        }}
+                                        renderItem={({ index, item }) => {
+                                            return (
+                                                this.contactoEdit(index, item)
+                                            )
+                                        }
+                                        } />
+                                </View>
+                                :
+                                <View />
                             )
                         }
 
@@ -762,6 +789,7 @@ class PerfilEdit extends React.Component {
 
                     </ScrollView>
                     <Animated.View style={[styles.fullScreenAnimate, this.animationStyle(), { opacity: this.state.startValue }]}>
+                       <ScrollView>
                         <FlatList
                             style={{ paddingTop: hp(8), flex: 1 }}
                             columnWrapperStyle={styles.listContainer}
@@ -782,6 +810,7 @@ class PerfilEdit extends React.Component {
                                 )
                             }
                             } />
+                        </ScrollView>
                     </Animated.View>
                     <Animated.View style={[styles.headerAnimatedContainer, { transform: [{ translateY: this.state.startValueSearchBar }] }]}>
                         <View style={[styles.searchBar]}>
@@ -823,11 +852,12 @@ class PerfilEdit extends React.Component {
                                         }}
                                         value={this.state.nuevaMoneda}
                                         onValueChange={(id_monedaNueva) => this.setState({ nuevaMoneda: id_monedaNueva })}
-                                        items={this.moneyPikerList(this.state.monedaBase)}
+                                        items={this.moneyPikerList(this.state.monedasBase)}
                                     />
                                     <TextInput style={[styles.inputMonto, styles.shadowLight]}
                                         value={this.state.nuevoMonto}
                                         keyboardType={'numeric'}
+                                        maxLength={4}
                                         placeholder="Monto"
                                         placeholderTextColor="grey"
                                         underlineColorAndroid='transparent'
@@ -873,7 +903,7 @@ class PerfilEdit extends React.Component {
                             </View>
                         </TouchableOpacity>
                     </Modal>
-                </SafeAreaView>
+                </View>
             );
         }
     }
@@ -916,7 +946,7 @@ const styles = StyleSheet.create({
         height: wp(50),
         borderRadius: 100,
         marginTop: hp(5),
-        backgroundColor: 'transparent',
+        justifyContent: "center",
         shadowColor: '#00000045',
         shadowOffset: {
             width: 0,
@@ -1094,8 +1124,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: '#F28C0F',
         borderRadius: 10,
-        paddingHorizontal: wp("2"),
-        paddingVertical: hp(1),
+        paddingHorizontal: wp("2")
     },
     dropDownTitulo: {
         //flex: 1,
@@ -1166,6 +1195,11 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         marginHorizontal: wp(5)
     },
+    arroba: {
+        alignSelf: "center",
+        position: "absolute",
+        left: wp(2)
+    },
     pencilButton: {
         alignSelf: "center",
         position: "absolute",
@@ -1235,8 +1269,9 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     modal: {
-        width: wp(50),
-        marginTop: hp(10),
+        flex: 1,
+        marginVertical: hp(42),
+        marginHorizontal: wp(25),
         padding: hp(2),
         alignSelf: "center",
         backgroundColor: '#FFF7EE',
@@ -1249,10 +1284,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         borderRadius: 10,
         borderBottomWidth: 1,
+        fontSize: wp(3.5),
         marginHorizontal: wp(2),
         height: hp(5),
         paddingHorizontal: hp(2.2),
-        marginTop: hp(2.2),
         flexDirection: 'column',
         textAlign: 'center'
     },
@@ -1263,9 +1298,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         flex: 1,
         marginHorizontal: wp(2),
+        fontSize: wp(3.5),
         height: hp(5),
         paddingHorizontal: hp(2.2),
-        marginTop: hp(2.2),
         flexDirection: 'column',
         textAlign: 'center'
     },
@@ -1273,21 +1308,21 @@ const styles = StyleSheet.create({
         paddingVertical: hp(1.5),
         marginTop: hp(2),
         justifyContent: 'center',
-        marginHorizontal: wp(5),
         alignItems: 'center',
-        marginBottom: hp(2.2),
         borderRadius: 10,
         paddingHorizontal: wp(3.3),
         backgroundColor: "#F28C0F"
     },
     loginText: {
+        fontSize: wp(3.3),
         color: 'white'
     },
     //MODAL
     modalDescripcion: {
-        height: hp(66),
-        width: wp(80),
-        marginTop: hp(10),
+        flex: 1,
+        marginTop: hp(20),
+        marginBottom: wp(30),
+        marginHorizontal: wp(10),
         alignSelf: "center",
         paddingHorizontal: wp(5),
         backgroundColor: '#FFF7EE',

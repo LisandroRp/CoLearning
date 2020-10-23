@@ -20,6 +20,7 @@ import { SearchBar } from 'react-native-elements';
 import RNPickerSelect from 'react-native-picker-select';
 import { Entypo, MaterialCommunityIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import ApiController from '../controller/ApiController';
 
 
 var { height, width } = Dimensions.get('window');
@@ -33,12 +34,13 @@ class EjerciciosNew extends Component {
       pregunta: '',
       descripcion: '',
       tag: '',
-      tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Magia" }],
-      memory: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Magia" }],
-      tagsElegidos: [{ id_tag: 2, nombre_tag: "Magia" }],
+      esAnonimo: false,
+      tagsBase: [],
+      memory: [],
+      tags: [],
       id_idioma: 0,
       animation: false,
-      isLoading: false,
+      isLoading: true,
       actualizando: false,
       modalGuardarVisible: false,
       animationStyle: false,
@@ -52,9 +54,13 @@ class EjerciciosNew extends Component {
     };
   }
   componentDidMount = async () => {
+    ApiController.getTags(this.okTags.bind(this))
     this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
     this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
     this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
+  }
+  okTags(tags){
+    this.setState({tagsBase: tags, memory: tags, isLoading: false})
   }
   keyboardDidShow = () => {
     this.setState({ searchBarFocused: true })
@@ -66,29 +72,6 @@ class EjerciciosNew extends Component {
 
   keyboardWillHide = () => {
     this.setState({ searchBarFocused: false })
-  }
-  guardarEjercicio() {
-    this.setState({ modalGuardarVisible: false, isLoading: true, actualizando: true })
-    //base.crearEjercicio((id_ejercicio + 1), this.state.nombre, this.state.descripcion, this.state.ejecucion, this.state.id_elemento, this.state.id_musculo, this.showInterstitial.bind(this))
-    base.crearEjercicio(this.state.nombre, this.state.descripcion, this.state.ejecucion, this.state.id_elemento, this.state.id_musculo, this.cancelarEjercicio.bind(this))
-  }
-  cancelarEjercicio() {
-    this.props.onPressCancelar()
-  }
-  botonGuardar() {
-    if (this.state.nombre == '') {
-      alert()
-      return
-    }
-    if (this.state.musculo == '') {
-      alert()
-      return
-    }
-    if (this.state.elemento == '') {
-      alert()
-      return
-    }
-    this.setState({ modalGuardarVisible: true })
   }
 
   animate() {
@@ -129,17 +112,17 @@ class EjerciciosNew extends Component {
     }
   }
   marginSize(item) {
-    if(this.state.tags.length != 0){
-      if (item.id_tag != this.state.tags[this.state.tags.length - 1].id_tag) {
+    if(this.state.tagsBase.length != 0){
+      if (item.id_tag != this.state.tagsBase[this.state.tagsBase.length - 1].id_tag) {
 
-        return { marginTop: height * 0.028 }
+        return { marginTop: hp(1.5) }
       } else {
-        return { marginBottom: height * 0.028, marginTop: height * 0.028 }
+        return { marginBottom: hp(1.5), marginTop:  hp(1.5) }
       }
     }
   }
   marginElegidosSize(item) {
-    if (item.id_tag != this.state.tagsElegidos[this.state.tagsElegidos.length - 1].id_tag) {
+    if (item.id_tag != this.state.tags[this.state.tags.length - 1].id_tag) {
 
       return { marginTop: height * 0.028 }
     } else {
@@ -156,27 +139,27 @@ class EjerciciosNew extends Component {
 
       return tagLowercase.indexOf(searchTermLowercase) > -1;
     });
-    this.setState({ tags: filterDeTags });
+    this.setState({ tagsBase: filterDeTags });
     this.setState({ tag: value })
   };
   agregarTag(tag) {
-    if (this.tagElegido(tag.id_tag) || this.state.tagsElegidos.length > 10) {
-      if(this.state.tagsElegidos.length > 10){
+    if (this.tagElegido(tag.id_tag) || this.state.tags.length > 10) {
+      if(this.state.tags.length > 10){
         alert("Ha superado la cantidad maxima de tags.")
       }
       else{
         alert("El tag ya ha sido seleccionado previamente.")
       }
     } else {
-      var tagElegidosNew = this.state.tagsElegidos
+      var tagElegidosNew = this.state.tags
       tagElegidosNew.push(tag)
-      this.setState({ tagsElegidos: tagElegidosNew })
+      this.setState({ tags: tagElegidosNew })
     }
   }
   tagElegido(id_tag) {
     var i = 0;
-    while (i < this.state.tagsElegidos.length) {
-      if (this.state.tagsElegidos[i].id_tag == id_tag) {
+    while (i < this.state.tags.length) {
+      if (this.state.tags[i].id_tag == id_tag) {
         return true
       }
       else {
@@ -188,18 +171,22 @@ class EjerciciosNew extends Component {
   quitarTag(id_tag) {
     var i = 0;
     var tagsElegidosNew = []
-    while (i < this.state.tagsElegidos.length) {
-      if (this.state.tagsElegidos[i].id_tag != id_tag) {
-        tagsElegidosNew.push(this.state.tagsElegidos[i])
+    while (i < this.state.tags.length) {
+      if (this.state.tags[i].id_tag != id_tag) {
+        tagsElegidosNew.push(this.state.tags[i])
         i++;
       }
       else {
         i++
       }
     }
-    this.setState({ tagsElegidos: tagsElegidosNew })
+    this.setState({ tags: tagsElegidosNew })
   }
-
+  isAnonimo() {
+    if(this.state.esAnonimo){
+      return <TouchableOpacity onPress={() => this.setState({esAnonimo: false})}><FontAwesome name={"check"} size={hp(4)} color="#5EC43A" /></TouchableOpacity>
+    }
+}
   crearForo(){
     this.props.onPressVolver()
   }
@@ -208,7 +195,7 @@ class EjerciciosNew extends Component {
     if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <ActivityIndicator size="large" color="#3399ff" style={{ marginBottom: 15 }}></ActivityIndicator>
+          <ActivityIndicator size="large" color="#F28C0F" style={{flex: 1}}></ActivityIndicator>
         </View>
       );
     } else {
@@ -257,16 +244,26 @@ class EjerciciosNew extends Component {
                       </Text>
                   <View style={{ backgroundColor: 'white', borderRadius: 10, padding: 5, marginLeft:wp(3) }}>
                     <Text style={[styles.screenButtonTagNumber]}>
-                      {this.state.tagsElegidos.length}/10
+                      {this.state.tags.length}/10
                       </Text>
                   </View>
                 </TouchableOpacity>
-                <View style={{ flexDirection: "row", justifyContent: 'center', marginTop: hp(5) }}>
+                <View style={{ flexDirection: "row", justifyContent: 'center', flex: 0.5}}>
+                <View style={{justifyContent: 'center', alignItems: "flex-end", flex: 1.1, marginRight: wp(3)}}>
+                <Text style={{fontSize: wp(4)}}>Anónimo: </Text>
+                </View>
+                <View style={[styles.checkBoxContainer]}>
+                    <TouchableOpacity style={[styles.checkBox, styles.shadow]} onPress={() => this.setState({esAnonimo: true})} />
+                    {this.isAnonimo()}
+                </View>
+                </View>
+                <View style={{ flexDirection: "row", marginTop: hp(5), flex: 1}}>
                 <TouchableOpacity style={styles.button} onPress={() => { this.props.onPressVolver() }}>
                             <Text style={styles.screenButtonText}>
                                 Cancelar
                             </Text>
-                        </TouchableOpacity><TouchableOpacity style={styles.button} onPress={() => { this.crearForo() }}>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={() => { this.crearForo() }}>
                             <Text style={styles.screenButtonText}>
                                 Crear
                             </Text>
@@ -278,10 +275,11 @@ class EjerciciosNew extends Component {
             </TouchableWithoutFeedback>
           </KeyboardAvoidingView>
           <Animated.View style={[styles.fullScreenAnimate, this.animationStyle(), { opacity: this.state.startValue }]}>
+            <ScrollView>
             <FlatList
-              style={{ paddingTop: hp(14), flex: 1 }}
+              style={{ paddingTop: hp(14), paddingBottom: hp(14), flex: 1 }}
               columnWrapperStyle={styles.listContainer}
-              data={this.state.tags}
+              data={this.state.tagsBase}
               numColumns={2}
               initialNumToRender={50}
               keyExtractor={(item) => {
@@ -297,6 +295,7 @@ class EjerciciosNew extends Component {
                 )
               }
               } />
+              </ScrollView>
           </Animated.View>
           <Animated.View style={[styles.headerAnimatedContainer, { transform: [{ translateY: this.state.startValueSearchBar }] }]}>
             <View style={[styles.searchBar]}>
@@ -319,7 +318,7 @@ class EjerciciosNew extends Component {
               style={[styles.tagBar]}
               columnWrapperStyle={styles.listContainer}
               horizontal={true}
-              data={this.state.tagsElegidos}
+              data={this.state.tags}
               initialNumToRender={50}
               keyExtractor={(item) => {
                 return item.id_tag.toString();
@@ -353,7 +352,6 @@ const styles = StyleSheet.create({
   },
   //Header
   fullScreenAnimate: {
-    flexDirection: "row",
     backgroundColor: "#FFF7EE",
     width: wp(100),
     height: hp(100),
@@ -491,16 +489,36 @@ const styles = StyleSheet.create({
     color: '#A7370F',
     fontWeight: 'bold'
   },
+  checkBoxContainer: {
+    borderColor: "#DFD8C8",
+    justifyContent: "center",
+    alignItems: 'flex-start',
+    flex: 0.8
+},
+checkBox: {
+    height: hp(2.5),
+    width: hp(2.5),
+    backgroundColor: "white",
+    position: 'absolute'
+},
+shadow: {
+    shadowColor: '#00000045',
+    shadowOffset: {
+        width: 0.05,
+        height: 0.55,
+    },
+    shadowOpacity: 2,
+    elevation: 29,
+},
   button: {
     backgroundColor: '#F28C0F',
     borderRadius: 10,
     alignItems: 'center',
     paddingVertical: hp(1.5),
     paddingHorizontal: wp(3.3),
-    marginHorizontal: height * 0.025,
-    marginVertical: height * 0.025,
-    alignSelf: 'center',
-    opacity: .95
+    marginHorizontal: wp(3),
+    alignSelf: 'flex-start',
+    opacity: .95,
 },
 screenButtonText: {
   color: 'white',

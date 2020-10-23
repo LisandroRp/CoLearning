@@ -18,7 +18,7 @@ class ClasesMenu extends Component {
             isLoading: false,
             nombre_profesor: "",
             tema: '',
-            direccion: '',
+            domicilio: '',
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
@@ -42,7 +42,14 @@ class ClasesMenu extends Component {
     vote(i) {
         this.setState({ rating: i })
     }
-
+    buscarProfesor(){
+        if(!this.state.tema.trim()){
+            alert("Debe proporcionar el tema de la clase que le interese")
+        }
+        else{
+            this.props.onPressSearch(this.state.nombre_profesor,this.state.tema, this.state.domicilio, this.state.rating)
+        }
+    }
     render() {
         var rating2 = this.state.rating
         let React_Native_Rating_Bar = [];
@@ -103,8 +110,8 @@ class ClasesMenu extends Component {
                         <SearchBar
                             placeholder="Direccion"
                             platform='ios'
-                            onChangeText={value => this.setState({direccion: value})}
-                            value={this.state.direccion}
+                            onChangeText={value => this.setState({domicilio: value})}
+                            value={this.state.domicilio}
                             inputContainerStyle={[styles.searchShadow, {height: hp(5)} ]}
                             placeholderTextColor= 'rgba(0, 0, 0, 0.3)'
                             containerStyle={styles.searchBar}
@@ -115,7 +122,7 @@ class ClasesMenu extends Component {
                         <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
                         <Text>Minima Puntuación: {this.state.rating}</Text>
 
-                        <TouchableOpacity style={styles.buscarButton} onPress={() => { this.props.onPressSearch() }}>
+                        <TouchableOpacity style={styles.buscarButton} onPress={() => { this.buscarProfesor() }}>
                             <Text style={styles.screenButtonText}>
                                 Buscar Clases
                 </Text>
@@ -155,21 +162,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.37,
         shadowRadius: 7.49,
         elevation: 12,
-    },
-    ContainerInside: {
-        backgroundColor: "black",
-        marginTop: hp(5),
-        padding: height * 0.04,
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: 'center',
-        height: height * 0.33,
-        width: width * 0.88
-    },
-    Text: {
-        fontSize: height * 0.027,
-        color: "#3399ff",
-        textAlign: "center"
     },
     //Star View
     heartView: {

@@ -109,7 +109,7 @@ class SwitchCrearUser extends Component {
               value={this.state.email}
               placeholder="Email"
               underlineColorAndroid='transparent'
-              onChangeText={(text) => this.setState({ mail: text })}
+              onChangeText={(text) => this.setState({ email: text })}
             />
             <View style={styles.logoSocialMedia}>
               <MaterialCommunityIcons style={[{ textAlign: "center" }]} name={"email-outline"} size={hp(2.5)} color='#F28C0F'/>

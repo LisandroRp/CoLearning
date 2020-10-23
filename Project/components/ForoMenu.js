@@ -16,8 +16,8 @@ class ForoMenu extends Component {
         super(props);
         this.state = {
             tema: "",
-            forosPopulares: [{ id_foro: 1, nombre_foro: 'Duda Existencial', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Juan Marinelli", esProfesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-            { id_foro: 2, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Leila Pereyra", esProfesor: false, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },]
+            forosPopulares: [{ id_foro: 2, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer una imagen se ajuste a un View??', id_usuario: 1, nombre_usuario: "Leila Pereyra", esProfesor: false, respuestas: 114, rating: 5, fecha_alta: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
+            { id_foro: 1, nombre_foro: 'Duda Existencial', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Juan Marinelli", esProfesor: true, respuestas: 114, rating: 5, fecha_alta: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Investigacion Operativa" }] }]  
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
@@ -42,8 +42,14 @@ class ForoMenu extends Component {
     keyboardWillHide = () => {
         this.setState({ searchBarFocused: false })
     }
-    vote(i) {
-        this.setState({ rating: i })
+    buscarForo(){
+        if(!this.state.tema.trim()){
+            alert("Debe proporcionar un tema")
+        }
+        else
+        {
+            this.props.onPressSearch(this.state.tema)
+        }
     }
     render() {
         if (this.state.isLoading) {
@@ -71,7 +77,7 @@ class ForoMenu extends Component {
                             searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
                         />
 
-                        <TouchableOpacity style={styles.buscarButton} onPress={() => { this.props.onPressSearch(this.state.tema) }}>
+                        <TouchableOpacity style={styles.buscarButton} onPress={() => { this.buscarForo() }}>
                             <Text style={styles.screenButtonText}>
                                 Buscar Foro
                             </Text>
@@ -84,11 +90,10 @@ class ForoMenu extends Component {
                         contentContainerCustomStyle={{ alignItems: 'center' }}
                         renderItem={this.renderCarouselItem}
                         sliderWidth={Dimensions.get('window').width}
-                        key={(item) => {item.id_foro}}
+                        key={(item) => {item.id_foro.toString()}}
                         itemWidth={wp(77)}
                         removeClippedSubviews={false}
                         initialScrollIndex={0}
-                    //onSnapToItem={(index) => this.onCarouselItemChange(index)}
                     />
                 </View>
             );
@@ -96,14 +101,15 @@ class ForoMenu extends Component {
     }
     renderCarouselItem = ({ item, index }) =>
         <TouchableOpacity
-            onPress={() => this.props.onPressGoForo(item.id_foro, item.nombre_foro)}
+            onPress={() => this.props.onPressGoForo(item.id_foro, item.nombre_foro, item.pregunta)}
             key={item.id}>
             <View
                 style={styles.cardContainer}
-            >
-                <Text style={styles.cardTitulo}>{item.pregunta}</Text>
-
-                <View style={[{ flexDirection: 'row'}]}>
+            >   
+                <View>
+                    <Text style={styles.cardTitulo} numberOfLines= {5}>{item.pregunta}</Text>
+                </View>
+                <View style={[{flex: 0.8, flexDirection: 'row', paddingTop: hp(1), flexWrap: "wrap"}]}>
                     {(item.tags).map((item) => (
                         <View style={styles.tagsContainer}>
                             <Text style={[styles.textTags]}>{item.nombre_tag}</Text>
@@ -112,11 +118,11 @@ class ForoMenu extends Component {
 
 
                 </View>
-                <View style={[{ position: 'absolute', bottom: 0, margin: 10 }]}>
+                <View style={[{ flex: 0.2, justifyContent: "flex-end"}]}>
                     <Text style={styles.cardSubTitulo}>Respuestas: {item.respuestas}</Text>
-                    <View style={[{ flexDirection: 'row' }]}>
-                        <Text style={styles.cardSubTitulo}>Preguntado el {item.fecha_inicio} por </Text>
-                        <Text style={styles.cardSubTituloUsuario} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario}</Text>
+                    <View style={[{ flexDirection: 'row', flexWrap: "wrap" }]}>
+                        <Text style={styles.cardSubTitulo}>Preguntado el {item.fecha_alta} por </Text>
+                        <Text style={styles.cardSubTituloUsuario} numberOfLines={1} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario}</Text>
                     </View>
                 </View>
             </View>
@@ -152,26 +158,6 @@ const styles = StyleSheet.create({
         shadowRadius: 7.49,
         elevation: 12,
     },
-    ContainerInside: {
-        backgroundColor: "black",
-        marginTop: hp(5),
-        padding: height * 0.04,
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: 'center',
-        height: height * 0.33,
-        width: width * 0.88
-    },
-    ContainerInside: {
-        backgroundColor: "black",
-        marginTop: hp(5),
-        padding: height * 0.04,
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: 'center',
-        height: height * 0.33,
-        width: width * 0.88
-    },
     //CAROUSEL
     carousel: {
         flex:1.25
@@ -196,7 +182,6 @@ const styles = StyleSheet.create({
         fontSize: wp(5),
         color: '#F28C0F',
         fontWeight: 'bold',
-        marginBottom: 8,
     },
 
     cardSubTitulo: {
@@ -212,15 +197,13 @@ const styles = StyleSheet.create({
     },
     //TAGS
     tagsContainer: {
-        padding: 5,
-        marginRight: 5,
-        marginBottom: 5,
+        padding: hp(0.66),
+        margin: hp(0.5),
         backgroundColor: '#FFDEB9',
         alignItems: "center",
         borderRadius: 10
     },
     textTags: {
-        marginTop: 1,
         fontSize: wp(3),
         color: 'black',
     },

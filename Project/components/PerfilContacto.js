@@ -4,9 +4,14 @@ import { SearchBar, Icon } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 import { FontAwesome, Feather, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+
+import ApiController from "../controller/ApiController";
 import ExportadorLogos from './exportadores/ExportadorLogos'
+import ExportadorObjetos from './exportadores/ExportadorObjetos'
 import ExportadorContacto from './exportadores/ExportadorContacto'
+
 
 var { height, width } = Dimensions.get('window');
 
@@ -18,36 +23,11 @@ class UserContactoEdit extends Component {
             perfil: {},
             rating: 0,
             max_rating: 5,
-            isLoading: false,
+            isLoading: true,
             id_idioma: 0,
             tema: '',
             direccion: '',
-            usuario: {
-                id_usuario: 1,
-                nombre_usuario: 'Juan',
-                apellido: 'Marinelli',
-                src: require("../assets/leila.jpg"),
-                esProfesor: false,
-                domicilio: 'Spega Ñeri',
-                dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
-                { id_dondeClases: 2, des_dondeClases: "A Domicilio" },
-                { id_dondeClases: 3, des_dondeClases: "Instituto" }],
-                tipoClases: [{ id_tipoClases: 1, des_tipoClases: "Particulares" },
-                { id_tipoClases: 2, des_tipoClases: "Grupales" },
-                { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
-                instagram: "juanmarinelli",
-                telefono: "1144373492",
-                email: "1144373492",
-                whatsApp: "1144373492",
-                rating: 3,
-                materias: [{ nombre_materia: "Ingles", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
-                { nombre_materia: "Matematica", des_materia: "Clases de matematica de secundaria y universidad" }],
-
-                horarios: [{ dia: 1, turno: 1 }, { dia: 0, turno: 0 }],
-
-                latitud: 123,
-                longitud: 123
-            },
+            usuario: {},
             dias: ["L", "Ma", "Mi", "J", "V", "S", "D"],
             turnos: ["Mañana", "Tarde", "Noche"],
             nuevosHorarios: []
@@ -55,21 +35,17 @@ class UserContactoEdit extends Component {
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
-    componentDidMount() {
-        this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
-        this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
-        this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
+    componentDidMount = async () =>{
+        ApiController.getUsuarioById((await this.props.navigation.getParam("id_usuario")) ? await this.props.navigation.getParam("id_usuario") : this.props.id_usuario, this.okUsuario.bind(this))
+    }
+    okUsuario(usuario){
+        ApiController.getHorarios(ExportadorObjetos.createUsuario(usuario), this.okHorarios.bind(this))
+    }
+    okHorarios(usuario, horarios){
+        usuario.horarios = horarios
+        this.setState({usuario: usuario, isLoading: false})
     }
 
-    keyboardDidShow = () => {
-        this.setState({ searchBarFocused: true })
-    }
-    keyboardWillShow = () => {
-        this.setState({ searchBarFocused: true })
-    }
-    keyboardWillHide = () => {
-        this.setState({ searchBarFocused: false })
-    }
     addBorderSize(index) {
         if (index < this.state.dias.length) {
             return { borderRightWidth: 1 }
@@ -101,11 +77,13 @@ class UserContactoEdit extends Component {
     //Horarios
     isCheckHorario(dia, turno) {
         var contador = 0;
-        while (contador < this.state.usuario.horarios.length) {
-            if (this.state.usuario.horarios[contador].dia == dia && this.state.usuario.horarios[contador].turno == turno) {
-                return <TouchableOpacity><FontAwesome name={"check"} size={hp(3)} color="#5EC43A" /></TouchableOpacity>
+        if(this.state.usuario.horarios){
+            while (contador < this.state.usuario.horarios.length) {
+                if (this.state.usuario.horarios[contador].dia == dia && this.state.usuario.horarios[contador].turno == turno) {
+                    return <TouchableOpacity><FontAwesome name={"check"} size={hp(3)} color="#5EC43A" /></TouchableOpacity>
+                }
+                contador++
             }
-            contador++
         }
         return
     }

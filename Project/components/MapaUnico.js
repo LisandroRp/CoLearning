@@ -21,6 +21,7 @@ import { Marker, Callout } from 'react-native-maps';
 import ApiController from '../controller/ApiController';
 import Carousel from 'react-native-snap-carousel';
 import UserDataManager from './UserDataManager';
+import ExportadorObjetos from './exportadores/ExportadorObjetos';
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyCdgRdU-qT9RXGnIBSyEUNVvCJtGhai1Ck';
 
@@ -34,60 +35,44 @@ class MapaUnico extends Component {
     this.state = {
       modalVisible: false,
       userSelected: [],
-      idEvento: null,
-      evento: {},
       isLoadingPos: true,
       isLoadingData: true,
       markers: [],
-      coordinates: [
-        { name: 'Matematica', latitude: -34.856093, longitude: -58.503515 }
-      ],
-      carousel: [
-        { name: 'Matematica', latitude: -34.856093, longitude: -58.503515 },
-        { name: 'Posicion', latitude: -34.897243, longitude: -58.627954 }
-      ],
+      coordinates: [],
+      carousel: [],
       miLatitude: -34.897243,
       miLongitude: -58.627954,
       id_transporte: 1,
-      tipoMapa: this.props.navigation.getParam('tipo')
+      tipoMapa: this.props.navigation.getParam('tipoMapa'),
+      esMapa: this.props.navigation.getParam("mapa")
     };
   }
 
   componentDidMount = async () => {
-    //ApiController.getUsuario(await this.props.navigation.getParam("id_usuario"), this.okDatos.bind(this))
-    this.cargarDatos()
+    console.log(await this.props.navigation.getParam("id"))
+    ApiController.getUsuarioById(await this.props.navigation.getParam("id"), this.okDatos.bind(this))
     this.traerPosicion(this.okPosicion.bind(this))
   }
-  okDatos(usuario){
-    var coordinate = []
-    coordinate.push(usuario)
-    var carousel = []
-    carousel.push(usuario)
-    carousel.push({ name: 'Posicion', latitude: UserDataManager.getInstance().getLatitude(), longitude: UserDataManager.getInstance().getLongitude() })
-    
-    this.setState({coordinate: coordinate, carousel: carousel})
+  okDatos(usuario) {
+    var newCoordinate = []
+    newCoordinate.push(usuario)
+    var newCarousel = []
+    newCarousel.push(usuario)
+    newCarousel.push({id_usuario: 0, nombre_usuario: 'Posicion', latitude: UserDataManager.getInstance().getLatitude(), longitude: UserDataManager.getInstance().getLongitude() })
+
+    this.setState({ coordinates: newCoordinate, carousel: newCarousel, tipoMapa: this.props.navigation.getParam('tipo') })
+    ApiController.getRoad(this.state.carousel, "Driving", this.okRoad.bind(this))
   }
-  cargarDatos = async () => {
-    let coordinates = [
-      { name: await this.props.navigation.getParam('nombre'), latitude: -34.856093, longitude: -58.503515 },
-    ]
-    let carousel = [
-      { name: await this.props.navigation.getParam('nombre'), direccion: await this.props.navigation.getParam('direccion'), distancia: '', tiempo: '', latitude: -34.856093, longitude: -58.503515 },
-      { name: 'Posicion', direccion: await this.props.navigation.getParam('nombre'), latitude: this.state.miLatitude, longitude: this.state.miLongitude }
-    ]
-    //VA ESTE Y SACAR EL LOADING Y EL CAROUSEL DEL STATE DE ABAJO//
-    ApiController.getRoad(carousel, "Driving", this.okRoad.bind(this))
-    this.setState({ coordinates: coordinates, carousel: carousel})
-  }
-  okRoad(carousel, road) {
-    if(road.rows[0].elements[0].status == "ZERO_RESULTS"){
-      carousel[0].distancia = 0
-      carousel[0].tiempo = 0
-      this.setState({id_transporte: 1, carousel: carousel})
+
+  okRoad(newCarousel, road) {
+    if (road.rows[0].elements[0].status == "ZERO_RESULTS") {
+      newCarousel[0].distancia = 0
+      newCarousel[0].tiempo = 0
+      this.setState({ id_transporte: 1, carousel: newCarousel })
     }
-    carousel[0].distancia = road.rows[0].elements[0].distance.text
-    carousel[0].tiempo = road.rows[0].elements[0].duration.text
-    this.setState({ carousel: carousel, isLoadingData: false })
+    newCarousel[0].distancia = road.rows[0].elements[0].distance.text
+    newCarousel[0].tiempo = road.rows[0].elements[0].duration.text
+    this.setState({ carousel: newCarousel, isLoadingData: false })
   }
   traerPosicion(okPosicion) {
     this.setState({ miLongitude: UserDataManager.getInstance().getLongitude(), miLatitude: UserDataManager.getInstance().getLatitude() })
@@ -96,14 +81,11 @@ class MapaUnico extends Component {
   okPosicion() {
     this.setState({ isLoadingPos: false })
   }
-  cargarDetalle() {
-    ApiController.getDetalle(this.okDetalle.bind(this), this.state.idEvento);
-  }
 
   onCarouselItemChange = (index) => {
     let location = this.state.carousel[index];
 
-    if (location.name == "Posicion") {
+    if (location.nombre == "Posicion") {
       this._map.animateToRegion({
         latitude: this.state.miLatitude,
         longitude: this.state.miLongitude,
@@ -187,7 +169,11 @@ class MapaUnico extends Component {
     if (this.state.isLoadingPos || this.state.isLoadingData) {
       return (
         <View style={styles.container}>
-          <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+    
+          <ActivityIndicator size="large" color="#F28C0F" backgroundColor=' #616161' style={{ flex: 1 }}/>
+          <TouchableOpacity style={[styles.backBubble, styles.shadow]} onPress={() => this.volver()}>
+            <Entypo name="chevron-left" size={hp(4.4)} style={{ textAlignVertical: "center" }} color={'#F28C0F'} />
+          </TouchableOpacity>
         </View>
       );
     } else {
@@ -206,13 +192,13 @@ class MapaUnico extends Component {
             {
               this.state.coordinates.map((marker, index) => (
                 <Marker
-                  key={marker.name}
+                  key = {(item) => (this.state.tipoMapa == 'Curso' ? item.id_curso : item.id_usuario )}
                   ref={ref => this.state.markers[index] = ref}
                   onPress={() => this.onMarkerPressed(marker, index)}
                   coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
                 >
                   <Callout>
-                    <Text>{marker.name}</Text>
+                    <Text>{(this.state.tipoMapa == "Curso" ? marker.nombre_curso : marker.nombre_usuario)}</Text>
                   </Callout>
 
                 </Marker>
@@ -234,15 +220,15 @@ class MapaUnico extends Component {
             />
 
           </MapView>
-          <View style={styles.safeArea}/>
+          <View style={styles.safeArea} />
           <TouchableOpacity style={[styles.backBubble, styles.shadow]} onPress={() => this.volver()}>
-            <Entypo name="chevron-left" size={hp(4.4)} style={{textAlignVertical: "center"}} color={'#F28C0F'} />
+            <Entypo name="chevron-left" size={hp(4.4)} style={{ textAlignVertical: "center" }} color={'#F28C0F'} />
           </TouchableOpacity>
           <View style={styles.transportContainer}>
             <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow, { backgroundColor: this.tipoDeTransporteContainer(1) }]} onPress={() => this.changeTransporte(this.state.carousel, 1)}><FontAwesome5 name="car" size={hp(3.3)} color={this.tipoDeTransporteLogo(1)} /></TouchableOpacity>
-            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow,{ backgroundColor: this.tipoDeTransporteContainer(2) }]} onPress={() => this.changeTransporte(this.state.carousel, 2)}><FontAwesome5 name="bus" size={hp(3.3)} color={this.tipoDeTransporteLogo(2)} /></TouchableOpacity>
-            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow,{ backgroundColor: this.tipoDeTransporteContainer(3) }]} onPress={() => this.changeTransporte(this.state.carousel, 3)}><FontAwesome5 name="walking" size={hp(3.3)} color={this.tipoDeTransporteLogo(3)} /></TouchableOpacity>
-            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow,{ backgroundColor: this.tipoDeTransporteContainer(4) }]} onPress={() => this.changeTransporte(this.state.carousel, 4)}><FontAwesome5 name="bicycle" size={hp(3.3)} color={this.tipoDeTransporteLogo(4)} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow, { backgroundColor: this.tipoDeTransporteContainer(2) }]} onPress={() => this.changeTransporte(this.state.carousel, 2)}><FontAwesome5 name="bus" size={hp(3.3)} color={this.tipoDeTransporteLogo(2)} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow, { backgroundColor: this.tipoDeTransporteContainer(3) }]} onPress={() => this.changeTransporte(this.state.carousel, 3)}><FontAwesome5 name="walking" size={hp(3.3)} color={this.tipoDeTransporteLogo(3)} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.typeTransportContainer, styles.shadow, { backgroundColor: this.tipoDeTransporteContainer(4) }]} onPress={() => this.changeTransporte(this.state.carousel, 4)}><FontAwesome5 name="bicycle" size={hp(3.3)} color={this.tipoDeTransporteLogo(4)} /></TouchableOpacity>
           </View>
           <Carousel
             ref={(c) => { this._carousel = c; }}
@@ -261,24 +247,82 @@ class MapaUnico extends Component {
   }
 
   renderCarouselItem = ({ item }) =>
-    (item.name == 'Posicion') ?
-      <View style={styles.cardContainerHome}>
-        <FontAwesome name="home" size={hp(11)} color={"#F28C0F"} />
+    (item.nombre_usuario == 'Posicion') ?
+      <View style={[styles.cardContainerHome, styles.shadowCard]}>
+        <FontAwesome name="home" size={hp(8)} color={"#F28C0F"} />
       </View>
       :
-      <View style={styles.cardContainer}>
+      ((this.state.tipoMapa == 'Curso') ?
+        <View style={[styles.cardContainer, styles.shadowCard]}>
+          <View style={{ justifyContent: "center" }}>
+            <View style={styles.cardImage}>
+              <Text style={{ fontSize: hp(5), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
+                {item.nombre.slice(0, 1).toUpperCase()}
+              </Text>
+            </View>
+          </View>
 
-        <View style={styles.cardImage}>
-          <FontAwesome name="user" size={hp(5.5)} color={"white"} />
+          <View style={{ flexDirection: 'column', flex: 1 }}>
+            <Text style={styles.cardTitle} numberOfLines={2}>{item.nombre}{item.apellido ? ('\n' + item.apellido) : ""}</Text>
+            {item.institucion ? <Text style={styles.cardInstituto}>{item.institucion}</Text> : <View />}
+            <Text style={styles.cardDireccion} numberOfLines={2}>{item.des_domicilio}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardDistancia}>Distancia: {item.distancia}</Text>
+                <Text style={styles.cardTiempo}>Duración: {item.tiempo}</Text>
+              </View>
+              {this.state.esMapa ?
+                <TouchableOpacity style={{ justifyContent: 'center', paddingLeft: wp(5) }} onPress={() => this.props.onPressGoPerfil(this.state.tipoMapa)}>
+                  <Entypo name="info-with-circle" size={hp(3.3)} color={"#F28C0F"} />
+                </TouchableOpacity>
+                //
+                :
+                <View />
+              }
+            </View>
+          </View>
         </View>
+        :
+        <View style={[styles.cardContainer, styles.shadowCard]}>
+          <View style={{ justifyContent: "center" }}>
+          {ExportadorObjetos.profileImage(item.id_usuario) ?
+            <View style={[styles.cardImageContainer, {borderWidth: 0}]}>
+            <Image
+                source={ExportadorObjetos.profileImage(item.id_usuario)}
+                style={[styles.cardImage, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
+              />
+            </View>
+              :
+              <View style={[styles.cardImageContainer, {borderWidth: 1.5}]}>
+              <Text style={{ fontSize: hp(5), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
+                {item.nombre_usuario.slice(0, 1).toUpperCase()}
+              </Text>
+            </View>
+          }
+          </View>
 
-        <View style={{ flexDirection: 'column', width: 0, flexGrow: 1 }}>
-          <Text style={styles.cardTitle}>{item.name}</Text>
-          <Text style={styles.cardDireccion}>{item.direccion}</Text>
-          <Text style={styles.cardDistancia}>Distancia: {item.distancia}</Text>
-          <Text style={styles.cardTiempo}>Duración: {item.tiempo}</Text>
+          <View style={{ flexDirection: 'column', flex: 1 }}>
+            <Text style={styles.cardTitle} numberOfLines={2}>{item.nombre_usuario}{item.apellido ? ('\n' + item.apellido) : ""}</Text>
+            {item.institucion ? <Text style={styles.cardInstituto}>{item.institucion}</Text> : <View />}
+            <Text style={styles.cardDireccion} numberOfLines={2}>{item.des_domicilio}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardDistancia}>Distancia: {item.distancia}</Text>
+                <Text style={styles.cardTiempo}>Duración: {item.tiempo}</Text>
+              </View>
+              {this.state.esMapa ?
+                <TouchableOpacity style={{ justifyContent: 'center', paddingLeft: wp(5) }} onPress={() => this.props.onPressGoPerfil(item.id_usuario, this.state.tipoMapa)}>
+                  <Entypo name="info-with-circle" size={hp(3.3)} color={"#F28C0F"} />
+                </TouchableOpacity>
+                //
+                :
+                <View />
+              }
+            </View>
+          </View>
         </View>
-      </View>
+      )
+
 }
 
 {/* <MapViewDirections
@@ -344,7 +388,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: 'white'
   },
-  shadow:{
+  shadow: {
     shadowColor: '#00000055',
     shadowOffset: {
       width: 2,
@@ -354,24 +398,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 55,
   },
-  //********************* */
-  //CAROUSEL
-  //********************* */
-  carousel: {
-    position: 'absolute',
-    bottom: 0,
-    paddingVertical: hp(4.4)
-  },
-  cardContainer: {
-    //backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    backgroundColor: 'white',
-    height: hp(20),
-    width: wp(80),
-    padding: 24,
-    borderRadius: 24,
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignContent: 'center',
+  shadowCard: {
     shadowColor: '#00000021',
     shadowOffset: {
       width: 0,
@@ -379,20 +406,46 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 2,
     shadowRadius: 8,
-    elevation: 55,
-    flexWrap: 'wrap'
+    elevation: 55
   },
-  cardImage: {
+  //********************* */
+  //CAROUSEL
+  //********************* */
+  carousel: {
+    position: 'absolute',
+    bottom: 0,
+    paddingVertical: hp(8.8)
+  },
+  cardContainer: {
+    backgroundColor: 'white',
+    flex: 1,
+    padding: hp(2),
+    borderRadius: 24,
+    flexDirection: 'row',
+  },
+  cardImageContainer: {
     height: hp(10),
     width: hp(10),
-    backgroundColor: '#F28C0F',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#FFF7EE',
+    borderColor: "#F28C0F",
     marginRight: wp(5),
-    borderRadius: 100
+    borderRadius: hp(10) / 2,
+    justifyContent: "center"
+  },
+  cardImage: {
+    height: "100%",
+    width: "100%",
+    borderRadius: hp(10) / 2,
+    resizeMode: "contain"
   },
   cardTitle: {
     color: '#F28C0F',
+    fontSize: wp(5.5),
+    alignSelf: 'center',
+    textAlign: 'center'
+  },
+  cardInstituto: {
+    color: 'black',
     fontSize: wp(4.4),
     alignSelf: 'center',
     textAlign: 'center'
@@ -400,8 +453,9 @@ const styles = StyleSheet.create({
   cardDireccion: {
     color: 'black',
     fontSize: wp(3),
-    alignSelf: 'center',
-    marginBottom: hp(5)
+    textAlign: 'center',
+    marginTop: hp(0.5),
+    marginBottom: hp(3)
   },
   cardDistancia: {
     color: 'black',
@@ -415,22 +469,13 @@ const styles = StyleSheet.create({
   //HOME
   //********************* */
   cardContainerHome: {
-    //backgroundColor: 'rgba(0, 0, 0, 0.6)',
     backgroundColor: 'white',
-    height: hp(18),
-    width: hp(18),
+    height: hp(15),
+    width: hp(15),
     padding: 24,
     borderRadius: 80,
     alignSelf: 'center',
-    alignItems: 'center',
-    shadowColor: '#00000021',
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 2,
-    shadowRadius: 8,
-    elevation: 55,
+    alignItems: 'center'
   },
 })
 

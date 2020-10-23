@@ -22,7 +22,10 @@ class ExportadorContacto extends React.Component {
                         <View style={styles.logoSocialMedia}>
                             <Fontisto style={{ textAlign: "center", paddingBottom: hp(1.5) }} name={"instagram"} size={hp(2.5)} color='#F28C0F' />
                         </View>
-                        <Text style={styles.socialMedia} onPress={() => Linking.openURL(ExportadorCreadores.queLinkInstagram() + item.des_contacto)}>{item.des_contacto}</Text>
+                        <View style={{ flexDirection: 'row'}}>
+                            <Text>@</Text>
+                            <Text style={styles.socialMedia} onPress={() => Linking.openURL(ExportadorCreadores.queLinkInstagram() + item.des_contacto)}>{item.des_contacto}</Text>
+                        </View>
                     </View>
                 </View>
                 )

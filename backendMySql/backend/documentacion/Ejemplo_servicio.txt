@@ -11,9 +11,9 @@ User by Id tipo clases
 
 localhost:8088/apiColearning/users/profesor/1/tipoClases
 
-Todos los usuarios
+User by Id por dondeDaClases
 
-localhost:8088/apiColearning/users
+localhost:8088/apiColearning/users/profesor/1/dondeDaClases
 
 usuario por comentarios:
 
@@ -53,9 +53,9 @@ User by Id por materia
 
 localhost:8088/apiColearning/users/profesor/1/materias
 
-User by Id por dondeDaClases
+Todos los usuarios
 
-localhost:8088/apiColearning/users/profesor/1/dondeDaClases
+localhost:8088/apiColearning/users
 
 Tipo de clases
 

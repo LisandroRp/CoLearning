@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { View, Image, StyleSheet, ActivityIndicator, FlatList, Modal, TextInput, TouchableOpacity, StatusBar, TouchableWithoutFeedback, Text, Keyboard, Dimensions } from 'react-native';
 import { SearchBar, Icon } from 'react-native-elements';
-import { FontAwesome } from '@expo/vector-icons';
 import { withNavigation } from 'react-navigation';
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+
 import ApiController from '../controller/ApiController';
+import ExportadorObjetos from './exportadores/ExportadorObjetos'
+import ExportadorLogos from './exportadores/ExportadorLogos';
 
 var { height, width } = Dimensions.get('window');
 
@@ -14,28 +16,40 @@ class Foros extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: false,
+            isLoading: true,
             modalVisible: false,
-            foros: [
-                { id_foro: 1, nombre_foro: 'Como cambiarle el color al titulo React Native', pregunta: 'Como cambiarle el color al titulo React Native?', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 2, nombre_foro: 'Consejos para leer mas rápido', pregunta: 'Consejos para leer mas rápido', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Leer" }, { id_tag: 2, nombre_tag: "Consejo" }] },
-                { id_foro: 3, nombre_foro: 'Resolvér Ecuacion', pregunta: 'Como resolvér esta ecuacion x^2+X-5?', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Matematica" }, { id_tag: 2, nombre_tag: "Ecuaciones" }] }
-            ],
-            memory: [
-                { id_foro: 1, nombre_foro: 'Como cambiarle el color al titulo React Native', pregunta: 'Como cambiarle el color al titulo React Native?', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
-                { id_foro: 2, nombre_foro: 'Consejos para leer mas rápido', pregunta: 'Consejos para leer mas rápido', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Leer" }, { id_tag: 2, nombre_tag: "Consejo" }] },
-                { id_foro: 3, nombre_foro: 'Resolvér Ecuacion', pregunta: 'Como resolvér esta ecuacion x^2+X-5?', id_usuario: 1, nombre_usuario: "Juan Marinelli", profesor: true, respuestas: 114, rating: 5, fecha_inicio: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Matematica" }, { id_tag: 2, nombre_tag: "Ecuaciones" }] }
-            ]
+            foros: [],
+            memory: []
         };
     }
     componentDidMount = async () => {
-        //ApiController.getForos(await this.props.navigation.getParam("tema"), this.okForos.bind(this))
+        ApiController.getFiltroForo(await this.props.navigation.getParam("tema"), this.okForos.bind(this))
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
     }
-    okForos(foros){
-        this.setState({foros: foros, isLoading: false})
+    okForos(foros) {
+        var contador = 0
+        var nuevosForos = []
+        if (foros.length != 0) {
+            var foroActual = ExportadorObjetos.createForo(foros[contador])
+            while (contador < foros.length) {
+                while (contador < foros.length && foroActual.id_foro == foros[contador].id_foro) {
+                    if (foros[contador].id_tag != null) {
+                        foroActual.tags.push(ExportadorObjetos.createTag(foros[contador].id_tag, foros[contador].nombre_tag))
+                    }
+                    contador++
+                }
+                nuevosForos.push(foroActual)
+                if (contador < foros.length) {
+                    foroActual = ExportadorObjetos.createForo(foros[contador])
+                }
+            }
+            this.setState({ foros: nuevosForos, memory: nuevosForos, isLoading: false })
+        }
+        else {
+            alert("No se han encontrado foros")
+        }
     }
     keyboardDidShow = () => {
         this.setState({ searchBarFocused: true })
@@ -51,7 +65,6 @@ class Foros extends Component {
 
     marginSize(item) {
         if (item.id_foro != this.state.foros[this.state.foros.length - 1].id_foro) {
-
             return { marginTop: height * 0.028 }
         } else {
             return { marginBottom: height * 0.028, marginTop: height * 0.028 }
@@ -91,23 +104,22 @@ class Foros extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <View style={{backgroundColor: '#F28C0F'}}>
-                    <SearchBar
-                            placeholder= "Buscar..."
+                    <View style={{ backgroundColor: '#F28C0F' }}>
+                        <SearchBar
+                            placeholder="Buscar..."
                             platform='ios'
                             onChangeText={value => this.searchForos(value)}
                             value={this.state.value}
-                            inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5)}}
+                            inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5) }}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
-                            cancelButtonProps={{buttonTextStyle: {color: 'white', paddingTop: 0}}}
-                            containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3)}}
+                            cancelButtonProps={{ buttonTextStyle: { color: 'white', paddingTop: 0 } }}
+                            containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3) }}
                             buttonStyle={{}}
                             searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
                         />
                     </View>
                     <FlatList
                         style={styles.contentList}
-                        columnWrapperStyle={styles.listContainer}
                         data={this.state.foros.sort((a, b) => a.nombre_foro.localeCompare(b.nombre_foro))}
                         initialNumToRender={50}
                         keyExtractor={(item) => {
@@ -116,27 +128,37 @@ class Foros extends Component {
                         renderItem={({ item }) => {
                             return (
                                 <View>
-                                    <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.props.onPressGoForo(item.id_foro, item.nombre_foro)}>
-                                        <View style={{ flexDirection: "row" }} >
+                                    <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.props.onPressGoForo(item.id_foro, item.nombre_foro, item.pregunta)}>
+                                        <View style={styles.cardContent}>
+                                            <Text numberOfLines={2} style={styles.cardTitulo}>{item.pregunta}</Text>
 
-                                            <View style={styles.cardContent}>
-                                                <Text numberOfLines={2} style={styles.cardTitulo}>{item.pregunta}</Text>
-
-                                                <View style={[{ flexDirection: 'row', marginBottom: hp(1.5)}]}>
-                                                    {(item.tags).map((item) => (
+                                            <View style={[{ flexDirection: 'row', flexWrap: "wrap", marginBottom: hp(1), flex: 1 }]}>
+                                                {item.tags.length != 0 ?
+                                                    (item.tags).map((item) => (
                                                         <View style={styles.tagsContainer}>
                                                             <Text numberOfLines={1} style={[styles.textTags]}>{item.nombre_tag}</Text>
                                                         </View>
-                                                    ))}
-
-
+                                                    ))
+                                                    :
+                                                    <View style={styles.tagsContainer}>
+                                                        <Text numberOfLines={1} style={[styles.textTags]}>Sin tags</Text>
+                                                    </View>
+                                                }
+                                            </View>
+                                            <View style={[{ flexWrap: "wrap", flex: 1 }]}>
+                                                <Text style={styles.cardSubTitulo}>Respuestas: {item.respuestasCant}</Text>
+                                                <View style={[{ flexDirection: 'row', flexWrap: "wrap", flex: 1 }]}>
+                                                    <Text style={styles.cardSubTitulo}>Preguntado el {item.fecha_alta}</Text>
+                                                    {
+                                                    item.esAnonimo ?
+                                                    <View/>
+                                                    :
+                                                    <View style={[{ flexDirection: 'row', flexWrap: "wrap", flex: 1 }]}>
+                                                        <Text style={styles.cardSubTitulo}> por </Text>
+                                                        <Text style={styles.cardSubTituloUsuario} numberOfLines={1} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario} {item.apellido}</Text>
+                                                    </View>
+                                                    }
                                                 </View>
-                                                <Text style={styles.cardSubTitulo}>Respuestas: {item.respuestas}</Text>
-                                                <View style={[{ flexDirection: 'row' }]}>
-                                                    <Text style={styles.cardSubTitulo}>Preguntado el {item.fecha_inicio} por </Text>
-                                                    <Text style={styles.cardSubTituloUsuario} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.profesor)}>{item.nombre_usuario}</Text>
-                                                </View>
-
                                             </View>
                                         </View>
                                     </TouchableOpacity>
@@ -172,8 +194,7 @@ const styles = StyleSheet.create({
     },
     searchBarInput: {
         backgroundColor: '#FFF7EE',
-        marginRight: height * 0.028,
-        marginLeft: height * 0.028
+        marginHorizontal: wp(3.3)
     },
     // FlatList
 
@@ -187,12 +208,10 @@ const styles = StyleSheet.create({
         shadowRadius: 7.49,
         elevation: 12,
 
-        marginLeft: height * 0.028,
-        marginRight: height * 0.028,
+        marginHorizontal: wp(5),
         borderRadius: 10,
         backgroundColor: "white",
         padding: 10,
-        flexDirection: 'row',
     },
     image: {
         width: wp("20"),
@@ -205,9 +224,7 @@ const styles = StyleSheet.create({
         alignSelf: "center"
     },
     cardContent: {
-        marginLeft: wp(4),
-        paddingRight: 5,
-        justifyContent: 'center',
+        marginLeft: wp(4)
     },
     cardTitulo: {
         fontSize: wp(5),
@@ -217,7 +234,6 @@ const styles = StyleSheet.create({
     },
 
     cardSubTitulo: {
-        marginTop: 1,
         fontSize: wp(3),
         color: "black"
     },
@@ -231,7 +247,7 @@ const styles = StyleSheet.create({
     tagsContainer: {
         padding: 5,
         marginRight: 5,
-        marginBottom: 5,
+        marginBottom: hp(0.5),
         backgroundColor: '#FFDEB9',
         alignItems: "center",
         borderRadius: 10

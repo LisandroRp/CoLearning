@@ -13,13 +13,15 @@ import {
     FlatList,
     KeyboardAvoidingView
 } from 'react-native';
-import { SearchBar, Icon } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 import { FontAwesome, Feather, Fontisto, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
+
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+
+import ApiController from "../controller/ApiController";
 import ExportadorLogos from './exportadores/ExportadorLogos'
-import ExportadorContacto from './exportadores/ExportadorContacto'
+import ExportadorObjetos from './exportadores/ExportadorObjetos'
 
 var { height, width } = Dimensions.get('window');
 
@@ -59,26 +61,23 @@ class UserContactoEdit extends Component {
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
-    componentDidMount() {
+    componentDidMount(){
+        ApiController.getUsuarioById(this.props.id_usuario, this.okUsuario.bind(this))
+    }
+    okUsuario(usuario){
+        console.log(usuario)
+        ApiController.getHorarios(ExportadorObjetos.createUsuario(usuario), this.okHorarios.bind(this))
+    }
+    okHorarios(usuario, horarios){
+        usuario.horarios = horarios
         this.setState({
-            contactoNuevo: this.contactoList(),
-            horariosNuevo: this.state.usuario.horarios,
+            usuario: usuario,
+            contactoNuevo: this.contactoList(usuario),
+            horariosNuevo: usuario.horarios,
             isLoading: false
         })
-        this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
-        this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
-        this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
     }
 
-    keyboardDidShow = () => {
-        this.setState({ searchBarFocused: true })
-    }
-    keyboardWillShow = () => {
-        this.setState({ searchBarFocused: true })
-    }
-    keyboardWillHide = () => {
-        this.setState({ searchBarFocused: false })
-    }
     addBorderSize(index) {
         if (index < this.state.dias.length) {
             return { borderRightWidth: 1 }
@@ -87,20 +86,20 @@ class UserContactoEdit extends Component {
     //************************ */
     //Contacto
     //************************ */
-    contactoList() {
+    contactoList(usuario) {
         var contactoList = []
 
-        if (this.state.usuario.instagram != "" && this.state.usuario.instagram) {
-            contactoList.push({ id_contacto: 0, des_contacto: this.state.usuario.instagram })
+        if (usuario.instagram != "" && usuario.instagram) {
+            contactoList.push({ id_contacto: 0, des_contacto: usuario.instagram })
         }
-        if (this.state.usuario.telefono != "" && this.state.usuario.telefono) {
-            contactoList.push({ id_contacto: 1, des_contacto: this.state.usuario.telefono })
+        if (usuario.telefono != "" && usuario.telefono) {
+            contactoList.push({ id_contacto: 1, des_contacto: usuario.telefono })
         }
-        if (this.state.usuario.email != "" && this.state.usuario.email) {
-            contactoList.push({ id_contacto: 2, des_contacto: this.state.usuario.email })
+        if (usuario.email != "" && usuario.email) {
+            contactoList.push({ id_contacto: 2, des_contacto: usuario.email })
         }
-        if (this.state.usuario.whatsApp != "" && this.state.usuario.whatsApp) {
-            contactoList.push({ id_contacto: 3, des_contacto: this.state.usuario.whatsApp })
+        if (usuario.whatsApp != "" && usuario.whatsApp) {
+            contactoList.push({ id_contacto: 3, des_contacto: usuario.whatsApp })
         }
         return contactoList
     }
@@ -131,6 +130,7 @@ class UserContactoEdit extends Component {
                                 <Fontisto style={{ textAlign: "center", paddingBottom: hp(1.5) }} name={"instagram"} size={hp(2.5)} color='#F28C0F' />
                             </View>
                             <View style={{ flexDirection: 'row' }}>
+                                <Text style={styles.arroba}>@</Text>
                                 <TextInput style={styles.socialMedia} onChangeText={(value) => this.cambiarContacto(index, value)} ref={(input) => { this.instagram = input }}>{item.des_contacto}</TextInput>
                                 <TouchableOpacity style={styles.pencilButton} onPress={() => this.instagram.focus()}>
                                     <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(4)} color="black" />
@@ -216,9 +216,6 @@ class UserContactoEdit extends Component {
         }
         return
     }
-    isCheckDondeClasesPosition(id_dondeClases) {
-
-    }
     checkClases(esTick, dia, turno) {
 
         if (esTick) {
@@ -295,7 +292,7 @@ class UserContactoEdit extends Component {
     }
     render() {
         const element = (data, index) => (
-            <View style={[styles.checkBoxContainer, this.isCheckDondeClasesPosition(data, index)]}>
+            <View style={[styles.checkBoxContainer]}>
                 <TouchableOpacity style={[styles.checkBox, styles.shadow]} onPress={() => this.checkClases(false, data, index)} />
                 {this.isCheckHorario(data, index)}
             </View>
@@ -474,6 +471,11 @@ const styles = StyleSheet.create({
         textAlign: "center",
         textDecorationLine: 'underline',
         marginHorizontal: wp(5)
+    },
+    arroba: {
+        alignSelf: "center",
+        position: "absolute",
+        left: wp(2)
     },
     pencilButton: {
         alignSelf: "center",

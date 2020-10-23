@@ -1,8 +1,23 @@
 import React, { Component } from 'react';
-import { View, Image, StyleSheet, ActivityIndicator, FlatList, Modal, TextInput, TouchableOpacity, StatusBar, TouchableWithoutFeedback, Text, Keyboard, Dimensions } from 'react-native';
-import { SearchBar, Icon } from 'react-native-elements';
+import {
+    View,
+    Image,
+    StyleSheet,
+    ActivityIndicator,
+    FlatList,
+    Modal,
+    TextInput,
+    TouchableOpacity,
+    StatusBar,
+    ScrollView,
+    Text,
+    Keyboard,
+    Dimensions
+} from 'react-native';
+import { SearchBar } from 'react-native-elements';
 import ExportadorLogos from './exportadores/ExportadorLogos'
 import { withNavigation } from 'react-navigation';
+import AntDesign from 'react-native-vector-icons/MaterialIcons'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ApiController from '../controller/ApiController';
@@ -17,15 +32,18 @@ class Cursos extends Component {
             isLoading: false,
             modalVisible: false,
             cursos: [
-                { id_curso: 1, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5 },
-                { id_curso: 2, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5 },
-                { id_curso: 3, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5 }
+                { id_curso: 1, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "200" } },
+                { id_curso: 2, nombre_curso: 'Magia para Principiantes', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "20" } },
+                { id_curso: 3, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "2000" } }
             ],
             memory: [
-                { id_curso: 1, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5 },
-                { id_curso: 2, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5 },
-                { id_curso: 3, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5 }
-            ]
+                { id_curso: 1, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "200" } },
+                { id_curso: 2, nombre_curso: 'Magia para Principiantes', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "200" } },
+                { id_curso: 3, nombre_curso: 'Programacion Avanzada', usuario:{id_usuario: 1, nombre_usuario: 'Pedro'}, direccion: "Narnia", rating: 5, money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "200" } }
+            ],
+            filtrarPrecio: false,
+            minPrice: null,
+            maxPrice: null
         };
     }
     componentDidMount() {
@@ -57,10 +75,54 @@ class Cursos extends Component {
             return { marginBottom: height * 0.028, marginTop: height * 0.028 }
         }
     }
-
+    filtrarPrecio() {
+        var cursoPrecio = []
+        for (var i = 0; i < this.state.cursos.length; i++) {
+            console.log(this.state.cursos[i].money.monto)
+            if ((this.state.cursos[i].money.monto <= parseInt(this.state.maxPrice)) && (this.state.cursos[i].money.monto >= parseInt(this.state.minPrice))) {
+                cursoPrecio.push(this.state.cursos[i])
+            }
+        }
+        this.setState({ cursos: cursoPrecio, isLoading: false })
+    }
+    noFiltrar() {
+        this.setState({ cursos: this.state.memory, filtrarPrecio: false, minPrice: null, maxPrice: null })
+    }
+    ActivarFiltrarPrecio() {
+        if (this.state.maxPrice == null || this.state.minPrice == null || this.state.minPrice == '' || this.state.maxPrice == '') {
+            alert('Hay un espacio en Blanco')
+        } else {
+            if (parseInt(this.state.minPrice) > parseInt(this.state.maxPrice)) {
+                alert('El precio menor no puede ser superior al precio mayor')
+                return;
+            }
+            if (parseInt(this.state.maxPrice) == parseInt(this.state.minPrice)) {
+                alert('Los precios no pueden ser iguales')
+                return;
+            }
+            this.setState({ filtrarPrecio: true, modalVisible: false })
+            this.filtrarPrecio()
+        }
+    }
+    setModalVisible(visible) {
+        this.setState({ modalVisible: visible, minPrice: null, maxPrice: null });
+    }
+    OrdenarPorPrecio(flag) {
+        var result = this.state.cursos
+        if (flag == 0) {
+            result = this.state.cursos.sort((a, b) => {
+                return b.money.monto - a.money.monto
+            });
+        } else {
+            result = this.state.cursos.sort((a, b) => {
+                return a.money.monto - b.money.monto
+            });
+        }
+        this.setState({ cursos: result, minPrice: null, maxPrice: null });
+    }
     searchCursos = value => {
         const filterDeCursos = this.state.memory.filter(cursos => {
-            let profesorLowercase = (
+            let cursosLowercase = (
                 cursos.nombre_curso +
                 ' ' +
                 cursos.institucion +
@@ -72,7 +134,7 @@ class Cursos extends Component {
 
             return cursosLowercase.indexOf(searchTermLowercase) > -1;
         });
-        this.setState({ profesores: filterDeCursos });
+        this.setState({ cursos: filterDeCursos });
         this.setState({ value })
     };
 
@@ -89,50 +151,120 @@ class Cursos extends Component {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
-                    <View style={{backgroundColor: '#F28C0F'}}>
-                    <SearchBar
-                            placeholder= "Search..."
+                    <View style={{ backgroundColor: '#F28C0F' }}>
+                        <SearchBar
+                            placeholder="Search..."
                             platform='ios'
-                            onChangeText={value => this.searchProfesor(value)}
+                            onChangeText={value => this.searchCursos(value)}
                             value={this.state.value}
-                            inputContainerStyle={{ backgroundColor: '#FFF7EE'}}
+                            inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5) }}
                             placeholderTextColor='rgba(0, 0, 0, 0.3)'
-                            cancelButtonProps={{buttonTextStyle: {color: 'white', paddingTop: 0}}}
-                            containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3)}}
+                            cancelButtonProps={{ buttonTextStyle: { color: 'white', paddingTop: 0 } }}
+                            containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3) }}
                             buttonStyle={{}}
                             searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
                         />
                     </View>
-                    <FlatList
-                        style={styles.contentList}
-                        columnWrapperStyle={styles.listContainer}
-                        data={this.state.cursos.sort((a, b) => a.nombre_curso.localeCompare(b.nombre_curso))}
-                        initialNumToRender={50}
-                        keyExtractor={(item) => {
-                            return item.id_curso.toString();
-                        }}
-                        renderItem={({ item }) => {
-                            return (
-                                <View>
-                                    <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.props.onPressGo(item.id_curso, item.nombre_curso, item.institucion, item.direccion)}>
-                                        <View style={{ flexDirection: "row" }} >
+                    <ScrollView>
+                        <View style={styles.priceFilterView}>
+                            <TouchableOpacity style={[styles.buttonContainer, styles.shadow]}
+                                onPress={() => this.OrdenarPorPrecio(0)}>
+                                <Text style={styles.loginText}>Precio: Mayor to Menor</Text>
+                            </TouchableOpacity>
+                            {(this.state.filtrarPrecio == false) ?
+                                <TouchableOpacity onPress={() => {
+                                    this.setModalVisible(true);
+                                }} style={styles.fab}>
+                                    <AntDesign name="attach-money" size={hp(2.7)} color="white" style={{ textAlign: "right" }} />
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity onPress={() => {
+                                    this.noFiltrar();
+                                }} style={styles.fab}>
+                                    <AntDesign name="money-off" size={25} color="white" style={{ marginLeft: 0.5 }} />
+                                </TouchableOpacity>
+                            }
+                            <TouchableOpacity style={[styles.buttonContainer, styles.shadow]}
+                                onPress={() => [this.OrdenarPorPrecio(1)]}>
+                                <Text style={styles.loginText}>Precio: Menor to Mayor</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <FlatList
+                            style={styles.contentList}
+                            columnWrapperStyle={styles.listContainer}
+                            data={this.state.cursos}
+                            initialNumToRender={50}
+                            keyExtractor={(item) => {
+                                return item.id_curso.toString();
+                            }}
+                            renderItem={({ item }) => {
+                                return (
+                                    <View>
+                                        <TouchableOpacity style={[this.marginSize(item), styles.card, styles.shadow]} onPress={() => this.props.onPressGo(item.id_profesor, item.nombre_profesor + " " + item.apellido, item.esProfesor)}>
                                             <Image style={styles.image} source={require("../assets/icon.png")} />
                                             <View style={styles.cardContent}>
-                                                <Text style={styles.cardTitulo}>{item.nombre_curso}</Text>
-                                                <Text style={styles.cardSubTitulo}>{item.usuario.nombre_usuario}</Text>
-                                                <Text style={styles.cardSubTitulo}>{item.direccion}</Text>
+                                                <Text style={styles.cardTitulo} numberOfLines={2}>{item.nombre_curso}</Text>
+                                                <Text style={styles.cardSubTitulo} numberOfLines={2}>{item.direccion}</Text>
+                                                <View style={{ flex: 1, flexDirection: "row", marginLeft: 2, marginTop: 5 }}>
+                                                    <Text style={styles.cardSubTituloMoney}>A partir de: </Text>
+                                                    <Text style={styles.cardSubTituloMoneyMonto}>{item.money.id_moneda.nombre}{item.money.monto}/h</Text>
+                                                </View>
                                             </View>
                                             <View style={styles.starView} >
-                                                {/* <Image style={styles.StarImage} source={require("../Contenido/Logos/Star_Llena.png")} /> */}
-                                                <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()}/>
+                                                <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()} />
+                                                {/* <FontAwesome name="star" style={styles.HeartImage}
+                                                    size={hp(5)}
+                                                /> */}
                                                 <Text style={styles.rating}>{item.rating + "/5"}</Text>
                                             </View>
-                                        </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            }
+                            } />
+                    </ScrollView>
+                    <Modal
+                        animationType="fade"
+                        visible={this.state.modalVisible}
+                        transparent={true}
+                        onRequestClose={() => this.setState({ modalVisible: false })}  >
+                        <TouchableOpacity style={[styles.modalContainer, styles.shadow]} activeOpacity={1} onPress={Keyboard.dismiss}>
+
+                            <View style={styles.modal}>
+                                <Text style={styles.cardTitulo}>Precio</Text>
+                                <View style={[{ flexDirection: "row", justifyContent: 'space-between' }]}>
+                                    <TextInput style={[styles.inputMonto, styles.shadowLight]}
+                                        value={this.state.nuevoMonto}
+                                        maxLength={4}
+                                        placeholder="Min."
+                                        keyboardType="numeric"
+                                        placeholderTextColor="grey"
+                                        underlineColorAndroid='transparent'
+                                        onChangeText={(text) => this.setState({ minPrice: text })}
+                                    />
+                                    <TextInput style={[styles.inputMonto, styles.shadowLight]}
+                                        value={this.state.nuevoMonto}
+                                        maxLength={4}
+                                        placeholder="Max."
+                                        keyboardType="numeric"
+                                        placeholderTextColor="grey"
+                                        underlineColorAndroid='transparent'
+                                        onChangeText={(text) => this.setState({ maxPrice: text })}
+                                    />
+                                </View>
+                                <View style={[{ flexDirection: "row" }]}>
+                                    <TouchableOpacity style={[styles.buttonContainerLogin]}
+                                        onPress={() => this.setModalVisible(false)}>
+                                        <Text style={styles.loginText}>Cancelar</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={[styles.buttonContainerLogin]}
+                                        onPress={() => [this.ActivarFiltrarPrecio()]}>
+                                        <Text style={styles.loginText}>Aceptar</Text>
                                     </TouchableOpacity>
                                 </View>
-                            )
-                        }
-                        } />
+                            </View>
+                        </TouchableOpacity>
+                    </Modal>
                 </View>
             )
         }
@@ -148,71 +280,31 @@ const styles = StyleSheet.create({
         height: hp(3),
         backgroundColor: "black"
     },
-
-    slide: {
-        backgroundColor: "black",
-        marginTop: height * 0.05,
-        marginBottom: height * 0.05,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        borderRadius: 10,
-        opacity: .95,
-    },
-
-    slideText: {
-        textAlign: "center",
-        fontSize: height * 0.03,
-        color: "#3399ff"
-    },
-
-    bgImage: {
-        flex: 1,
-        resizeMode,
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-        resizeMode: 'cover'
-    },
-    slideContainer: {
-        flex: 1,
-        alignItems: "center",
-    },
-
-    TextContainer: {
-        backgroundColor: 'grey',
-        borderRadius: 10,
-        width: wp("20"),
-        height: hp("5.5"),
+    priceFilterView: {
         flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center',
-        fontWeight: 'bold',
-        fontSize: height * 0.02,
-        textAlign: 'center',
-        marginTop: height * 0.028,
-        opacity: .95
+        marginTop: 10
     },
-
-    ContainerInside: {
-        width: width,
-        height: height,
-        alignItems: "center",
-    },
-    guardarButton: {
-        backgroundColor: 'grey',
+    buttonContainer: {
+        flex: 1,
+        paddingVertical: hp(1.5),
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: "#F28C0F",
+        alignItems: 'center',
         borderRadius: 10,
-        alignItems: 'center',
-        width: width * 0.33,
-        marginHorizontal: 22,
-        marginTop: height * 0.05,
-        alignSelf: 'center',
-        opacity: .95
+        marginHorizontal: 15
     },
-
-    // FlatList
-
-    card: {
+    fab: {
+        width: wp(8),
+        height: wp(8),
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#F28C0F',
+        borderRadius: wp(8) / 2,
+    },
+    shadow: {
         shadowColor: '#00000045',
         shadowOffset: {
             width: 0,
@@ -221,57 +313,128 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.37,
         shadowRadius: 7.49,
         elevation: 12,
+    },
+    shadowLight: {
+        shadowColor: "#808080",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
 
+        elevation: 5
+    },
+    // FlatList
+
+    card: {
         marginLeft: height * 0.028,
         marginRight: height * 0.028,
         borderRadius: 10,
         backgroundColor: "white",
-        padding: 10,
+        padding: wp(2.5),
         flexDirection: 'row',
     },
     image: {
         width: wp("20"),
-        height: hp("11"),
+        height: wp("20"),
         borderWidth: 2,
         borderColor: "#ebf0f7",
         borderRadius: 10,
-        margin: 5,
-        marginRight: 5,
         alignSelf: "center"
     },
     cardContent: {
-        marginLeft: height * 0.028,
-        paddingRight: 5,
-        width: wp("40"),
-        justifyContent: 'center',
+        flex: 1.6,
+        marginLeft: wp(3.3),
+        marginVertical: hp(0.5)
     },
     cardTitulo: {
         fontSize: wp(4.4),
         color: "#F28C0F",
-        fontWeight: 'bold',
-        marginBottom: 5
+        fontWeight: 'bold'
     },
 
     cardSubTitulo: {
         marginTop: 1,
+        marginLeft: 2,
         fontSize: wp(3),
         color: "black"
     },
-//Estrellas
-starImage: {
-    height: hp(4.4),
-    width: hp(4.4),
-    color: "orange"
-},
-starView: {
-    alignItems: 'center',
-    justifyContent: "center",
-    paddingHorizontal: wp("5")
-},
-rating: {
-    marginTop: 5,
-    fontSize: height * 0.018,
-    color: "orange"
-}
+    cardSubTituloMoney: {
+        marginTop: 1,
+        fontSize: wp(3),
+        color: "black"
+    },
+    cardSubTituloMoneyMonto: {
+        flexShrink: 1,
+        fontWeight: "bold",
+        marginTop: 1,
+        fontSize: wp(3),
+        color: "green"
+    },
+
+    //Estrellas
+    starImage: {
+        height: hp(4.4),
+        width: hp(4.4),
+    },
+    starView: {
+        flex: 0.4,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    rating: {
+        marginTop: 5,
+        fontSize: wp(3),
+        color: "orange"
+    },
+    //MODAL
+    /*************************************** */
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center"
+    },
+    modal: {
+        flex: 1,
+        marginTop: hp(35),
+        marginBottom: hp(43),
+        marginHorizontal: wp(20),
+        padding: hp(2),
+        backgroundColor: '#FFF7EE',
+        borderRadius: 22,
+        opacity: .95,
+        alignItems: "center"
+    },
+    inputMonto: {
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        borderBottomWidth: 1,
+        flex: 1,
+        marginHorizontal: wp(2),
+        height: hp(5),
+        paddingHorizontal: hp(2.2),
+        marginTop: hp(2.2),
+        flexDirection: 'column',
+        textAlign: 'center'
+    },
+    buttonContainerLogin: {
+        flex: 1,
+        marginTop: hp(2),
+        paddingVertical: hp(1.5),
+        justifyContent: 'center',
+        marginHorizontal: wp(2),
+        alignItems: 'center',
+        marginBottom: hp(2.2),
+        borderRadius: 10,
+        paddingHorizontal: wp(3.3),
+        backgroundColor: "#F28C0F"
+    },
+    loginText: {
+        fontSize: wp(3),
+        color: 'white'
+    }
+    //MODAL
+
 })
 export default withNavigation(Cursos);

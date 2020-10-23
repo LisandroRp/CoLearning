@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, YellowBox } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from '@expo/vector-icons/Ionicons';
@@ -48,13 +48,17 @@ import ForoMenu from './components/ForoMenu'
 import ForoNew from './components/ForoNew';
 import Foros from './components/Foros'
 import ForoEspecifico from './components/ForoEspecifico'
+import Planes from './components/Planes'
 
 import UserDataManager from './components/UserDataManager';
 import ExportadorLogos from './components/exportadores/ExportadorLogos';
 
 
+YellowBox.ignoreWarnings(['Remote debugger']);
 console.disableYellowBox = true
 var esProfesorTodo = false
+var id_perfil = 0
+var eraMapa = false
 Font.loadAsync({
   'shakies': require('./assets/fonts/Shakies-TT.ttf'),
 });
@@ -83,9 +87,10 @@ class SwitchLogInScreen extends React.Component {
       />
     )
   }
-  checkLogin(IdUser, esProfesor) {
+  checkLogin(id_usuario, esProfesor) {
     esProfesorTodo = esProfesor
-    this.props.navigation.navigate('drawer', { pepe: "hola", esProfesor: esProfesor });
+    id_perfil = id_usuario
+    this.props.navigation.navigate('drawer', {esProfesor: esProfesor });
   }
 
   goPass() {
@@ -167,21 +172,20 @@ class MapaVariosScreen extends React.Component {
       />
     );
   }
-  pasarDetallesCurso(id_curso, nombre, direccion) {
+  pasarDetallesCurso(id_curso, nombre, domicilio) {
+    eraMapa = true
     this.props.navigation.navigate('cursoEspecifico', { id_curso: id_curso });
   }
-  pasarDetallesProfesor(id_profesor, nombre, direccion, esProfesor) {
-    if(esProfesor){
-      this.props.navigation.navigate('profesorEspecifico', { id_profesor: id_profesor });
-    }
-    else{
-      this.props.navigation.navigate('usuarioEspecifico', { id_profesor: id_profesor });
-    }
+  pasarDetallesProfesor(id_usuario, nombre, domicilio) {
+      eraMapa = true
+      this.props.navigation.navigate('profesorEspecifico', { id_usuario: id_usuario });
   }
-  pasarMapaUnico(id_profesor, nombre, direccion) {
-    this.props.navigation.navigate('mapaUnico', {id_profesor: 2, nombre: nombre, direccion: direccion, mapa: true});
+  pasarMapaUnico(id, nombre, apellido, domicilio, tipoMapa) {
+    eraMapa = true
+    this.props.navigation.navigate('mapaUnico', {id: id, nombre: nombre, domicilio: domicilio, tipoMapa: tipoMapa, mapa: true, });
   }
   volver(curso) {
+    eraMapa = false
     if(curso){
       this.props.navigation.navigate('cursos');
     }
@@ -212,6 +216,7 @@ class MapaUnicoScreen extends React.Component {
     return (
       <MapaUnico
         onPressVolver={this.volver.bind(this)}
+        onPressGoPerfil={this.goPerfil.bind(this)}
       />
     );
   }
@@ -220,56 +225,34 @@ class MapaUnicoScreen extends React.Component {
       this.props.navigation.navigate('mapaVarios');
     }
     else{
-      this.props.navigation.navigate('profesorEspecifico');
+      this.props.navigation.navigate('profesorEspecifico', {id_mapa: true});
+    }
+  }
+  goPerfil(id, tipoMapa) {
+    if(tipoMapa == "Curso"){
+      this.props.navigation.navigate('cursoEspecifico', {id_curso: id});
+    }
+    else{
+      this.props.navigation.navigate('profesorEspecifico', {id_usuario: id});
     }
   }
 }
 //******************************************* */
-//******************Clases******************** */
+//******************PERFIL******************* */
 //******************************************* */
-class ClasesMenuScreen extends React.Component {
+class PerfilHomeScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
     return {
-      //title: "Clases",
-      //fontSize: hp(10)
-    };
-  }
-
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return (
-      <ClasesMenu
-      onPressSearch={this.buscarClase.bind(this)}
-      />
-    );
-  }
-
-  buscarClase(nombre_profesor, tema_profesor, direccion_profesor) {
-    this.props.navigation.navigate('profesores', {nombre_profesor: nombre_profesor, tema_profesor: tema_profesor, direccion_profesor: direccion_profesor, curso: false});
-  }
-}
-class ClasesScreen extends React.Component {
-  
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Profesores",
+      title: "Perfil",
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: hp(10),
-        shadowColor: 'transparent'
+        borderBottomWidth: 0
       },
       headerTitleStyle: {
         fontSize: hp(2),
       }, 
-      headerRight: () => 
-        <FontAwesome name="map" style={{ paddingRight: 20, color: 'white' }}
-                onPress={() => navigation.navigate("mapaVarios", { tipo: 'Profesor' })}
-                size={22}
-        />
-      ,
       headerTintColor: 'white',
     };
   }
@@ -279,29 +262,26 @@ class ClasesScreen extends React.Component {
   }
   render() {
     return (
-      <Clases
-        onPressGo={this.buscarProfesor.bind(this)}
+      <PerfilHome
+        id_usuario={id_perfil}
+        onPressSearch={this.buscarClase.bind(this)}
+        onPressGoChat={this.goChat.bind(this)}
       />
     );
 
   }
-  buscarProfesor(id_profesor, nombre, esProfesor) {
-    if(esProfesor){
-      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_profesor, nombre_profesor: nombre, esProfesor: esProfesor});
-    }
-    else{
-      this.props.navigation.navigate('usuarioEspecifico', {id_profesor: id_profesor, nombre_profesor: nombre, esProfesor: esProfesor});
-    }
+  buscarClase() {
+    this.props.navigation.navigate('Profesores', {});
+  }
+  goChat(id_usuario) {
+
   }
 }
-//******************************************* */
-//******************USUARIO****************** */
-//******************************************* */
-class UsuarioEspecificoScreen extends React.Component {
+class PerfilEditScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "Detalles",
+      title: "Editar",
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: hp(10),
@@ -313,23 +293,29 @@ class UsuarioEspecificoScreen extends React.Component {
       headerTintColor: 'white',
     };
   } 
-
-  constructor(props) {
-    super(props)
-  }
+  
   render() {
     return (
-      <PerfilHome
-        onPressSearch={this.buscarClase.bind(this)}
+      <PerfilEdit
+        id_usuario={id_perfil}
+        goPerfil={this.goPerfil.bind(this)}
       />
     );
 
   }
-  buscarClase() {
-    this.props.navigation.navigate('Profesores', {});
+  goPerfil(esProfesor) {
+    if(esProfesor){
+      this.props.navigation.navigate("PerfilProfesorStack");
+    }
+    else{
+      this.props.navigation.navigate("PerfilUsuarioStack");
+    }
   }
 }
-class UserContactoScreen extends React.Component {
+/////////////////////
+//Contacto
+///////////////////// 
+class PerfilContactoScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
     return {
@@ -352,6 +338,7 @@ class UserContactoScreen extends React.Component {
   render() {
     return (
       <PerfilContacto
+        id_usuario={id_perfil}
         onPressSearch={this.buscarClase.bind(this)}
       />
     );
@@ -361,7 +348,7 @@ class UserContactoScreen extends React.Component {
     this.props.navigation.navigate('Profesores', {});
   }
 }
-class UserContactoEditScreen extends React.Component {
+class PerfilContactoEditScreen extends React.Component {
   
   constructor(props) {
     super(props)
@@ -369,6 +356,7 @@ class UserContactoEditScreen extends React.Component {
   render() {
     return (
       <PerfilContactoEdit
+        id_usuario={id_perfil}
         onPressSearch={this.buscarClase.bind(this)}
       />
     );
@@ -378,7 +366,7 @@ class UserContactoEditScreen extends React.Component {
     this.props.navigation.navigate('Profesores', {});
   }
 }
-class UserComentariosScreen extends React.Component {
+class PerfilComentariosScreen extends React.Component {
   
 
   constructor(props) {
@@ -387,6 +375,7 @@ class UserComentariosScreen extends React.Component {
   render() {
     return (
       <PerfilComentarios
+      id_usuario = {id_perfil}
       onPressGoPerfil={this.buscarUsuario.bind(this)}
       />
     );
@@ -394,73 +383,36 @@ class UserComentariosScreen extends React.Component {
   }
   buscarUsuario(id_usuario, esProfesor) {
     if(esProfesor){
-      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_usuario, esProfesor: esProfesor});
+      this.props.navigation.navigate('profesorEspecifico2', {id_usuario: id_usuario, esProfesor: esProfesor});
     }
     else{
       this.props.navigation.navigate('usuarioEspecifico', {id_usuario: id_usuario, esProfesor: esProfesor});
     }
   }
 }
-//************** */
-//UsuarioTab
-//************** */
-const UsuarioTabNavigator = createBottomTabNavigator({
-  Usuario: UsuarioEspecificoScreen,
-},
-{
-  navigationOptions: ({ navigation }) => {
-    const { routeName } = navigation.state.routes[navigation.state.index]
-    return {
-      title: "Detalles",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: 'white',
-    };
-  },
-swipeEnabled: true,
-  Title: 'Ficha',
-  tabBarOptions: {
-    Title: 'Mi Plan',
-    activeTintColor: '#A7370F',
-    inactiveTintColor: 'white',
-    style: {
-      backgroundColor: '#F28C0F',
-      borderTopColor: '#F28C0F'
-
-    },
-    labelStyle: {
-      fontSize: 18,
-      paddingVertical: 10
-    }
-
-  }
-});
-const ProfesorTabNavigator = createBottomTabNavigator({
-  // Profesor: UsuarioEspecificoScreen,
-  // Contacto: UserContactoScreen,
-  // Comentarios: UserComentariosScreen
+/////////////////////
+//Contacto 
+////////////////////
+const PerfilTabNavigatorProfesor = createBottomTabNavigator({
+  // Profesor: PerfilHomeScreen,
+  // Contacto: PerfilContactoScreen,
+  // Comentarios: PerfilComentariosScreen
   Profesor: {
-    screen: UsuarioEspecificoScreen,
+    screen: PerfilHomeScreen,
     navigationOptions: {
       tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Detalles</Text>,
       tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="account-details" size={hp(2.5)} color={tintColor} />)}
     }
   },
   Contacto: {
-    screen: UserContactoScreen,
+    screen: PerfilContactoScreen,
     navigationOptions: {
       tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Contacto</Text>,
       tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="contact-mail-outline" size={hp(2.5)} color={tintColor} />)}
     }
   },
   Comentarios: {
-    screen: UserComentariosScreen,
+    screen: PerfilComentariosScreen,
     navigationOptions: {
       tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Comentarios</Text>,
       tabBarIcon: ({ tintColor }) => {return (<FontAwesome name="comments-o" size={hp(2.5)} color={tintColor} />)}
@@ -472,7 +424,7 @@ const ProfesorTabNavigator = createBottomTabNavigator({
   navigationOptions: ({ navigation }) => {
     const { routeName } = navigation.state.routes[navigation.state.index]
     return {
-      title: "Detalles",
+      title: "Perfil",
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: hp(10),
@@ -482,12 +434,16 @@ const ProfesorTabNavigator = createBottomTabNavigator({
         fontSize: hp(2),
       }, 
       headerRight: () =>
+      ( !eraMapa ?
         <View style={{ flexDirection: 'row' }}>
-          <FontAwesome name="map-marker" style={{ paddingRight: 20, color: 'white' }}
-            onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_profesor'), direccion: navigation.getParam('direccion'), tipo: 'Unico', mapa: false })}
+          <FontAwesome name="map-marker" style={{ paddingRight: wp(5), color: 'white' }}
+            onPress={() => navigation.navigate("mapaUnico", {id: navigation.getParam('id_usuario'), nombre: navigation.getParam('nombre_profesor'), apellido: navigation.getParam('apellido'), domicilio: navigation.getParam('domicilio'), tipo: 'Unico', mapa: false })}
             size={22}
           />
         </View>
+        :
+        <View/>
+      )
       ,
       headerTintColor: 'white',
     };
@@ -501,298 +457,6 @@ swipeEnabled: true,
     style: {
       backgroundColor: '#F28C0F',
       borderTopColor: '#F28C0F'
-    },
-    labelStyle: {
-      fontSize: 18,
-      paddingVertical: 10
-    }
-
-  }
-});
-//******************************************* */
-//******************CURSOS******************* */
-//******************************************* */
-class CursosMenuScreen extends React.Component {
-  
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return (
-      <CursosMenu
-      onPressSearch={this.buscarClase.bind(this)}
-      />
-    );
-  }
-
-  buscarClase(nombre_curso, tema, direccion) {
-    this.props.navigation.navigate('cursos', {nombre_curso: nombre_curso, tema: tema, direccion: direccion});
-  }
-}
-class CursosScreen extends React.Component {
-  
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Cursos",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        shadowColor: 'transparent'
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerRight: () => 
-        <FontAwesome name="map" style={{ paddingRight: 20, color: 'white' }}
-                onPress={() => navigation.navigate("mapaVarios", { tipo: 'Curso', curso: true })}
-                size={22}
-        />
-      ,
-      headerTintColor: 'white',
-    };
-  }
-  
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return (
-      <Cursos
-        onPressGo={this.buscarCurso.bind(this)}
-      />
-    );
-
-  }
-  buscarCurso(id_curso, nombre_curso, institucion, direccion) {
-    this.props.navigation.navigate('cursoEspecifico', {id_curso: id_curso, nombre_curso: nombre_curso, institucion: institucion, direccion: direccion});
-
-  }
-}
-class CursoEspecificoScreen extends React.Component {
-  
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Detalles",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerRight: () => 
-        <View style={{ flexDirection: 'row' }}>
-          <FontAwesome name="map-marker" style={{ paddingRight: 20, color: 'white' }}
-            onPress={() => navigation.navigate("mapaUnico", {id_profesor: 2, nombre: navigation.getParam('nombre_curso'), direccion: navigation.getParam('direccion'), tipo: 'Unico', mapa: false })}
-            size={22}
-          />
-        </View>
-      ,
-      headerTintColor: 'white',
-    };
-  }
-  
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return (
-      <CursoEspecifico
-        onPressSearch={this.buscarCurso.bind(this)}
-      />
-    );
-
-  }
-  buscarCurso() {
-    this.props.navigation.navigate('Profesores', {});
-  }
-}
-//************** */
-//BuscarTab
-//************** */
-const BuscarTabNavigator = createBottomTabNavigator({
-  Clases: {
-    screen: ClasesMenuScreen,
-    navigationOptions: {
-      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Clases</Text>,
-      tabBarIcon: ({ tintColor }) => {return (<FontAwesome5 name="chalkboard-teacher" size={hp(2.5)} color={tintColor} />)}
-    }
-  },
-  Cursos: {
-    screen: CursosMenuScreen,
-    navigationOptions: {
-      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Cursos</Text>,
-      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="school" size={hp(2.5)} color={tintColor} />)}
-    }
-  }
-},
-{
-  navigationOptions: ({ navigation }) => {
-    const { routeName } = navigation.state.routes[navigation.state.index]
-    return {
-      headerTitle: (<Text style={{fontFamily: 'shakies', fontSize: wp(7), color: "white"}}>CoLearning</Text>),
-      //headerTitle: 'CoLearning',
-      //(<Image source={ExportadorLogos.traerLogoBlanco()} styles={styles.imageHeader} resizeMode='contain'/>),
-      headerTintColor: 'white',
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0,
-      },
-    }
-  },
-swipeEnabled: true,
-  tabBarOptions: {
-    Title: 'Mi Plan',
-    activeTintColor: '#A7370F',
-    inactiveTintColor: 'white',
-    style: {
-      backgroundColor: '#F28C0F',
-      borderTopColor: '#F28C0F'
-    },
-    labelStyle: {
-      fontSize: 18,
-      paddingVertical: 10
-    }
-
-  }
-});
-
-const BuscarStackNavigator = createStackNavigator({
-
-  BuscarTabNavigator: {
-    screen: BuscarTabNavigator,
-    navigationOptions: ({ navigation }) => {
-      return {
-        headerLeft: () =>
-          <Icon
-            style={{ paddingLeft: 10, color: 'white' }}
-            onPress={() => navigation.openDrawer()}
-            name="md-menu"
-            size={30}
-          />
-        ,
-      }
-    }     
-  },
-  profesores: ClasesScreen,
-  cursos: CursosScreen,
-  usuarioEspecifico: UsuarioEspecificoScreen,
-  profesorEspecifico: ProfesorTabNavigator,
-  cursoEspecifico: CursoEspecificoScreen,
-  mapaVarios: MapaVariosScreen, 
-  mapaUnico: MapaUnicoScreen,
-}
-);
-//******************************************* */
-//******************PERFIL******************* */
-//******************************************* */
-class PerfilScreen extends React.Component {
-  
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Detalles",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: 'white',
-    };
-  }
-  
-  constructor(props) {
-    super(props)
-  }
-  render() {
-    return (
-      <PerfilHome
-        onPressSearch={this.buscarClase.bind(this)}
-      />
-    );
-
-  }
-  buscarClase() {
-    this.props.navigation.navigate('Profesores', {});
-  }
-}
-class PerfilEditScreen extends React.Component {
-  
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Detalle",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: 'white',
-    };
-  } 
-  
-  render() {
-    return (
-      <PerfilEdit
-        goPerfil={this.goPerfil.bind(this)}
-      />
-    );
-
-  }
-  goPerfil(esProfesor) {
-    if(esProfesor){
-      this.props.navigation.navigate("PerfilProfesorStack");
-    }
-    else{
-      this.props.navigation.navigate("PerfilUsuarioStack");
-    }
-  }
-}
-/////////////////////
-const PerfilTabNavigatorUsuario = createBottomTabNavigator({
-  Perfil: PerfilScreen,
-},
-{
-  navigationOptions: ({ navigation })  => 
-  {
-    const { routeName } = navigation.state.routes[navigation.state.index]
-    return {
-      headerTitle: 'Perfil',
-      headerTintColor: 'white',
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerLeft: () =>
-        <Icon
-          style={{ paddingLeft: 10, color: '#A01A50' }}
-          onPress={() => navigation.openDrawer()}
-          name="md-menu"
-          size={30}
-        />
-      ,
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      }
-    }
-  },
-swipeEnabled: true,
-  Title: 'Ficha',
-  tabBarOptions: {
-    Title: 'Mi Plan',
-    activeTintColor: '#A7370F',
-    inactiveTintColor: 'white',
-    style: {
-      backgroundColor: '#F28C0F',
-      borderTopColor: '#F28C0F'
-
     },
     labelStyle: {
       fontSize: 18,
@@ -802,26 +466,26 @@ swipeEnabled: true,
   }
 });
 ////////////////////
-const PerfilTabNavigatorProfesor = createBottomTabNavigator({
-  // Perfil: PerfilScreen,
-  // Contacto: UserContactoScreen,
-  // Comentarios: UserComentariosScreen
+const PerfilTabNavigator = createBottomTabNavigator({
+  // Perfil: PerfilHomeScreen,
+  // Contacto: PerfilContactoScreen,
+  // Comentarios: PerfilComentariosScreen
   Profesor: {
-    screen: UsuarioEspecificoScreen,
+    screen: PerfilHomeScreen,
     navigationOptions: {
       tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Detalles</Text>,
       tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="account-details" size={hp(2.5)} color={tintColor} />)}
     }
   },
   Contacto: {
-    screen: UserContactoScreen,
+    screen: PerfilContactoScreen,
     navigationOptions: {
       tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Contacto</Text>,
       tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="contact-mail-outline" size={hp(2.5)} color={tintColor} />)}
     }
   },
   Comentarios: {
-    screen: UserComentariosScreen,
+    screen: PerfilComentariosScreen,
     navigationOptions: {
       tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Comentarios</Text>,
       tabBarIcon: ({ tintColor }) => {return (<FontAwesome name="comments-o" size={hp(2.5)} color={tintColor} />)}
@@ -840,17 +504,17 @@ const PerfilTabNavigatorProfesor = createBottomTabNavigator({
       }, 
       headerLeft: () =>
         <Icon
-          style={{ paddingLeft: 10, color: '#A01A50' }}
+          style={{ paddingLeft: wp(5), color: 'white' }}
           onPress={() => navigation.openDrawer()}
           name="md-menu"
-          size={30}
+          size={hp(3.3)}
         />
       ,
       headerRight: () => 
         <View style={{ flexDirection: 'row' }}>
-          <FontAwesome name="edit" style={{ paddingRight: 20, color: 'white' }}
+          <FontAwesome name="edit" style={{ marginRight: wp(5), color: 'white' }}
             onPress={() => navigation.navigate("perfilEditTab")}
-            size={22}
+            size={hp(2.5)}
           />
         </View>
       ,
@@ -880,7 +544,7 @@ swipeEnabled: true,
   }
 });
 ///////////////////////
-const PerfilTabNavigatorProfesorEdit = createBottomTabNavigator({
+const PerfilTabNavigatorEdit = createBottomTabNavigator({
   Perfil:{
   screen: PerfilEditScreen,
   navigationOptions: {
@@ -889,7 +553,7 @@ const PerfilTabNavigatorProfesorEdit = createBottomTabNavigator({
   },
   },
   Contacto: {
-    screen: UserContactoEditScreen,
+    screen: PerfilContactoEditScreen,
     navigationOptions: {
       tabBarLabel: ({ focused }) => <Text numberOfLines={1} style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Contacto</Text>,
       tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="contact-mail-outline" size={hp(2.5)} color={tintColor} />)}
@@ -936,57 +600,58 @@ swipeEnabled: true,
 ///////////////////////
 const PerfilUsuarioStackNavigator = createStackNavigator(
   {
-    PerfilTabNavigatorUsuario: {
-      screen: PerfilScreen,
+    PerfilHomeScreen: {
+      screen: PerfilHomeScreen,
       navigationOptions: ({ navigation }) => {
         return {
           // headerLeft: () => <SomeElement />
           headerLeft: () =>
             <Icon
-              style={{ paddingLeft: 10, color: 'white' }}
+              style={{ paddingLeft: wp(5), color: 'white' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
-              size={30}
+              size={hp(3.3)}
             />
           ,
           headerRight: () => 
           <View style={{ flexDirection: 'row' }}>
-            <FontAwesome name="edit" style={{ paddingRight: 20, color: 'white' }}
+            <FontAwesome name="edit" style={{ marginRight: wp(5), color: 'white' }}
               onPress={() => navigation.navigate("perfilEdit")}
-              size={22}
+              size={hp(2.5)}
             />
           </View>
         }
       }     
     },
-    perfilEdit: PerfilEditScreen,
+    perfilEdit: PerfilEditScreen
 })
 ////////////////
 const PerfilProfesorStackNavigator = createStackNavigator(
   {
-  PerfilTabNavigatorProfesor: {
-    screen: PerfilTabNavigatorProfesor,
+  PerfilTabNavigator: {
+    screen: PerfilTabNavigator,
     navigationOptions: ({ navigation }) => {
       return {
         // headerLeft: () => <SomeElement />
         headerLeft: () =>
           <Icon
-            style={{ paddingLeft: 10, color: 'white' }}
+            style={{ paddingLeft: wp(5), color: 'white' }}
             onPress={() => navigation.openDrawer()}
             name="md-menu"
-            size={30}
+            size={hp(3.3)}
           />
         ,
       }
     }     
   },
-  perfilEditTab: PerfilTabNavigatorProfesorEdit,
+  perfilEditTab: PerfilTabNavigatorEdit,
   perfilEdit: PerfilEditScreen,
-  usuarioEspecifico: UsuarioEspecificoScreen,
-  profesorEspecifico: ProfesorTabNavigator,
+  usuarioEspecifico: PerfilHomeScreen,
+  profesorEspecifico: PerfilTabNavigatorProfesor,
   mapaUnico: MapaUnicoScreen
 }
 );
+
 class PerfilValidationScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
@@ -1027,7 +692,253 @@ class PerfilValidationScreen extends React.Component {
     }
   }
 }
+//******************************************* */
+//******************Clases******************** */
+//******************************************* */
+class ClasesMenuScreen extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+    return {
+      //title: "Clases",
+      //fontSize: hp(10)
+    };
+  }
 
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <ClasesMenu
+      onPressSearch={this.buscarClase.bind(this)}
+      />
+    );
+  }
+
+  buscarClase(nombre_profesor, materia, des_domicilio, rating) {
+    this.props.navigation.navigate('profesores', {nombre_profesor: nombre_profesor, materia: materia, des_domicilio: des_domicilio, rating: rating, curso: false});
+  }
+}
+class ClasesScreen extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Profesores",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        shadowColor: 'transparent'
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerRight: () => 
+        <FontAwesome name="map" style={{ paddingRight: wp(5), color: 'white' }}
+                onPress={() => navigation.navigate("mapaVarios", { nombre_profesor: navigation.getParam("nombre_profesor"), materia: navigation.getParam("materia"), des_domicilio: navigation.getParam("des_domicilio"), rating: navigation.getParam("rating"), tipo: 'Profesor' })}
+                size={22}
+        />
+      ,
+      headerTintColor: 'white',
+    };
+  }
+  
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <Clases
+        onPressGo={this.buscarProfesor.bind(this)}
+      />
+    );
+
+  }
+  buscarProfesor(id_usuario, nombre, apellido, domicilio, esProfesor) {
+    if(esProfesor){
+      this.props.navigation.navigate('profesorEspecifico', {id_usuario: id_usuario, nombre_profesor: nombre, apellido: apellido, domicilio: domicilio, esProfesor: esProfesor});
+    }
+    else{
+      this.props.navigation.navigate('usuarioEspecifico', {id_usuario: id_usuario, nombre_profesor: nombre, esProfesor: esProfesor});
+    }
+  }
+}
+//******************************************* */
+//******************CURSOS******************* */
+//******************************************* */
+class CursosMenuScreen extends React.Component {
+  
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <CursosMenu
+      onPressSearch={this.buscarClase.bind(this)}
+      />
+    );
+  }
+
+  buscarClase(nombre_curso, tema, domicilio) {
+    this.props.navigation.navigate('cursos', {nombre_curso: nombre_curso, tema: tema, domicilio: domicilio});
+  }
+}
+class CursosScreen extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Cursos",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        shadowColor: 'transparent'
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerRight: () => 
+        <FontAwesome name="map" style={{ paddingRight: wp(5), color: 'white' }}
+                onPress={() => navigation.navigate("mapaVarios", { tipo: 'Curso', curso: true })}
+                size={22}
+        />
+      ,
+      headerTintColor: 'white',
+    };
+  }
+  
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <Cursos
+        onPressGo={this.buscarCurso.bind(this)}
+      />
+    );
+
+  }
+  buscarCurso(id_curso, nombre_curso, institucion, domicilio) {
+    this.props.navigation.navigate('cursoEspecifico', {id_curso: id_curso, nombre_curso: nombre_curso, institucion: institucion, domicilio: domicilio});
+
+  }
+}
+class CursoEspecificoScreen extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Detalles",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerRight: () => 
+        <View style={{ flexDirection: 'row' }}>
+          <FontAwesome name="map-marker" style={{ paddingRight: wp(5), color: 'white' }}
+            onPress={() => navigation.navigate("mapaUnico", {id_profesor: navigation.getParam('id_usuario'), nombre: navigation.getParam('nombre_curso'), domicilio: navigation.getParam('domicilio'), tipo: 'Unico', mapa: false })}
+            size={22}
+          />
+        </View>
+      ,
+      headerTintColor: 'white',
+    };
+  }
+  
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <CursoEspecifico
+        onPressSearch={this.buscarCurso.bind(this)}
+      />
+    );
+
+  }
+  buscarCurso() {
+    this.props.navigation.navigate('Profesores', {});
+  }
+}
+//************** */
+//BuscarTab
+//************** */
+const BuscarTabNavigator = createBottomTabNavigator({
+  Clases: {
+    screen: ClasesMenuScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Clases</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<FontAwesome5 name="chalkboard-teacher" size={hp(2.5)} color={tintColor} />)}
+    }
+  },
+  Cursos: {
+    screen: CursosMenuScreen,
+    navigationOptions: {
+      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Cursos</Text>,
+      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="school" size={hp(2.5)} color={tintColor} />)}
+    }
+  }
+},
+{
+  navigationOptions: ({ navigation }) => {
+    const { routeName } = navigation.state.routes[navigation.state.index]
+    return {
+      headerTitle: () => (<Text style={{fontFamily: 'shakies', fontSize: wp(7), color: "white"}}>CoLearning</Text>),
+      //headerTitle: 'CoLearning',
+      //(<Image source={ExportadorLogos.traerLogoBlanco()} styles={styles.imageHeader} resizeMode='contain'/>),
+      headerTintColor: 'white',
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0,
+      },
+    }
+  },
+swipeEnabled: true,
+  tabBarOptions: {
+    Title: 'Mi Plan',
+    activeTintColor: '#A7370F',
+    inactiveTintColor: 'white',
+    style: {
+      backgroundColor: '#F28C0F',
+      borderTopColor: '#F28C0F'
+    },
+    labelStyle: {
+      fontSize: 18,
+      paddingVertical: 10
+    }
+
+  }
+});
+
+const BuscarStackNavigator = createStackNavigator({
+
+  BuscarTabNavigator: {
+    screen: BuscarTabNavigator,
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerLeft: () =>
+          <Icon
+            style={{ paddingLeft: wp(5), color: 'white' }}
+            onPress={() => navigation.openDrawer()}
+            name="md-menu"
+            size={hp(3.3)}
+          />
+        ,
+      }
+    }     
+  },
+  profesores: ClasesScreen,
+  cursos: CursosScreen,
+  usuarioEspecifico: PerfilHomeScreen,
+  profesorEspecifico: PerfilTabNavigatorProfesor,
+  profesorEspecifico2: PerfilTabNavigatorProfesor,
+  cursoEspecifico: CursoEspecificoScreen,
+  mapaVarios: MapaVariosScreen, 
+  mapaUnico: MapaUnicoScreen,
+}
+);
 //******************************************* */
 //******************HOME******************* */
 //******************************************* */
@@ -1056,13 +967,8 @@ class HomeClasesMenuScreen extends React.Component {
     );
   }
 
-  buscarClase(id_profesor, nombre, direccion,  esProfesor) {
-    if(esProfesor){
-      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_profesor, nombre_profesor: nombre, direccion: direccion, esProfesor: esProfesor});
-    }
-    else{
-      this.props.navigation.navigate('usuarioEspecifico', {id_profesor: id_profesor, nombre_profesor: nombre, esProfesor: esProfesor});
-    }
+  buscarClase(id_usuario, nombre, domicilio, esProfesor) {
+      this.props.navigation.navigate('profesorEspecifico', {id_usuario: id_usuario, nombre_profesor: nombre, domicilio: domicilio, esProfesor: esProfesor});
   }
 }
 class HomeCursosScreen extends React.Component {
@@ -1089,8 +995,8 @@ class HomeCursosScreen extends React.Component {
     );
   }
 
-  buscarCurso(id_curso, nombre_curso, institucion, direccion) {
-    this.props.navigation.navigate('cursoEspecifico', {id_curso: id_curso, nombre_curso: nombre_curso, institucion: institucion, direccion: direccion});
+  buscarCurso(id_curso, nombre_curso, institucion, domicilio) {
+    this.props.navigation.navigate('cursoEspecifico', {id_curso: id_curso, nombre_curso: nombre_curso, institucion: institucion, domicilio: domicilio});
   }
 }
 const HomeTabNavigator = createBottomTabNavigator({
@@ -1143,6 +1049,7 @@ swipeEnabled: true,
 
   }
 });
+
 const HomeStackNavigator = createStackNavigator(
   {
     HomeScreen: {
@@ -1152,17 +1059,18 @@ const HomeStackNavigator = createStackNavigator(
           // headerLeft: () => <SomeElement />
           headerLeft: () =>
             <Icon
-              style={{ paddingLeft: 10, color: 'white' }}
+              style={{ paddingLeft: wp(5), color: 'white' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
-              size={30}
+              size={hp(3.3)}
             />
           ,
         }
       }     
     },
-    usuarioEspecifico: UsuarioEspecificoScreen,
-    profesorEspecifico: ProfesorTabNavigator,
+    usuarioEspecifico: PerfilHomeScreen,
+    profesorEspecifico: PerfilTabNavigatorProfesor,
+    profesorEspecifico2: PerfilTabNavigatorProfesor,
     cursoEspecifico: CursoEspecificoScreen,
     mapaUnico: MapaUnicoScreen
   },
@@ -1310,7 +1218,7 @@ class ChatEspecificoScreen extends React.Component {
       />
     );
   }
-  pasarChat(id_chat, nombre, direccion) {
+  pasarChat(id_chat, nombre, domicilio) {
     this.props.navigation.navigate('cursoEspecifico', { id_curso: id_curso });
   }
 }
@@ -1323,10 +1231,10 @@ const ChatListStackNavigator = createStackNavigator(
           // headerLeft: () => <SomeElement />
           headerLeft: () =>
             <Icon
-              style={{ paddingLeft: 10, color: 'white' }}
+              style={{ paddingLeft: wp(5), color: 'white' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
-              size={30}
+              size={hp(3.3)}
             />
           ,
         }
@@ -1375,12 +1283,12 @@ class ForoMenuScreen extends React.Component {
   buscarForos(tema) {
     this.props.navigation.navigate('foros', {tema: tema});
   }
-  buscarForo(id_foro, nombre_foro) {
-    this.props.navigation.navigate('foroEspecifico', {id_foro: id_foro, nombre_foro: nombre_foro});
+  buscarForo(id_foro, nombre_foro, pregunta) {
+    this.props.navigation.navigate('foroEspecifico', {id_foro: id_foro, nombre_foro: nombre_foro, pregunta: pregunta});
   }
   buscarUsuario(id_usuario, nombre_usuario, esProfesor) {
     if(esProfesor){
-      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_usuario, nombre_profesor: nombre_usuario, esProfesor: esProfesor});
+      this.props.navigation.navigate('profesorEspecifico', {id_usuario: id_usuario, nombre_profesor: nombre_usuario, esProfesor: esProfesor});
     }
     else{
       this.props.navigation.navigate('usuarioEspecifico', {id_usuario: id_usuario, nombre_usuario: nombre_usuario, esProfesor: esProfesor});
@@ -1417,15 +1325,15 @@ class ForosScreen extends React.Component {
 
   }
   
-  buscarForo(id_foro, nombre_foro) {
-    this.props.navigation.navigate('foroEspecifico', {id_foro: id_foro, nombre_foro: nombre_foro});
+  buscarForo(id_foro, nombre_foro, pregunta) {
+    this.props.navigation.navigate('foroEspecifico', {id_foro: id_foro, nombre_foro: nombre_foro, pregunta: pregunta});
   }
   buscarUsuario(id_usuario, nombre_usuario, esProfesor) {
     if(esProfesor){
-      this.props.navigation.navigate('profesorEspecifico', {id_profesor: id_usuario, nombre_profesor: nombre_usuario, esProfesor: esProfesor});
+      this.props.navigation.navigate('profesorEspecifico', {id_usuario: id_usuario, nombre_profesor: nombre_usuario, esProfesor: esProfesor});
     }
     else{
-      this.props.navigation.navigate('usuarioEspecifico', {id_profesor: id_usuario, nombre_profesor: nombre_usuario, esProfesor: esProfesor});
+      this.props.navigation.navigate('usuarioEspecifico', {id_usuario: id_usuario, nombre_profesor: nombre_usuario, esProfesor: esProfesor});
     }
   }
 }
@@ -1466,7 +1374,7 @@ class ForoEspecificoScreen extends React.Component {
   
   static navigationOptions = ({ navigation }) => {
     return {
-      title: navigation.getParam('nombre_foro', 'Foro'),
+      title: "Foro",
       headerStyle: {
         backgroundColor: '#F28C0F',
         height: hp(10),
@@ -1508,15 +1416,15 @@ const ForoStackNavigator = createStackNavigator(
           // headerLeft: () => <SomeElement />
           headerLeft: () =>
             <Icon
-              style={{ paddingLeft: 10, color: 'white' }}
+              style={{ paddingLeft: wp(5), color: 'white' }}
               onPress={() => navigation.openDrawer()}
               name="md-menu"
-              size={30}
+              size={hp(3.3)}
             />
           ,
           headerRight: () =>
             <FontAwesome
-              style={{ paddingRight: 15, color: 'white' }}
+              style={{ paddingRight: wp(5), color: 'white' }}
               onPress={() => navigation.navigate("foroNew")}
               name="plus"
               size={hp(3)}
@@ -1527,12 +1435,105 @@ const ForoStackNavigator = createStackNavigator(
     foros: ForosScreen,
     foroNew: ForoNewScreen,
     foroEspecifico: ForoEspecificoScreen,
-    usuarioEspecifico: UsuarioEspecificoScreen,
+    usuarioEspecifico: PerfilHomeScreen,
     mapaUnico: MapaUnicoScreen,
-    profesorEspecifico: ProfesorTabNavigator,
+    profesorEspecifico: PerfilTabNavigatorProfesor,
   },
   {
     initialRouteName: 'ForoMenuScreen',
+  }
+);
+//******************************************* */
+//******************PLAN******************** */
+//******************************************* */
+class PlanMenuScreen2 extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+
+    return {
+      
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      drawerIcon: (esProfesorTodo ?  ({ tintColor }) => (<FontAwesome5 name="money-bill" size={20} color={tintColor} />) : ({ tintColor }) => (<MaterialCommunityIcons name="school" size={24} color={tintColor} />)),
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
+    };
+  }
+  
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <Planes
+      />
+    );
+
+  }
+}
+class PlanMenuScreen extends React.Component {
+  
+  static navigationOptions = ({ navigation }) => {
+
+    return {
+      
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      drawerIcon: (esProfesorTodo ?  ({ tintColor }) => (<FontAwesome5 name="money-bill" size={20} color={tintColor} />) : ({ tintColor }) => (<MaterialCommunityIcons name="school" size={24} color={tintColor} />)),
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
+    };
+  }
+  
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return (
+      <Planes
+          onPressGoUsuario={this.buscarUsuario.bind(this)}
+      />
+    );
+
+  }
+  buscarUsuario() {
+    this.props.navigation.navigate(PerfilComentariosScreen);
+  }
+}
+const PlanStackNavigator = createStackNavigator(
+  {
+    PlanMenuScreen: {
+      screen: PlanMenuScreen,
+      navigationOptions: ({ navigation }) => {
+        return {
+          title: esProfesorTodo ? "Planes" : "Profesores",
+          // headerLeft: () => <SomeElement />
+          headerLeft: () =>
+            <Icon
+              style={{ paddingLeft: wp(5), color: 'white' }}
+              onPress={() => navigation.openDrawer()}
+              name="md-menu"
+              size={hp(3.3)}
+            />
+          ,
+          title: esProfesorTodo ? "Planes" : "Profesores",
+        }
+      }     
+    },
+    foros: ForosScreen,
+  },
+  {
+    initialRouteName: 'PlanMenuScreen',
   }
 );
 //******************************************* */
@@ -1569,35 +1570,42 @@ const AppDrawerNavigator = createDrawerNavigator({
     screen: HomeStackNavigator,
     navigationOptions: {
       title: "Inicio",
-      drawerIcon: ({ tintColor }) => (<FontAwesome name="home" size={24} color={tintColor} />)
+      drawerIcon: ({ tintColor }) => (<FontAwesome name="home" size={wp(6.6)} color={tintColor} />)
     }
   },
   Clases: {
     screen: BuscarStackNavigator,
     navigationOptions: {
       title: "Buscar Profesores",
-      drawerIcon: ({ tintColor }) => (<FontAwesome name="search" size={24} color={tintColor} />)
+      drawerIcon: ({ tintColor }) => (<FontAwesome name="search" size={wp(6.6)} color={tintColor} />)
     }
   },
   Chat: {
     screen: ChatListStackNavigator,
     navigationOptions: {
       title: "Chats",
-      drawerIcon: ({ tintColor }) => (<FontAwesome name="comments" size={24} color={tintColor} />)
+      drawerIcon: ({ tintColor }) => (<FontAwesome name="comments" size={wp(6.6)} color={tintColor} />)
     }
   },
   Foro: {
     screen: ForoStackNavigator,
     navigationOptions: {
       title: "Foros",
-      drawerIcon: ({ tintColor }) => (<FontAwesome name="list" size={24} color={tintColor} />)
+      drawerIcon: ({ tintColor }) => (<FontAwesome name="list" size={wp(6.6)} color={tintColor} />)
+    }
+  },
+  Planes: {
+    screen: PlanStackNavigator,
+    navigationOptions: {
+      title: "Planes",
+      drawerIcon: (esProfesorTodo ?  ({ tintColor }) => ([<FontAwesome5 name="money-check-alt" size={24} color={tintColor} />]) : ({ tintColor }) => ([<MaterialCommunityIcons name="school" size={24} color={tintColor} />]))
     }
   },
   Perfil: {
     screen: PerfilSwitchNavigator,
     navigationOptions: {
       title: "Perfil",
-      drawerIcon: ({ tintColor }) => (<FontAwesome name="user" size={24} color={tintColor} />)
+      drawerIcon: ({ tintColor }) => (<FontAwesome name="user" size={wp(6.6)} color={tintColor} />)
     }
   }
 },
@@ -1617,7 +1625,7 @@ const AppDrawerNavigator = createDrawerNavigator({
       activeTintColor: '#A7370F',
       inactiveTintColor: 'white',
       labelStyle: {
-        fontSize: 15
+        fontSize: wp(3.5)
       }
     },
   },
@@ -1630,6 +1638,7 @@ const AppDrawerNavigator = createDrawerNavigator({
   //     }
   //   }
 );
+
 
 // *****************************************************
 // **********************Switch*************************

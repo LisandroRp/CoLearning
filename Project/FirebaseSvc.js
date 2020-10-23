@@ -27,7 +27,7 @@ class FirebaseSvc {
     .then(success_callback, failed_callback);
   }
 
-  observeAuth = () =>
+  observeAuth = (user) =>
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
 
   onAuthStateChanged = user => {
@@ -38,7 +38,8 @@ class FirebaseSvc {
         console.log("Failed:" + message);
       }
     } else {
-      console.log("Reusing auth...");
+      alert("No existe el usuario")
+      console.log("No existe el usuario");
     }
   };
 

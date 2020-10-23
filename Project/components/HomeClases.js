@@ -4,6 +4,7 @@ import Carousel from 'react-native-snap-carousel';
 import { withNavigation } from 'react-navigation';
 
 import ExportadorLogos from './exportadores/ExportadorLogos'
+import ExportadorObjetos from './exportadores/ExportadorObjetos'
 
 let SCREEN_WIDTH = Dimensions.get('window').width
 let SCREEN_HEIGHT = Dimensions.get('window').height
@@ -13,61 +14,15 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
 import ApiController from '../controller/ApiController';
+import { withChannelContext } from 'stream-chat-expo';
 
 class HomeClases extends React.Component {
 
   constructor() {
     super()
     this.state = {
-      clases: [{ id_usuario: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
-      {
-        id_usuario: 1,
-        nombre: 'Juan',
-        apellido: 'Marinelli',
-        src: require("../assets/leila.jpg"),
-        esProfesor: true,
-        domicilio: 'Ezeiza, Canning',
-        rating: { rating: 5, votos: 1503 },
-        dondeClases: [{ id: 1, des_domicilio: "En su casa" },
-        { id: 2, des_domicilio: "A Domicilio" },
-        { id: 3, des_domicilio: "En un Instituto" }],
-        tipoClases: [{ id: 1, des_tipoClases: "Particulares" },
-        { id: 2, des_tipoClases: "Grupales" },
-        { id: 3, des_tipoClases: "Virtuales" }],
-        instagram: "@LisandroRp",
-        whatsApp: "1144373492",
-        money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "100" },
-        materias: [{ nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Matematica", des_materia: "Clases avanzadas de amtematica" },
-        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Ingles", des_materia: "Examenes Internacionales" }]
-      },
-      {
-        id_usuario: 2,
-        nombre: 'Leila',
-        apellido: 'Pereyra',
-        src: require("../assets/caca.jpg"),
-        esProfesor: false,
-        domicilio: 'Nordelta',
-        rating: { rating: 2, votos: 103 },
-        dondeClases: [{ id: 1, des_domicilio: "En su casa" },
-        { id: 2, des_domicilio: "A Domicilio" },
-        { id: 3, des_domicilio: "En un Instituto" }],
-        tipoClases: [{ id: 1, des_tipoClases: "Particulares" },
-        { id: 2, des_tipoClases: "Grupales" },
-        { id: 3, des_tipoClases: "Virtuales" }],
-        instagram: "@LisandroRp",
-        whatsApp: "1144373492",
-        money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "100" },
-        materias: [{ nombre_materia: "Chino", des_materia: "Examenes Internacionales" },
-        { nombre_materia: "Latin", des_materia: "Clases avanzadas de amtematica" }]
-      }],
-      activeImage: { id_usuario: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
+      clases: [],
+      activeImage: { id_usuario: 0, src: ExportadorLogos.traerClNaranja(), nombre_usuario: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' },
       y: 0,
       max_rating: 5,
       isLoading: true,
@@ -76,11 +31,11 @@ class HomeClases extends React.Component {
     this.Star = ExportadorLogos.traerEstrellaLlena();
     this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
   }
-  componentDidMount = async () => {
-    //ApiController.getProfesores(this.okProfesores.bind(this))
+  componentDidMount() {
+    ApiController.getProfesoresHome(this.okProfesores.bind(this))
     this.loadFont()
     this.setState({ activeImage: this.state.clases[0] })
-    this.setState({ isLoading: false })
+    //this.setState({ isLoading: false })
   }
   loadFont = async () => {
     await Font.loadAsync({
@@ -88,11 +43,56 @@ class HomeClases extends React.Component {
     });
     this.setState({ isLoadingFont: false })
   }
-  okUsuarios(profesoresBase) {
+  okProfesores = async (profesoresBase) => {
+    var lenght = 0
+
+    profesoresBase.map((item, index) => lenght++)
+    var contadorExterno = 0
+    var contadorInterno = 0
+    var contadorDondeClases = 0
+    var flag = 0
+    var arrayProfesores = [{ id_usuario: 0, src: ExportadorLogos.traerClNaranja(), nombre_usuario: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' }]
+    var arrayMaterias = []
+    var arrayDondeClases = []
+    var profesorActual
+    var materiaActual
     console.log(profesoresBase)
-    var profesores = [{ id_usuario: 0, src: ExportadorLogos.traerClNaranja(), nombre: 'Co-Learning', apellido: "", materias: [], tipoClases: [], rating: '' }]
-    profesores.concat(profesoresBase)
-    this.setState({ clases: profesores, isLoading: false })
+    while (contadorExterno < lenght) {
+      contadorInterno = contadorExterno
+      profesorActual = ExportadorObjetos.createProfesorHome(profesoresBase[contadorExterno])
+      while (contadorInterno < lenght && profesoresBase[contadorInterno].id_usuario == profesorActual.id_usuario) {
+        materiaActual = ExportadorObjetos.createMaterias(profesoresBase[contadorInterno].id_materia, profesoresBase[contadorInterno].nombre_materia)
+        console.log("1"+profesorActual.nombre_usuario +  profesoresBase[contadorInterno].nombre_usuario + " " + materiaActual.nombre_materia + profesoresBase[contadorInterno].nombre_materia)
+        if (flag == 0) {
+          // profesoresBase[contadorInterno].id_materia != null &&
+          while (contadorInterno < lenght && profesoresBase[contadorInterno].id_usuario == profesorActual.id_usuario && profesoresBase[contadorInterno].id_materia == materiaActual.id_meteria) {
+            console.log("2"+profesorActual.nombre_usuario +  profesoresBase[contadorInterno].nombre_usuario + " " + materiaActual.nombre_materia + profesoresBase[contadorInterno].nombre_materia)
+            arrayDondeClases.push(ExportadorObjetos.createDondeClases(profesoresBase[contadorInterno].id_dondeClases, profesoresBase[contadorInterno].des_dondeClases))
+            contadorInterno++
+            contadorDondeClases ++
+          }
+          flag = 1
+          if(materiaActual.id_meteria != null){
+            arrayMaterias.push(materiaActual)
+          }
+        }
+        else {
+          if(materiaActual.id_meteria != null && arrayMaterias[arrayMaterias.length-1].id_meteria != materiaActual.id_meteria){
+            arrayMaterias.push(materiaActual)
+          }
+          contadorInterno ++
+        }
+      }
+      profesorActual.materias = arrayMaterias
+      profesorActual.dondeClases = arrayDondeClases
+      arrayProfesores.push(profesorActual)
+      flag = 0
+      contadorDondeClases
+      contadorExterno = contadorInterno
+      arrayMaterias = []
+      arrayDondeClases = []
+    }
+    this.setState({ clases: arrayProfesores, activeImage: arrayProfesores[0], isLoading: false })
   }
   UNSAFE_componentWillMount() {
     this.allImages = {}
@@ -317,7 +317,7 @@ class HomeClases extends React.Component {
         return "Clases: "
       }
       else {
-        return "Tipo de Clases:"
+        return "Donde da Clases:"
       }
     }
   }
@@ -363,7 +363,7 @@ class HomeClases extends React.Component {
         </View>
       );
     }
-    if (this.state.isLoading && this.state.isLoadingFont) {
+    if (this.state.isLoading || this.state.isLoadingFont) {
       return (
         <View style={styles.container}>
           <StatusBar barStyle="black" backgroundColor="white" />
@@ -401,50 +401,66 @@ class HomeClases extends React.Component {
               <View style={[styles.card]}>
                 <View style={[{ flexDirection: 'column', alignItems: 'center', padding: 10, backgroundColor: 'white' }]} ref={(view) => (this.viewImage = view)}>
                   <View style={styles.shadowImage}>
-                    <Animated.Image
-                      source={this.state.activeImage.src}
-                      style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth() }]}
-                    />
+                    {this.state.activeImage.src == null ?
+                      <Animated.View
+                      style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth(), backgroundColor: (this.state.activeImage.src == null ? "#F28C0F" : "transparent") }]}
+                      >
+                      <Text style={{ fontSize: wp(20), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                        {this.state.activeImage.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.activeImage.apellido.slice(0, 1).toUpperCase()}
+                      </Text>
+                      </Animated.View>
+                      :
+                      <Animated.Image
+                        source={this.state.activeImage.src}
+                        style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth() }]}
+                      />
+                    }
                   </View>
                   <View style={styles.heartView}>{React_Native_Rating_Bar}</View>
                   <Text style={{ fontSize: wp(3), marginTop: 5 }}>{this.inactiveImageVotos()}{this.state.activeImage ? this.state.activeImage.rating.votos : ''}</Text>
                 </View>
                 <Animated.View style={[{ backgroundColor: 'white', flex: 1, padding: 10, flexDirection: 'column' }]}>
 
-                <View style={[{flex: 1.5}]}>
-                  <Text style={styles.tituloProfesor} numberOfLines={2}>{this.state.activeImage.nombre + " " + this.state.activeImage.apellido}</Text>
-                  <Text style={styles.domicilioProfesor} numberOfLines={2}>{this.state.activeImage.domicilio}</Text>  
-                  <View style={[styles.infoContainer]}>
+                  <View style={[{ flex: 1.5 }]}>
+                    <Text style={styles.tituloProfesor} numberOfLines={2}>{this.state.activeImage.nombre_usuario + " " + this.state.activeImage.apellido}</Text>
+                    <Text style={styles.domicilioProfesor} numberOfLines={2}>{this.state.activeImage.des_domicilio}</Text>
+                    <View style={[styles.infoContainer]}>
 
-                    <Text style={styles.infoTitle}>{this.inactiveTitles(1)}</Text>
+                      <Text style={styles.infoTitle}>{this.inactiveTitles(1)}</Text>
 
-                    {this.state.activeImage.materias.map((item, index) => (index < 3 ? (
-                      <View>
-                        <Text style={styles.infoDes} numberOfLines={1}>• {item.nombre_materia}</Text>
-                      </View>
-                    ) : <View></View>))
-                    }
-                  </View>
+                      {this.state.activeImage.materias.map((item, index) => (index < 3 ? (
+                        <View>
+                          <Text style={styles.infoDes} numberOfLines={1}>• {item.nombre_materia}</Text>
+                        </View>
+                      ) : <View></View>))
+                      }
+                    </View>
 
-                  <View style={[styles.infoContainer]}>
-                    <Text style={styles.infoTitle}>{this.inactiveTitles(2)}</Text>
+                    <View style={[styles.infoContainer]}>
+                      <Text style={styles.infoTitle}>{this.inactiveTitles(2)}</Text>
 
-                    {this.state.activeImage.tipoClases.map((item, index) => (index < 3 ? (
-                      <View>
-                        <Text style={styles.infoDes} numberOfLines={1}>• {item.des_tipoClases}</Text>
-                      </View>
-                    ) : <View></View>))
-                    }
-                  </View>
+                      {
+                        this.state.activeImage.dondeClases.map((item, index) => (index < 3 ? (
+                        <View>
+                          <Text style={styles.infoDes} numberOfLines={1}>• {item.des_dondeClases}</Text>
+                        </View>
+                      ) : <View/>))
+                      }
+                    </View>
                   </View>
                   <View style={styles.buttonContainer}>
+                    {this.state.activeImage.money.des_moneda && this.state.activeImage.money.monto ?
                     <View style={{ flexDirection: "row", justifyContent: "center" }}>
                       <View style={[styles.moneyView, styles.shadowMoney]}>
-                        <Text style={styles.moneyText}>{this.state.activeImage.money.id_moneda.nombre}{this.state.activeImage.money.monto}</Text>
+                        <Text style={styles.moneyText}>{this.state.activeImage.money.des_moneda}</Text>
+                                        <Text style={styles.moneyText}>{this.state.activeImage.money.monto}</Text>
                         <Text style={styles.moneyText2}>/h</Text>
                       </View>
                     </View>
-                    <TouchableOpacity style={[styles.button, { backgroundColor: this.inactiveImageButton() }]} onPress={() => this.props.onPressGo(this.state.activeImage.id_usuario, this.state.activeImage.nombre + " " + this.state.activeImage.apellido, this.state.activeImage.domicilio, this.state.activeImage.esProfesor)} >
+                    :
+                    <View/>
+                    }
+                    <TouchableOpacity style={[styles.button, { backgroundColor: this.inactiveImageButton() }]} onPress={() => this.props.onPressGo(this.state.activeImage.id_usuario, this.state.activeImage.nombre_usuario + " " + this.state.activeImage.apellido, this.state.activeImage.des_domicilio, this.state.activeImage.esProfesor)} >
                       <Text style={{ color: 'white' }}>{this.inactiveImageButtonText()}</Text>
                     </TouchableOpacity>
                   </View>
@@ -452,10 +468,10 @@ class HomeClases extends React.Component {
               </View>
             )
               :
-              <View style={[{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 10, backgroundColor: 'white' }]} ref={(view) => (this.viewImage = view)}>
+              <View style={[{ padding: 10, flexShrink: 1 }]} ref={(view) => (this.viewImage = view)}>
 
                 <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.imageTitulo} />
-                <Text style={{ textAlign: 'left', fontSize: wp(5) }}> CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés. {'\n'}{'\n'} Además te da la posibilidad de visualizar cuales son los profesores más populares de la aplicación y los cercanos a tu zona actual.</Text>
+                <Text style={{ textAlign: 'left', fontSize: wp(4.4), flexShrink: 1 }}> Aquí podras encontrar cuales son los profesores más populares de la aplicación y los mas cercanos a tu zona actual. Podras encontrar su puntuacion, las clases que enseña y de que manera dicta las clases {'\n'}{'\n'} CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés a partir de los profesores que te comuniques.</Text>
 
               </View>
             )
@@ -478,11 +494,19 @@ class HomeClases extends React.Component {
           alignSelf: "center"
         }]}
       >
-        <Image
-          ref={(item) => (this.allImages[index] = item)}
-          source={item.src}
-          style={[styles.carouselImage, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
-        />
+        {item.src == null ?
+          <View style={[styles.carouselImage, { backgroundColor: (item.src == null ? "#F28C0F" : "transparent") }]} ref={(item) => (this.allImages[index] = item)}>
+            <Text style={{ fontSize: wp(20), textAlign: "center", color: 'white', alignContent: 'center' }}>
+              {item.nombre_usuario.slice(0, 1).toUpperCase()}{item.apellido.slice(0, 1).toUpperCase()}
+            </Text>
+          </View>
+          :
+          <Image
+            ref={(item) => (this.allImages[index] = item)}
+            source={item.src}
+            style={[styles.carouselImage, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
+          />
+        }
       </Animated.View>
     </View>
 }
@@ -532,7 +556,8 @@ const styles = StyleSheet.create({
   carouselImage: {
     height: wp(50),
     width: wp(50),
-    borderRadius: wp(50)/2
+    justifyContent: "center",
+    borderRadius: wp(50) / 2
   },
   //Heart
   heartView: {
@@ -549,16 +574,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flex: 1.4,
     flexDirection: 'row',
-    width: wp(90),
-    height: hp(44),
     marginHorizontal: 10,
     marginBottom: 20,
     padding: 10,
-    flexWrap: "wrap",
     borderRadius: 10
   },
   card: {
-    backgroundColor: 'white',
     flexDirection: 'row',
     flex: 1,
     flexWrap: "wrap"
@@ -580,6 +601,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: hp(33),
+    justifyContent: "center",
     marginBottom: 22,
     borderRadius: 10
   },

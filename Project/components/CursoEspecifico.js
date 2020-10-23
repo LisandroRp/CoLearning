@@ -23,7 +23,7 @@ class CursoEspecifico extends React.Component {
             curso: {
               id_curso: 1,
               id_usuario: 0,
-              src: require("../assets/leila.jpg"),
+              src: null,
               vacantes: 20,
               dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
                 { id_dondeClases: 2, des_dondeClases: "A Domicilio" },
@@ -126,7 +126,7 @@ class CursoEspecifico extends React.Component {
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={{ alignSelf: "center" }}>
                             <View style={styles.profileImage}>
-                                <Image source={this.state.curso.src} style={styles.image} resizeMode="center"></Image>
+                                {/* <Image source={this.state.curso.src} style={styles.image} resizeMode="center"></Image> */}
                             </View>
                             <View style={styles.active}></View>
                         </View>

@@ -24,23 +24,23 @@ class LogIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "JuanMn@gmail.com",
-      password: "123456",
-      usuario: { esProfesor: true }
+      email: "LeoR97@gmail.com",
+      password: "leonardo",
+      usuario: { id_usuario: 0, esProfesor: true }
     }
   }
 
   checkLogin() {
-    //this.firebaseLogin()
-    //ApiController.getUsuarioByMail(this.state.mail, this.checkUsuario.bind(this))
+    ApiController.getUsuarioByMail(this.state.email, this.checkUsuario.bind(this))
 
-    this.props.onPressLogin(this.state.mail, this.state.usuario.esProfesor);
+    //this.props.onPressLogin(this.state.mail, this.state.usuario.esProfesor);
   }
 
   checkUsuario(data) {
     if (data.email == this.state.email && data.password == this.state.password && this.state.email != null) {
       this.setState({ usuario: data })
-      this.firebaseLogin()
+      this.props.onPressLogin(data.id_usuario, data.esProfesor);
+      //this.firebaseLogin()
     } else {
       alert("Contraseña incorrecta");
     }
@@ -63,11 +63,15 @@ class LogIn extends Component {
 
   loginSuccess = () => {
     console.log('login successful');
-    this.props.onPressLogin(this.state.usuario.esProfesor);
+    this.props.onPressLogin(this.state.id_usuario, this.state.usuario.esProfesor);
   };
   loginFailed = () => {
     console.log('login failed ***');
-    alert('Hubo un problema, intentelo mas tarde');
+    const user = {
+      email: this.state.email,
+      password: this.state.password,
+    }
+    firebaseSvc.observeAuth(user)
   };
 
   render() {

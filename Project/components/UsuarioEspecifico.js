@@ -15,28 +15,7 @@ class UsuarioEspecifico extends React.Component {
         this.state = {
             isLoading: false,     
             max_rating: 5,
-            usuario: {
-                id_usuario: 1,
-                nombre_usuario: 'Juan',
-                apellido: 'Marinelli',
-                src: require("../assets/leila.jpg"),
-                esProfesor: true,
-                domicilio: 'Spega Ñasderi',
-                dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
-                { id_dondeClases: 2, des_dondeClases: "A Domicilio" },
-                { id_dondeClases: 3, des_dondeClases: "Instituto" }],
-                tipoClases: [{ id_tipoClases: 1, des_tipoClases: "Particulares" },
-                { id_tipoClases: 2, des_tipoClases: "Grupales" },
-                { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
-                instagram: "@LisandroRp",
-                whatsApp: "1144373492",
-                rating: 3,
-                materias: [{ nombre_materia: "Ingles", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
-                { nombre_materia: "Matematica", des_materia: "Clases de matematica de secundaria y universidad" }],
-                latitud: 123,
-                longitud: 123,
-                money: {id_moneda: {id_moneda: 1, nombre: "$"}, monto: "100"}
-            }
+            usuario: {}
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();

@@ -15,7 +15,9 @@ import { FontAwesome, FontAwesome5, Ionicons, AntDesign, Fontisto, MaterialCommu
 import DropDownItem from 'react-native-drop-down-item';
 import { withNavigation } from 'react-navigation';
 
+import ApiController from "../controller/ApiController";
 import ExportadorLogos from './exportadores/ExportadorLogos'
+import ExportadorObjetos from './exportadores/ExportadorObjetos'
 import ExportadorContacto from './exportadores/ExportadorContacto'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -25,36 +27,39 @@ class PerfilHome extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: false,
+            isLoading: true,
             max_rating: 5,
-            usuario: {
-                id_usuario: 1,
-                nombre_usuario: 'Juan',
-                apellido: 'Marinelli',
-                src: require("../assets/leila.jpg"),
-                esProfesor: true,
-                domicilio: 'Spegaaaaaaaaaaaa Ñeri',
-                dondeClases: [{ id_dondeClases: 1, des_dondeClases: "En su casa" },
-                { id_dondeClases: 2, des_dondeClases: "A Domicilio" },
-                { id_dondeClases: 3, des_dondeClases: "Instituto" }],
-                tipoClases: [{ id_tipoClases: 1, des_tipoClases: "Particulares" },
-                { id_tipoClases: 2, des_tipoClases: "Grupales" },
-                { id_tipoClases: 3, des_tipoClases: "Virtuales" }],
-                instagram: "juanmarinelli",
-                telefono: "1144373492",
-                email: "1144373492",
-                whatsApp: "1144373492",
-                rating: 3,
-                materias: [{ nombre_materia: "Ingles", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
-                { nombre_materia: "Matematica", des_materia: "Clases de matematica de secundaria y universidad" }],
-                latitud: 123,
-                longitud: 123,
-                money: { id_moneda: { id_moneda: 1, nombre: "$" }, monto: "100" }
-            }
+            usuario: {}
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
+    componentDidMount = async () => {
+        ApiController.getUsuarioById((await this.props.navigation.getParam("id_usuario")) ? await this.props.navigation.getParam("id_usuario") : this.props.id_usuario, this.okUsuario.bind(this))
+    }
+    okUsuario(usuario) {
+        if (usuario.esProfesor) {
+            ApiController.getDondeClases(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
+        }
+        else {
+            usuario.src= ExportadorObjetos.profileImage(usuario.id_usuario)
+            this.setState({ usuario: usuario, isLoading: false })
+        }
+    }
+    okDondeClases(usuario, dondeClases) {
+        usuario.dondeClases = dondeClases
+        ApiController.getTipoClases(usuario, this.okTipoClases.bind(this))
+    }
+    okTipoClases(usuario, tipoClases) {
+        usuario.tipoClases = tipoClases
+        ApiController.getMateriasProfesor(usuario, this.okMateriasProfesor.bind(this))
+
+    }
+    okMateriasProfesor(usuario, materias) {
+        usuario.materias = materias
+        this.setState({ usuario: usuario, isLoading: false })
+    }
+
     vote(i) {
         var usuarioUpdate = this.state.usuario
         usuarioUpdate.rating = i
@@ -63,19 +68,19 @@ class PerfilHome extends React.Component {
     //************************ */
     //Contacto
     //************************ */
-    contactoList(){
+    contactoList() {
         var contactoList = []
 
-        if(this.state.usuario.instagram != "" && this.state.usuario.instagram){
+        if (this.state.usuario.instagram != "" && this.state.usuario.instagram) {
             contactoList.push({ id_contacto: 0, des_contacto: this.state.usuario.instagram })
         }
-        if(this.state.usuario.telefono != "" && this.state.usuario.telefono){
+        if (this.state.usuario.telefono != "" && this.state.usuario.telefono) {
             contactoList.push({ id_contacto: 1, des_contacto: this.state.usuario.telefono })
         }
-        if(this.state.usuario.email != "" && this.state.usuario.email){
+        if (this.state.usuario.email != "" && this.state.usuario.email) {
             contactoList.push({ id_contacto: 2, des_contacto: this.state.usuario.email })
         }
-        if(this.state.usuario.whatsApp != "" && this.state.usuario.whatsApp){
+        if (this.state.usuario.whatsApp != "" && this.state.usuario.whatsApp) {
             contactoList.push({ id_contacto: 3, des_contacto: this.state.usuario.whatsApp })
         }
         return contactoList
@@ -88,13 +93,13 @@ class PerfilHome extends React.Component {
 
             case 1:
 
-                return <FontAwesome5 style={[{ marginBottom: 10, flex: 1 }]} name={"home"} size={hp(3.3)} color='#F28C0F'></FontAwesome5>;
+                return <FontAwesome5 style={[{ marginBottom: 10, flex: 1 }]} name={"home"} size={hp(3.3)} color='#F28C0F' />;
             case 2:
 
-                return <FontAwesome style={[{ marginBottom: 10, flex: 1 }]} name={"car"} size={hp(3.3)} color='#F28C0F'></FontAwesome>;
+                return <FontAwesome style={[{ marginBottom: 10, flex: 1 }]} name={"car"} size={hp(3.3)} color='#F28C0F' />;
             case 3:
 
-                return <FontAwesome5 style={[{ marginBottom: 10, flex: 1 }]} name={"school"} size={hp(3.3)} color='#F28C0F'></FontAwesome5>;
+                return <FontAwesome5 style={[{ marginBottom: 10, flex: 1 }]} name={"school"} size={hp(3.3)} color='#F28C0F' />;
             default:
 
                 return <View></View>;
@@ -105,13 +110,13 @@ class PerfilHome extends React.Component {
 
             case 1:
 
-                return <FontAwesome style={[{ marginBottom: 10, flex: 1 }]} name={"user"} size={hp(4)} color='#F28C0F'></FontAwesome>;
+                return <FontAwesome style={[{ marginBottom: 10, flex: 1 }]} name={"user"} size={hp(4)} color='#F28C0F' />;
             case 2:
 
-                return <FontAwesome style={[{ marginBottom: 10, flex: 1 }]} name={"group"} size={hp(4)} color='#F28C0F'></FontAwesome>;
+                return <FontAwesome style={[{ marginBottom: 10, flex: 1 }]} name={"group"} size={hp(4)} color='#F28C0F' />;
             case 3:
 
-                return <Ionicons style={[{ marginBottom: 10, flex: 1 }]} name={"ios-tv"} size={hp(4)} color='#F28C0F'></Ionicons>;
+                return <Ionicons style={[{ marginBottom: 10, flex: 1 }]} name={"ios-tv"} size={hp(4)} color='#F28C0F' />;
             default:
 
                 return <View></View>;
@@ -154,23 +159,31 @@ class PerfilHome extends React.Component {
         }
         else {
             return (
-                <SafeAreaView style={styles.container}>
+                <View style={styles.container}>
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View>
                             <View style={{ alignSelf: "center" }}>
-                                <View style={styles.profileImage}>
-                                    <Image source={this.state.usuario.src} style={styles.image} resizeMode="center"></Image>
+                                <View style={[styles.profileImage, {backgroundColor: (this.state.usuario.src == null ? "#F28C0F" : "transparent")}]}>
+                                    {this.state.usuario.src == null ?
+                                        <Text style={{ fontSize: wp(25), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                                            {this.state.usuario.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.usuario.apellido.slice(0, 1).toUpperCase()}
+                                        </Text>
+                                        :
+                                        <Image source={this.state.usuario.src} style={styles.image} resizeMode="contain"></Image>
+                                    }
+
                                 </View>
                             </View>
 
                             <View style={styles.infoContainer}>
-                                <Text numberOfLines={1} style={[styles.text, { fontWeight: "200", fontSize: wp(6.6), fontWeight: 'bold', color: '#F28C0F' }]}>{this.state.usuario.nombre_usuario} {this.state.usuario.apellido}</Text>
+                                <Text numberOfLines={2} style={[styles.text, { fontSize: wp(6.6), textAlign: "center", fontWeight: 'bold', color: '#F28C0F' }]}>{this.state.usuario.nombre_usuario} {this.state.usuario.apellido}</Text>
                                 <Text numberOfLines={1} style={[styles.text, { color: "#AEB5BC", fontSize: wp(3.3) }]}>{this.state.usuario.domicilio}</Text>
                             </View>
                             {
                                 this.state.usuario.esProfesor ?
                                     <View style={[styles.moneyView, styles.shadowMoney]}>
-                                        <Text style={styles.moneyText}>{this.state.usuario.money.id_moneda.nombre}{this.state.usuario.money.monto}</Text>
+                                        <Text style={styles.moneyText}>{this.state.usuario.money.des_moneda ? this.state.usuario.money.des_moneda : "$"}</Text>
+                                        <Text style={styles.moneyText}>{this.state.usuario.money.monto ? this.state.usuario.money.monto : 0}</Text>
                                         <Text style={styles.moneyText2}>/h</Text>
                                     </View>
                                     :
@@ -182,103 +195,144 @@ class PerfilHome extends React.Component {
                             {
                                 this.state.usuario.esProfesor ?
                                     <View style={[styles.statsBoxStar]}>
-                                        <View style={styles.starView}>{React_Native_Rating_Bar}</View>
-                                        <Text style={[styles.text, styles.subText]}>Votos: 1523</Text>
+                                        <View style={styles.starView}>
+                                            {React_Native_Rating_Bar}
+                                        </View>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            {/* <Text style={[styles.text, styles.subText]}>rating: {this.state.usuario.rating}</Text> */}
+                                            <Text style={[styles.text, styles.subText]}>Votos: {this.state.usuario.votos}</Text>
+                                        </View>
                                     </View> :
                                     <View />
                             }
                             <View style={[styles.statsBoxForo]}>
                                 <View style={{ flexDirection: 'row' }}>
                                     <FontAwesome style={[{ flex: 0.5, textAlign: 'right', marginRight: wp(5) }]} name={"thumbs-up"} size={hp(3)} color="#5EC43A" />
-                                    <Text numberOfLines={1} style={[styles.text, { fontSize: wp(5), flex: 0.5 }]}>302</Text>
+                                    {this.state.usuario.res_buenas ?
+                                        <Text numberOfLines={1} style={[styles.text, { fontSize: wp(5), flex: 0.5 }]}>{this.state.usuario.res_buenas}</Text>
+                                        :
+                                        <Text numberOfLines={1} style={[styles.text, { fontSize: wp(5), flex: 0.5 }]}>0</Text>
+                                    }
                                 </View>
                                 <View style={{ flexDirection: 'row' }}>
                                     <FontAwesome style={[{ flex: 0.5, textAlign: 'right', marginRight: wp(5) }]} name={"check"} size={hp(3)} color="#5EC43A" />
-                                    <Text numberOfLines={1} style={[styles.text, { fontSize: wp(5), flex: 0.5 }]}>2</Text>
+                                    {this.state.usuario.res_mejores ?
+                                        <Text numberOfLines={1} style={[styles.text, { fontSize: wp(5), flex: 0.5 }]}>{this.state.usuario.res_mejores}</Text>
+                                        :
+                                        <Text numberOfLines={1} style={[styles.text, { fontSize: wp(5), flex: 0.5 }]}>0</Text>
+                                    }
                                 </View>
-                                <Text style={[styles.text, styles.subText, { marginTop: hp(1) }]}>Respuestas Foro: 111</Text>
+                                {this.state.usuario.res_cantidad ?
+                                    <Text style={[styles.text, styles.subText, { marginTop: hp(1) }]}>Respuestas Foro: {this.state.usuario.res_cantidad}</Text>
+                                    :
+                                    <Text style={[styles.text, styles.subText, { marginTop: hp(1) }]}>Respuestas Foro: 0</Text>
+                                }
                             </View>
                         </View>
                         {/*/////////////////////////////////////////////////////////////////////////// */}
                         {this.state.usuario.esProfesor ?
                             <View>
                                 <View style={styles.bottomBox}>
-                                    <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center"  }]}>Ubicación de Clases</Text>
+                                    <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center" }]}>Ubicación de Clases</Text>
 
                                     <View style={[{ flexDirection: 'row' }]}>
-                                        {this.state.usuario.dondeClases.map((item) => (
-                                            <View style={[{ padding: 10, marginTop: 10, flex: 1, alignItems: "center", borderRadius: 10 }]} key={item.id_dondeClases}>
-                                                {this.queDondeClase(item.id_dondeClases)}
-                                                <Text numberOfLines={1} style={[styles.text, styles.subText]}>{item.des_dondeClases}</Text>
+                                        {this.state.usuario.dondeClases.length != 0 ?
+                                            this.state.usuario.dondeClases.map((item) => (
+                                                <View style={[{ padding: 10, marginTop: 10, flex: 1, alignItems: "center", borderRadius: 10 }]} key={item.id_dondeClases}>
+                                                    {this.queDondeClase(item.id_dondeClases)}
+                                                    <Text numberOfLines={1} style={[styles.text, styles.subText]}>{item.des_dondeClases}</Text>
+                                                </View>
+                                            ))
+                                            :
+                                            <View style={[{ padding: 10, marginTop: 10, flex: 1, alignItems: "center", borderRadius: 10 }]}>
+                                                <Text>No se han cargado la ubicación de las clases</Text>
                                             </View>
-                                        ))}
+                                        }
                                     </View>
                                 </View>
 
                                 <View style={styles.bottomBox}>
-                                    <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center"  }]}>Tipo de Clases</Text>
+                                    <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center" }]}>Tipo de Clases</Text>
 
                                     <View style={[{ flexDirection: 'row' }]}>
-                                        {this.state.usuario.tipoClases.map((item) => (
-                                            <View style={[{ padding: 10, flex: 1, marginTop: 10, alignItems: "center", borderRadius: 10 }]} key={item.id_tipoClases}>
-                                                {this.queTipoClase(item.id_tipoClases)}
-                                                <Text numberOfLines={1} style={[styles.text, styles.subText]}>{item.des_tipoClases}</Text>
+                                        {this.state.usuario.tipoClases.length != 0 ?
+                                            this.state.usuario.tipoClases.map((item) => (
+                                                <View style={[{ padding: 10, flex: 1, marginTop: 10, alignItems: "center", borderRadius: 10 }]} key={item.id_tipoClases}>
+                                                    {this.queTipoClase(item.id_tipoClases)}
+                                                    <Text numberOfLines={1} style={[styles.text, styles.subText]}>{item.des_tipoClases}</Text>
+                                                </View>
+                                            ))
+                                            :
+                                            <View style={[{ padding: 10, marginTop: 10, flex: 1, alignItems: "center", borderRadius: 10 }]}>
+                                                <Text>No se han cargado el tipo de las clases</Text>
                                             </View>
-                                        ))}
+                                        }
                                     </View>
                                 </View>
 
                                 <View style={styles.dropDownViewContainer}>
                                     <Text style={[styles.text, { fontSize: wp(4.8), textAlign: 'center' }]}>Materias</Text>
-
-                                    {this.state.usuario.materias.map((item, index) => (
-                                        <View style={[styles.dropDownContainer, this.marginSize(index)]} key={item.nombre_materia}>
-                                            <DropDownItem contentVisible={false}
-                                                header={
-                                                    <View style={styles.backgroundTitulo}>
-                                                        <Text style={styles.titulo}>{item.nombre_materia}</Text>
-                                                        <View style={{ position: 'absolute', right: 0}}>
-                                                            <AntDesign style={{ textAlign: 'center', marginRight: wp(3.3) }} name={"caretdown"} size={wp(3.3)} color="white" />
+                                    {this.state.usuario.dondeClases.length != 0 ?
+                                        this.state.usuario.materias.map((item, index) => (
+                                            <View style={[styles.dropDownContainer, this.marginSize(index)]} key={item.nombre_materia}>
+                                                <DropDownItem contentVisible={false}
+                                                    header={
+                                                        <View style={styles.backgroundTitulo}>
+                                                            <Text style={styles.titulo}>{item.nombre_materia}</Text>
+                                                            <View style={{ position: 'absolute', right: 0 }}>
+                                                                <AntDesign style={{ textAlign: 'center', marginRight: wp(3.3) }} name={"caretdown"} size={wp(3.3)} color="white" />
+                                                            </View>
                                                         </View>
-                                                    </View>
-                                                }
-                                            >
+                                                    }
+                                                >
 
-                                                <Text style={styles.descripcion}>{item.des_materia}</Text>
-                                            </DropDownItem>
+                                                    <Text style={styles.descripcion}>{item.des_materia}</Text>
+                                                </DropDownItem>
+                                            </View>
+                                        )
+                                        )
+                                        :
+                                        <View style={[{ padding: 10, marginTop: 10, flex: 1, alignItems: "center", borderRadius: 10 }]}>
+                                            <Text>No se han agregado materias</Text>
                                         </View>
-                                    )
-                                    )
                                     }
                                 </View>
                             </View>
                             /////////////
                             :
                             /////////////    
-                            (this.contactoList().length != 0 ?                       
-                            <View style={styles.bottomBox}>
-                                <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center" }]}>Contacto</Text>
-                                <FlatList
-                                    data={this.contactoList()}
-                                    numColumns={2}
-                                    initialNumToRender={50}
-                                    keyExtractor={(item) => {
-                                        return item.id_contacto.toString();
-                                    }}
-                                    renderItem={({ item }) => {
-                                        return (
-                                            ExportadorContacto.contacto(item)
-                                        )
-                                    }
-                                    } />
-                            </View>
-                            :
-                            <View/>
+                            (this.contactoList().length != 0 ?
+                                <View style={styles.bottomBox}>
+                                    <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center" }]}>Contacto</Text>
+                                    <FlatList
+                                        data={this.contactoList()}
+                                        numColumns={2}
+                                        initialNumToRender={50}
+                                        keyExtractor={(item) => {
+                                            return item.id_contacto.toString();
+                                        }}
+                                        renderItem={({ item }) => {
+                                            return (
+                                                ExportadorContacto.contacto(item)
+                                            )
+                                        }
+                                        } />
+                                </View>
+                                :
+                                <View />
                             )
-                            }
+                        }
 
                     </ScrollView>
-                </SafeAreaView>
+                    {this.props.navigation.getParam("id_usuario") ? 
+                    <TouchableOpacity style={[styles.dm]} onPress={() => this.props.onPressGoChat(this.state.usuario.id_usuario)}>
+                        <FontAwesome name="comments" size={hp(3)} color={"white"} />
+                    </TouchableOpacity>
+                    : 
+                    <View/>   
+                    }
+                    
+                </View>
             );
         }
     }
@@ -312,7 +366,7 @@ const styles = StyleSheet.create({
         height: wp(50),
         borderRadius: 100,
         marginTop: hp(5),
-        backgroundColor: 'transparent',
+        justifyContent: "center",
         shadowColor: '#00000045',
         shadowOffset: {
             width: 0,
@@ -358,14 +412,14 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 0,
         right: 0,
-        width: hp(8),
-        height: hp(8),
+        width: hp(6.6),
+        height: hp(6.6),
         marginRight: wp(5.5),
         marginBottom: hp(3),
         borderRadius: 100,
         alignItems: "center",
         justifyContent: "center",
-        shadowColor: '#00000055',
+        shadowColor: '#00000025',
         shadowOffset: {
             width: 0.01,
             height: 0.25,

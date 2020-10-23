@@ -19,7 +19,7 @@ let findAllById = (req, res) =>
     console.log("llegue a leer Buscar usuario por id",req.params.id);
     var idBusqueda = req.params.id;
     console.log(idBusqueda);
-    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,d.latitud,d.longitud, m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
+    var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,d.latitude,d.longitude, m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
     + ' FROM usuario u' 
     +' left join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
     +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
@@ -133,7 +133,7 @@ let findByIdProfesor= (req, res) =>
                 +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
                 +' left join moneda mo on mo.id_moneda = um.id_moneda_fk'
                 +' left join rating r on r.id_rating = u.id_rating_fk'
-                +' WHERE u.id_usuario = ? and u.esProfesor = 1'
+                +' WHERE u.esProfesor = 1'
                 +' Order by 1,6,8 desc';
     console.log(sql);
     dbConn.query(sql,[idBusqueda], (err,rows) => {
@@ -201,7 +201,7 @@ let findByIdUsuarioByComentarios = (req, res) =>
   console.log(req.params.id);
   var idBusqueda = req.params.id;
   console.log(idBusqueda);
-  var sql =    'SELECT u.nombre_usuario,u.apellido,u.src, u.esProfesor, c.*'  
+  var sql =    'SELECT u.nombre_usuario,u.apellido, u.esProfesor, c.*, u.src'  
               + ' FROM usuario u'  
               + ' Inner join comentarios c on c.id_usuarioOrigen = u.id_usuario' 
               + ' WHERE c.id_usuarioDestino = ? ';
@@ -226,7 +226,7 @@ let findProfesorMateriaDomicilioRating = (req, res) =>
   var cruzarMateria = ((tieneMateria)?' Inner':' left') ;
   var cruzarRating = ((tieneRating)?' Inner':' left') ;
 
-  var sql = 'SELECT  u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, u.src, d.des_domicilio,d.latitud,d.longitud, m.des_moneda,um.monto,r.votos,r.rating' 
+  var sql = 'SELECT  u.id_usuario,u.nombre_usuario,u.apellido, u.esProfesor, u.src, d.des_domicilio,d.latitude,d.longitude, m.des_moneda,um.monto,r.votos,r.rating' 
             +' FROM usuario u'
             +  cruzarDomicilio +' join domicilio d on d.id_domicilio = u.id_domicilio_fk' 
             +' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
