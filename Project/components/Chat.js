@@ -13,11 +13,8 @@ const customtInputToolbar = props => {
       {...props}
       containerStyle={{
         marginLeft: 15,
-    marginRight: 15,
-    marginBottom: 10,
-    borderRadius: 25,
-    position: "absolute",
-    bottom: 5
+      marginRight: 15,
+      borderRadius: 25,
       }}
     />
   );
@@ -47,14 +44,16 @@ class Chat extends React.Component {
 
   state = {
     messages: [],
+    isLoading: true,
+    id_chat: ""
   };
 
   get userOrigen() {
     return {
-      nombre: this.props.navigation.getParam('nombre_chatOrigen'),
+      nombre: "Lisandro",
       avatar: '',
-      id_user: 1,
-      _id: 1, // need for gifted-chat
+      id_user: this.props.navigation.getParam('id_userOrigen'),
+      _id: this.props.navigation.getParam('id_userOrigen'), // need for gifted-chat
     };
   }
   get userDestino() {
@@ -67,14 +66,23 @@ class Chat extends React.Component {
   }
 
   render() {
+    if (this.state.isLoading) {
+      return (
+        <View style={styles.container}>
+            <StatusBar barStyle="black" backgroundColor="white" />
+            <ActivityIndicator size="large" color='#F28C0F' backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
+        </View>
+    );
+    }
+    else {
     return (
       <GiftedChat
       listViewProps={{style: { backgroundColor: '#FFF7EE'} }}
-        //renderInputToolbar={props => customtInputToolbar(props)}
+        renderInputToolbar={props => customtInputToolbar(props)}
         renderBubble={props => customBubles(props)}
         messages={this.state.messages}
         //onSend={firebaseSvc.send}
-        onSend={messages => firebaseSvc.send(messages, this.userDestino)}
+        onSend={messages => firebaseSvc.send(this.state.id_chat, messages)}
         user={this.userOrigen}
         inverted={true}
       />
@@ -106,12 +114,15 @@ class Chat extends React.Component {
       //                   }
       //                   } />
     );
+    }
   }
 
-  componentDidMount() {
-    firebaseSvc.refOn(message =>
+  componentDidMount = async () => {
+    this.setState({id_chat: await this.props.navigation.getParam("id_chat")})
+    firebaseSvc.refOn(await this.props.navigation.getParam("id_chat"), message =>
       this.setState(previousState => ({
         messages: (GiftedChat.append(previousState.messages, message)).sort((a, b) => Date(a.createdAt).toString().localeCompare(Date(b.createdAt).toString())),
+        isLoading: false
       }))
     );
   }
@@ -123,7 +134,7 @@ const resizeMode = 'center';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFEEEE"
+    backgroundColor: "#FFF7EE"
   },
   StatusBar: {
     height: hp(3),

@@ -511,6 +511,7 @@ shadow: {
     elevation: 29,
 },
   button: {
+    flex: 1,
     backgroundColor: '#F28C0F',
     borderRadius: 10,
     alignItems: 'center',

@@ -194,7 +194,6 @@ class MapaVariosScreen extends React.Component {
     }
   }
 }
-
 class MapaUnicoScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
@@ -238,6 +237,175 @@ class MapaUnicoScreen extends React.Component {
   }
 }
 //******************************************* */
+//******************CHAT******************** */
+//******************************************* */
+class LogInScreen extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Chats",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+  render() {
+    return (
+      <LogIn
+      onPressLogin={this.pasarChat.bind(this)}
+      onPressCreate={this.createAccount.bind(this)}
+      />
+    );
+  }
+  pasarChat(name, email, avatar) {
+    this.props.navigation.navigate('ChatList', { name: name, email: email, avatar: avatar });
+  }
+  createAccount(){
+    this.props.navigation.navigate('CreateAccount')
+  }
+}
+class CreateAccountScreen extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Chats",
+      headerStyle: {
+        backgroundColor: '#6BA8FF',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: '#A01A50',
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+  render() {
+    return (
+      <CreateAccount
+      onPressLogin={this.pasarChat.bind(this)}
+      onPressCreate={this.createAccount.bind(this)}
+      />
+    );
+  }
+  pasarChat(name, email, avatar) {
+    this.props.navigation.navigate('ChatList', { name: name, email: email, avatar: avatar });
+  }
+  createAccount(){
+    this.props.navigation.navigate('CreateAccount')
+  }
+}
+class ChatListScreen extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Chats",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+  render() {
+    return (
+      <ChatList
+        onPressGoChat={this.pasarChat.bind(this)}
+      />
+    );
+  }
+  pasarChat( id_chat, id_userOrigen, nombre_chatDestino) {
+    this.props.navigation.navigate('ChatEspecifico', {id_userOrigen: id_userOrigen, id_chat: id_chat , nombre_chatDestino: nombre_chatDestino });
+  }
+}
+class ChatEspecificoScreen extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: navigation.getParam("nombre_chatDestino"),
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+  render() {
+    return (
+      <ChatEspecifico
+        onPressGoChat={this.pasarChat.bind(this)}
+      />
+    );
+  }
+  pasarChat(id_chat, nombre, domicilio) {
+    this.props.navigation.navigate('cursoEspecifico', { id_curso: id_curso });
+  }
+}
+const ChatListStackNavigator = createStackNavigator(
+  {
+    ChatListScreen: {
+      screen: ChatListScreen,
+      navigationOptions: ({ navigation }) => {
+        return {
+          // headerLeft: () => <SomeElement />
+          headerLeft: () =>
+            <Icon
+              style={{ paddingLeft: wp(5), color: 'white' }}
+              onPress={() => navigation.openDrawer()}
+              name="md-menu"
+              size={hp(3.3)}
+            />
+          ,
+        }
+      }     
+    },
+    CreateAccount: CreateAccountScreen,
+    ChatEspecifico: ChatEspecificoScreen
+  },
+  {
+    initialRouteName: 'ChatListScreen',
+  }
+);
+
+//******************************************* */
 //******************PERFIL******************* */
 //******************************************* */
 class PerfilHomeScreen extends React.Component {
@@ -273,8 +441,8 @@ class PerfilHomeScreen extends React.Component {
   buscarClase() {
     this.props.navigation.navigate('Profesores', {});
   }
-  goChat(id_usuario) {
-
+  goChat( id_chat, nombre_chatDestino) {
+    this.props.navigation.navigate('ChatEspecifico', {id_userOrigen: id_perfil, id_chat: id_chat , nombre_chatDestino: nombre_chatDestino });
   }
 }
 class PerfilEditScreen extends React.Component {
@@ -382,6 +550,7 @@ class PerfilComentariosScreen extends React.Component {
 
   }
   buscarUsuario(id_usuario, esProfesor) {
+    console.log(esProfesor)
     if(esProfesor){
       this.props.navigation.navigate('profesorEspecifico2', {id_usuario: id_usuario, esProfesor: esProfesor});
     }
@@ -648,7 +817,8 @@ const PerfilProfesorStackNavigator = createStackNavigator(
   perfilEdit: PerfilEditScreen,
   usuarioEspecifico: PerfilHomeScreen,
   profesorEspecifico: PerfilTabNavigatorProfesor,
-  mapaUnico: MapaUnicoScreen
+  mapaUnico: MapaUnicoScreen,
+  ChatEspecifico: ChatEspecificoScreen
 }
 );
 
@@ -937,6 +1107,7 @@ const BuscarStackNavigator = createStackNavigator({
   cursoEspecifico: CursoEspecificoScreen,
   mapaVarios: MapaVariosScreen, 
   mapaUnico: MapaUnicoScreen,
+  ChatEspecifico: ChatEspecificoScreen
 }
 );
 //******************************************* */
@@ -1072,181 +1243,14 @@ const HomeStackNavigator = createStackNavigator(
     profesorEspecifico: PerfilTabNavigatorProfesor,
     profesorEspecifico2: PerfilTabNavigatorProfesor,
     cursoEspecifico: CursoEspecificoScreen,
-    mapaUnico: MapaUnicoScreen
+    mapaUnico: MapaUnicoScreen,
+    ChatEspecifico: ChatEspecificoScreen
   },
   {
     initialRouteName: 'HomeScreen',
   }
 );
 
-//******************************************* */
-//******************CHAT******************** */
-//******************************************* */
-class LogInScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Chats",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: 'white',
-    };
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
-  }
-  render() {
-    return (
-      <LogIn
-      onPressLogin={this.pasarChat.bind(this)}
-      onPressCreate={this.createAccount.bind(this)}
-      />
-    );
-  }
-  pasarChat(name, email, avatar) {
-    this.props.navigation.navigate('ChatList', { name: name, email: email, avatar: avatar });
-  }
-  createAccount(){
-    this.props.navigation.navigate('CreateAccount')
-  }
-}
-class CreateAccountScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Chats",
-      headerStyle: {
-        backgroundColor: '#6BA8FF',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: '#A01A50',
-    };
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
-  }
-  render() {
-    return (
-      <CreateAccount
-      onPressLogin={this.pasarChat.bind(this)}
-      onPressCreate={this.createAccount.bind(this)}
-      />
-    );
-  }
-  pasarChat(name, email, avatar) {
-    this.props.navigation.navigate('ChatList', { name: name, email: email, avatar: avatar });
-  }
-  createAccount(){
-    this.props.navigation.navigate('CreateAccount')
-  }
-}
-class ChatListScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Chats",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: 'white',
-    };
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
-  }
-  render() {
-    return (
-      <ChatList
-        onPressGoChat={this.pasarChat.bind(this)}
-      />
-    );
-  }
-  pasarChat(nombre_chatOrigen, nombre_chatDestino) {
-    this.props.navigation.navigate('ChatEspecifico', { nombre_chatOrigen: nombre_chatOrigen, nombre_chatDestino: nombre_chatDestino });
-  }
-}
-class ChatEspecificoScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: navigation.getParam("nombre_chatDestino"),
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: 'white',
-    };
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
-  }
-  render() {
-    return (
-      <ChatEspecifico
-        onPressGoChat={this.pasarChat.bind(this)}
-      />
-    );
-  }
-  pasarChat(id_chat, nombre, domicilio) {
-    this.props.navigation.navigate('cursoEspecifico', { id_curso: id_curso });
-  }
-}
-const ChatListStackNavigator = createStackNavigator(
-  {
-    ChatListScreen: {
-      screen: ChatListScreen,
-      navigationOptions: ({ navigation }) => {
-        return {
-          // headerLeft: () => <SomeElement />
-          headerLeft: () =>
-            <Icon
-              style={{ paddingLeft: wp(5), color: 'white' }}
-              onPress={() => navigation.openDrawer()}
-              name="md-menu"
-              size={hp(3.3)}
-            />
-          ,
-        }
-      }     
-    },
-    CreateAccount: CreateAccountScreen,
-    ChatEspecifico: ChatEspecificoScreen
-  },
-  {
-    initialRouteName: 'ChatListScreen',
-  }
-);
 //******************************************* */
 //******************FORO******************** */
 //******************************************* */
@@ -1438,6 +1442,7 @@ const ForoStackNavigator = createStackNavigator(
     usuarioEspecifico: PerfilHomeScreen,
     mapaUnico: MapaUnicoScreen,
     profesorEspecifico: PerfilTabNavigatorProfesor,
+    ChatEspecifico: ChatEspecificoScreen
   },
   {
     initialRouteName: 'ForoMenuScreen',

@@ -1,7 +1,7 @@
 import { Component } from 'react';
 
 //  var ip = '172.20.10.5';
-var ip = '192.168.1.20';
+var ip = '192.168.1.25';
 //var ip = '172.20.10.8';
 var url = 'http://'+ip+':8088/apiColearning';
 const key ="AIzaSyCdgRdU-qT9RXGnIBSyEUNVvCJtGhai1Ck"
@@ -27,33 +27,6 @@ getUsuarioById(id_usuario, okUsuario) {
     }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
         then(data => {
             okUsuario(data[0]);
-        })
-}
-getDondeClases(usuario, okDondeClases) {
-    let uri = url+'/users/profesor/' + usuario.id_usuario + '/dondeDaClases'
-    fetch(uri).then(res => {
-        return res.json()
-    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
-        then(data => {
-            okDondeClases(usuario, data);
-        })
-}
-getTipoClases(usuario, okTipoClases) {
-    let uri = url+'/users/profesor/' + usuario.id_usuario + '/tipoClases'
-    fetch(uri).then(res => {
-        return res.json()
-    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
-        then(data => {
-            okTipoClases(usuario, data);
-        })
-}
-getMateriasProfesor(usuario, okMaterias) {
-    let uri = url+'/users/profesor/' + usuario.id_usuario + '/materias'
-    fetch(uri).then(res => {
-        return res.json()
-    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
-        then(data => {
-            okMaterias(usuario, data);
         })
 }
 getHorarios(usuario, okHorarios) {
@@ -92,6 +65,25 @@ getTags(okTags) {
             okTags(data);
         })
 }
+getDondeClases(okDondeClases) {
+    let uri = url+'/dondeDaClases'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okDondeClases(data);
+        })
+}
+getTipoClases(okTipoClases) {
+    let uri = url+'/tipoClases'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okTipoClases(data);
+        })
+}
+
 //********************** */
 //Profesores
 //********************** */
@@ -120,6 +112,33 @@ getProfesoresFilter(nombre, materia, domicilio, rating, okProfesores) {
     }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
         then(data => {
             okProfesores(data);
+        })
+}
+getDondeClasesProfesor(usuario, okDondeClases) {
+    let uri = url+'/users/profesor/' + usuario.id_usuario + '/dondeDaClases'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okDondeClases(usuario, data);
+        })
+}
+getTipoClasesProfesor(usuario, okTipoClases) {
+    let uri = url+'/users/profesor/' + usuario.id_usuario + '/tipoClases'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okTipoClases(usuario, data);
+        })
+}
+getMateriasProfesor(usuario, okMaterias) {
+    let uri = url+'/users/profesor/' + usuario.id_usuario + '/materias'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okMaterias(usuario, data);
         })
 }
 //********************** */

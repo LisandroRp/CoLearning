@@ -125,28 +125,23 @@ class FirebaseSvc {
     return firebase.database().ref().child("Chats").orderByChild( "user/id_user" )
     //return firebase.database().ref("Chats");
   }
-  refChat(id_chat) {
-    if(firebase.database().ref().child("Chats").orderByChild( "id_chat" ).equalTo(id_chat)){
-      return firebase.database().ref().child("Chats").orderByChild( "id_chat" ).equalTo(id_chat)
-    }
-    else{
-      return []
-    }
+  refOrigen(id_user) {
+    return firebase.database().ref().child("Chats").orderByChild( "user/id_user" ).equalTo(id_user)
+    //return firebase.database().ref("Chats");
   }
-  refDestino() {
-    return firebase.database().ref().child("Chats").orderByChild( "user/id_user" ).equalTo()
+  refDestino(id_user) {
+    return firebase.database().ref().child("Chats").orderByChild( "user/id_user" ).equalTo(id_user)
     //return firebase.database().ref("Chats");
   }
 
   parse = snapshot => {
-    const {createdAt, id_chat, text, user, destino } = snapshot.val();
-    //const { key: id_user } = snapshot;
+    const {createdAt, text, user, destino } = snapshot.val();
+    const { key: id_user } = snapshot;
     const { key: _id } = snapshot; //needed for giftedchat
     //const timestamp = new Date(createdAt);
     const message = {
-      //id_user,
+      id_user,
       _id,
-      id_chat,
       createdAt: new Date(createdAt),
       text,
       user,
@@ -155,8 +150,11 @@ class FirebaseSvc {
     return message;
   };
 
-  refOn = (id_chat, callback) => {
-      this.refChat(id_chat)
+  refOn = (id_userOrigen, id_userDestino, callback) => {
+    this.refOrigen(id_userOrigen)
+      .limitToLast(20)
+      .on('child_added', snapshot => callback(this.parse(snapshot)));
+      this.refDestino(id_userDestino)
       .limitToLast(20)
       .on('child_added', snapshot => callback(this.parse(snapshot)));
   }
@@ -181,11 +179,11 @@ class FirebaseSvc {
   //     //this.ref.push(message);
   //   }
   // };
-  send(id_chat, messages){
+  send(messages, userDestino){
     for (let i = 0; i < messages.length; i++) {
       const { text, user } = messages[i];
       const message = {
-        id_chat: id_chat,
+        id_chat: 1,
         user,
         text,
         createdAt: this.timestamp,
@@ -198,7 +196,7 @@ class FirebaseSvc {
     this.ref.off();
     //this.refOrigen.off();
     //this.refDestino.off();
-    //this.refMensajes.off();
+    this.refMensajes.off();
   }
 }
 

@@ -11,6 +11,7 @@ import {
     StatusBar,
     TouchableWithoutFeedback,
     FlatList,
+    Animated,
     KeyboardAvoidingView
 } from 'react-native';
 import { withNavigation } from 'react-navigation';
@@ -56,7 +57,12 @@ class UserContactoEdit extends Component {
             horariosNuevo: [],
             dias: ["L", "Ma", "Mi", "J", "V", "S", "D"],
             turnos: ["Mañana", "Tarde", "Noche"],
-            nuevosHorarios: []
+            nuevosHorarios: [],
+            endValue: 1,
+            duration: 500,
+            startValueContactBar: new Animated.Value(0),
+            endValueContactBar: -hp(15),
+            durationContactBar: 500,
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
@@ -65,7 +71,6 @@ class UserContactoEdit extends Component {
         ApiController.getUsuarioById(this.props.id_usuario, this.okUsuario.bind(this))
     }
     okUsuario(usuario){
-        console.log(usuario)
         ApiController.getHorarios(ExportadorObjetos.createUsuario(usuario), this.okHorarios.bind(this))
     }
     okHorarios(usuario, horarios){
@@ -82,6 +87,53 @@ class UserContactoEdit extends Component {
         if (index < this.state.dias.length) {
             return { borderRightWidth: 1 }
         }
+    }
+    animateContactBar() {
+        if(this.state.cambios){
+            this.setState({ animationStyle: true })
+            if(this.state.contactoNuevo.length > 2){
+                Animated.timing(this.state.startValueContactBar, {
+                    toValue: this.state.endValueContactBar,
+                    duration: this.state.durationContactBar,
+                    useNativeDriver: true,
+                }).start();
+            }
+            if(this.state.contactoNuevo.length > 0 && this.state.contactoNuevo.length < 3){
+                Animated.timing(this.state.startValueContactBar, {
+                    toValue: this.state.endValueContactBar,
+                    duration: this.state.durationContactBar,
+                    useNativeDriver: true,
+                }).start();
+            }
+            if(this.state.contactoNuevo.length < 1){
+                Animated.timing(this.state.startValueContactBar, {
+                    toValue: this.state.endValueContactBar,
+                    duration: this.state.durationContactBar,
+                    useNativeDriver: true,
+                }).start();
+            }
+        }
+        else{
+            this.setState({ animationStyle: true })
+            Animated.timing(this.state.startValueContactBar, {
+                toValue: this.state.endValueContactBar,
+                duration: this.state.durationContactBar,
+                useNativeDriver: true,
+            }).start();
+        }  
+    }
+    desAnimateContactBar(id_contacto) {
+        Animated.timing(this.state.startValueContactBar, {
+            toValue: -hp(10),
+            duration: this.state.durationContactBar,
+            useNativeDriver: true,
+        }).start();
+        if(id_contacto == false){
+            setTimeout(() => this.setState({ animationStyle: false }), 500)
+        }
+        else{
+            setTimeout(() => this.setState({ animationStyle: false, contactoNuevo: this.agregarContacto(id_contacto)}), 500)
+        }    
     }
     //************************ */
     //Contacto
@@ -200,6 +252,48 @@ class UserContactoEdit extends Component {
                         </View>
                     </View>
                 )
+        }
+    }
+    agregarContacto(id_contacto) {
+        var contactoList = this.state.contactoNuevo
+        console.log(this.state.contactoNuevo)
+        var flag = false
+        for(var i = 0; i < contactoList.length; i++){
+            if(contactoList[i].id_contacto == (id_contacto-1)){
+                flag = true
+            }
+        }
+        if (id_contacto == 1 ) {
+            if(flag){
+                alert("Instagram ya está en la lista")
+                return contactoList
+            }
+            contactoList.push({ id_contacto: 0, des_contacto: this.state.usuario.instagram })
+            return contactoList
+        }
+        if (id_contacto == 2) {
+            if(flag){
+                alert("Telefono ya está en la lista")
+                return contactoList
+            }
+            contactoList.push({ id_contacto: 1, des_contacto: this.state.usuario.telefono })
+            return contactoList
+        }
+        if (id_contacto == 3) {
+            if(flag){
+                alert("Email ya está en la lista")
+                return contactoList
+            }
+            contactoList.push({ id_contacto: 2, des_contacto: this.state.usuario.email })
+            return contactoList
+        }
+        if (id_contacto == 4) {
+            if(flag){
+                alert("WhatsApp ya está en la lista")
+                return contactoList
+            }
+            contactoList.push({ id_contacto: 3, des_contacto: this.state.usuario.whatsApp })
+            return contactoList
         }
     }
     //************************ */
@@ -328,6 +422,7 @@ class UserContactoEdit extends Component {
         }
         else {
             return (
+                <View style={{ flex: 1 }}>
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
                     <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(5)} enabled>
                         <View style={styles.allSocialMediaContainer}>
@@ -350,9 +445,14 @@ class UserContactoEdit extends Component {
                             </Table>
                             <View style={{ borderColor: "#DFD8C8", borderBottomWidth: 1, paddingBottom: hp(3.3), marginHorizontal: wp(8) }} />
 
-                            {this.state.contactoNuevo.length != 0 ?
+                            {this.state.contactoNuevo.length != -1 ?
                                 <View style={styles.bottomBox}>
-                                    <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center", marginBottom: hp(1) }]}>Contacto</Text>
+                                    <View style={[{ flexDirection: 'row', justifyContent: "center", alignItems: 'center', marginBottom: hp(2) }]}>
+                                        <Text style={[styles.text, { fontSize: wp(4.8), textAlign: 'center' }]}>Contacto</Text>
+                                        <TouchableOpacity style={styles.bubblePlus} onPress={() => this.animateContactBar()}>
+                                            <FontAwesome style={{ textAlign: 'center' }} name={"plus"} size={hp(2.5)} color="white" />
+                                        </TouchableOpacity>
+                                    </View>
 
                                     <FlatList
                                         data={this.state.contactoNuevo}
@@ -373,10 +473,30 @@ class UserContactoEdit extends Component {
                                 :
                                 <View />
                             }
+                            {this.showButton()}
                         </View>
-                        {this.showButton()}
                     </KeyboardAvoidingView>
                 </TouchableWithoutFeedback>
+                <Animated.View style={[styles.bottomAnimatedContainer, { transform: [{ translateY: this.state.startValueContactBar }] }]}>
+                        <View style={[styles.searchBar]}>
+                            <TouchableOpacity style={[styles.logoSocialMediaBar, {flex: 0.5}]} onPress={() => this.desAnimateContactBar(false)}>
+                                <Entypo style={{textAlign: "center"}} name={"cross"} size={hp(2.5)} color="#FFF7EE"></Entypo>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(1)}>
+                                <Fontisto style={{textAlign: "center"}} name={"instagram"} size={hp(2.5)} color='#FFF7EE' />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(2)}>
+                                <Feather style={{textAlign: "center"}} name={"phone"} size={hp(2.5)} color='#FFF7EE' />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(3)}>
+                                <MaterialCommunityIcons style={{textAlign: "center"}} name={"email-outline"} size={hp(2.5)} color='#FFF7EE' />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(4)}>
+                                <Fontisto style={{textAlign: "center"}} name={"whatsapp"} size={hp(2.5)} color='#FFF7EE' />
+                            </TouchableOpacity>
+                        </View>
+                </Animated.View>
+                    </View>
             );
         }
     }
@@ -487,7 +607,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F28C0F',
         borderRadius: 10,
         alignItems: 'center',
-        margin: hp(4),
+        margin: hp(2),
         alignSelf: 'center',
         opacity: .95,
         paddingHorizontal: 10
@@ -496,6 +616,33 @@ const styles = StyleSheet.create({
         marginVertical: hp(1.5),
         color: 'white',
         fontSize: wp(4.4)
+    },
+    bubblePlus: {
+        width: hp(3.8),
+        height: hp(3.8),
+        marginLeft: wp(2.5),
+        borderRadius: 100,
+        alignContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#F28C0F"
+    },
+    bottomAnimatedContainer: {
+        flexDirection: 'row',
+        backgroundColor: "#F28C0F",
+        width: wp(100),
+        bottom: -hp(15),
+        position: 'absolute',
+    },
+    searchBar: {
+        flexDirection: 'row',
+        backgroundColor: "#F28C0F",
+        width: wp(100),
+        paddingBottom: hp(0)
+    },
+    logoSocialMediaBar: {
+        flex: 1,
+        marginVertical: hp(2)
     }
 })
 export default withNavigation(UserContactoEdit);

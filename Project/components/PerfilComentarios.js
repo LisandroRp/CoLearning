@@ -121,11 +121,11 @@ class UserCalendario extends Component {
                         keyExtractor={(item, index) => {
                             return index.toString();
                         }}
-                        renderItem={({ item }) => {
+                        renderItem={({ item, index }) => {
                             return (
-                                <View style={[this.marginSize(item), styles.card]}>
+                                <View style={[this.marginSize(index), styles.card]}>
                                         <View style={{ flexDirection: "row" }} >
-                                            <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoPerfil(item.id_usuarioOrigen, this.state.esProfesor)}>
+                                            <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoPerfil(item.id_usuarioOrigen, item.esProfesor)}>
                                             {item.src == null ?
                                                 <Text style={{ fontSize: wp(7.7), textAlign: "center", color: 'white', alignContent: 'center' }}>
                                                     {item.nombre_usuario.slice(0, 1).toUpperCase()}{item.apellido.slice(0, 1).toUpperCase()}
@@ -136,7 +136,7 @@ class UserCalendario extends Component {
                                             </TouchableOpacity>
                                             <View style={{ flexDirection: "column", flex: 1 }} >
                                                 <View style={styles.cardContent}>
-                                                    <TouchableOpacity style={{ flex: 1 }} onPress={() => this.props.onPressGoPerfil(item.id_usuarioOrigen, this.state.esProfesor)}>
+                                                    <TouchableOpacity style={{ flex: 1 }} onPress={() => this.props.onPressGoPerfil(item.id_usuarioOrigen, item.esProfesor)}>
                                                         <Text numberOfLines={2} style={styles.cardTitulo}>{item.nombre_usuario} {item.apellido}</Text>
                                                     </TouchableOpacity>
                                                     <View style={[styles.statsBoxStar]}>
@@ -302,17 +302,18 @@ const styles = StyleSheet.create({
         opacity: .95
     },
     bubble: {
+        backgroundColor: "#F28C0F",
         position: "absolute",
         bottom: 0,
         right: 0,
-        width: hp(7),
-        height: hp(7),
-        margin: hp(2.2),
+        width: hp(6.6),
+        height: hp(6.6),
+        marginRight: wp(5.5),
+        marginBottom: hp(3),
         borderRadius: 100,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#F28C0F",
-        shadowColor: '#00000035',
+        shadowColor: '#00000025',
         shadowOffset: {
             width: 0.01,
             height: 0.25,

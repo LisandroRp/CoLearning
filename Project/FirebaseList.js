@@ -144,7 +144,7 @@ class FirebaseSvc {
     const message = {
       id_user,
       userDestino,
-      ultimoMensaje
+      //ultimoMensaje
     };
     return message;
   };
@@ -155,10 +155,8 @@ class FirebaseSvc {
       .on('child_added', snapshot => callback(this.parse(snapshot)));
   }
   refOnUltimoMensaje = (callback, usuarioOrigen, usuarioDestino) =>{
-    this.refUltimoMensajeOrigen(usuarioOrigen)
-    .limitToLast(1).on('child_added',mensaje => callback(mensaje.val()));
-    this.refUltimoMensajeDestino(usuarioDestino)
-    .limitToLast(1).on('child_added',mensaje => callback(mensaje.val()));
+    this.refUltimoMensajeOrigen(usuarioOrigen).limitToLast(1).on('child_added',mensaje => callback(mensaje.val()));
+    this.refUltimoMensajeDestino(usuarioDestino).limitToLast(1).on('child_added',mensaje => callback(mensaje.val()));
   }
 
   get timestamp() {

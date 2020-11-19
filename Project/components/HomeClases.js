@@ -56,17 +56,13 @@ class HomeClases extends React.Component {
     var arrayDondeClases = []
     var profesorActual
     var materiaActual
-    console.log(profesoresBase)
     while (contadorExterno < lenght) {
       contadorInterno = contadorExterno
       profesorActual = ExportadorObjetos.createProfesorHome(profesoresBase[contadorExterno])
       while (contadorInterno < lenght && profesoresBase[contadorInterno].id_usuario == profesorActual.id_usuario) {
         materiaActual = ExportadorObjetos.createMaterias(profesoresBase[contadorInterno].id_materia, profesoresBase[contadorInterno].nombre_materia)
-        console.log("1"+profesorActual.nombre_usuario +  profesoresBase[contadorInterno].nombre_usuario + " " + materiaActual.nombre_materia + profesoresBase[contadorInterno].nombre_materia)
         if (flag == 0) {
-          // profesoresBase[contadorInterno].id_materia != null &&
           while (contadorInterno < lenght && profesoresBase[contadorInterno].id_usuario == profesorActual.id_usuario && profesoresBase[contadorInterno].id_materia == materiaActual.id_meteria) {
-            console.log("2"+profesorActual.nombre_usuario +  profesoresBase[contadorInterno].nombre_usuario + " " + materiaActual.nombre_materia + profesoresBase[contadorInterno].nombre_materia)
             arrayDondeClases.push(ExportadorObjetos.createDondeClases(profesoresBase[contadorInterno].id_dondeClases, profesoresBase[contadorInterno].des_dondeClases))
             contadorInterno++
             contadorDondeClases ++

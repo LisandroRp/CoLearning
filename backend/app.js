@@ -6,22 +6,19 @@ var cors = require('cors');
 // Initialize the server express
 var app = express();
 
-//conectar BD
-var urlBD = 'mongodb://localhost/PFI_COLEARNING';
-//opciones conexion
-var opts = {useNewUrlParser : true,useUnifiedTopology: true , connectTimeoutMS:20000};
-//importo driver
-var mongoose = require('mongoose');
+//conectar BD var urlBD = 'mongodb://localhost/PFI_COLEARNING';
+//opciones conexion var opts = {useNewUrlParser : true,useUnifiedTopology: true , connectTimeoutMS:20000};
+//importo driver var mongoose = require('mongoose');
 //Pruebo conexion
-mongoose.connect(urlBD,opts).then
-(
-    () => {
-            console.log("Conectado a PFI_COLEARNING!!");
-          }, //se conecto
-    err => { 
-            console.log("ERROR:" + err); 
-           } //manejo error
-);
+//mongoose.connect(urlBD,opts).then
+//(
+//    () => {
+//            console.log("Conectado a PFI_COLEARNING!!");
+//          }, //se conecto
+//    err => { 
+//            console.log("ERROR:" + err); 
+//           } //manejo error
+//);
 
 // Import router
 var apiRoutes = require("./api-routes")
@@ -36,7 +33,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Setup server port
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8088;
 
 // Send message for default URL
 app.get('/', (req, res) => res.send('Soy colearning Activa'));

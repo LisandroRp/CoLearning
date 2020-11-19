@@ -39,7 +39,7 @@ class PerfilHome extends React.Component {
     }
     okUsuario(usuario) {
         if (usuario.esProfesor) {
-            ApiController.getDondeClases(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
+            ApiController.getDondeClasesProfesor(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
         }
         else {
             usuario.src= ExportadorObjetos.profileImage(usuario.id_usuario)
@@ -48,7 +48,7 @@ class PerfilHome extends React.Component {
     }
     okDondeClases(usuario, dondeClases) {
         usuario.dondeClases = dondeClases
-        ApiController.getTipoClases(usuario, this.okTipoClases.bind(this))
+        ApiController.getTipoClasesProfesor(usuario, this.okTipoClases.bind(this))
     }
     okTipoClases(usuario, tipoClases) {
         usuario.tipoClases = tipoClases
@@ -129,6 +129,18 @@ class PerfilHome extends React.Component {
         } else {
             return { marginBottom: hp(3), marginTop: hp(3) }
         }
+    }
+
+    okChat(id_chat){
+        if(id_chat == null){
+            ApiController.crearChat(this.okChatCreado.bind(this))
+        }
+        else{
+            this.props.onPressGoChat(id_chat, this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
+        }
+    }
+    okChatCreado(id_chat){
+        this.props.onPressGoChat(id_chat, this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
     }
     render() {
         var rating2 = this.state.usuario.rating
@@ -325,7 +337,7 @@ class PerfilHome extends React.Component {
 
                     </ScrollView>
                     {this.props.navigation.getParam("id_usuario") ? 
-                    <TouchableOpacity style={[styles.dm]} onPress={() => this.props.onPressGoChat(this.state.usuario.id_usuario)}>
+                    <TouchableOpacity style={[styles.dm]} onPress={() => ApiController.getChatByIdUsuarioDestino(this.okChat.bind(this))}>
                         <FontAwesome name="comments" size={hp(3)} color={"white"} />
                     </TouchableOpacity>
                     : 

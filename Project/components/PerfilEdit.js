@@ -83,15 +83,15 @@ class PerfilEdit extends React.Component {
     }
     okUsuario(usuario) {
         if (usuario.esProfesor) {
-            ApiController.getDondeClases(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
+            ApiController.getDondeClasesProfesor(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
         }
         else {
-            this.setState({ usuario: usuario, contactoNuevo: this.contactoList(usuario), isLoading: false })
+            this.setState({ usuario: ExportadorObjetos.createUsuarioBasico(usuario), contactoNuevo: this.contactoList(usuario), isLoading: false })
         }
     }
     okDondeClases(usuario, dondeClases) {
         usuario.dondeClases = dondeClases
-        ApiController.getTipoClases(usuario, this.okTipoClases.bind(this))
+        ApiController.getTipoClasesProfesor(usuario, this.okTipoClases.bind(this))
     }
     okTipoClases(usuario, tipoClases) {
         usuario.tipoClases = tipoClases

@@ -1,7 +1,0 @@
-[{
-  "_id": {
-    "$oid": "5f3994f3a84f3c8ac1bc1f2d"
-  },
-  "idClase_FK": "1",
-  "idCursos_FK": "1"
-}]

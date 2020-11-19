@@ -217,8 +217,10 @@ const styles = StyleSheet.create({
     marginTop: hp(5),
     marginBottom: hp(3.3),
     borderRadius: 10,
+    marginHorizontal: wp(2),
     paddingHorizontal: wp(3.3),
-    backgroundColor: "#FFF7EE"
+    backgroundColor: "#FFF7EE",
+    flex: 1
   },
   buttonContainerPass: {
     height: 20,
@@ -242,6 +244,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: '#F28C0F',
     fontWeight: 'bold',
+    textAlign: "center"
   },
   bgImage: {
     flex: 1,

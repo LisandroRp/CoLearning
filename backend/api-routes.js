@@ -1,191 +1,197 @@
-// Initialize express router
-let router = require('express').Router();
-let usuarioController = require('./controller/UsuarioController');
-let comentarioController = require('./controller/ComentarioController');
-let genericoController = require('./controller/ControlerGenerico');
-let direccionController = require('./controller/DireccionController');
-       
-// Set default API response
-router.get('/', function (req, res) 
-{
-    res.json(
-    {
-       status: 'Estoy Funcionando',
-       message: 'Se esta ejecutando la Api!',
-    });
+const express = require('express')
+const router = express.Router()
+const usuarioController =   require('./controller/usuaurio.controller');
+const catalogoController =   require('./controller/catalogo.controller');
+const foroController =   require('./controller/foro.controller');
+
+//**************************Inicio Recursos Usuario **************************** */
+router.get('/users', (req, res) => {
+    console.log("findAll usuarioss");
+    usuarioController.findAll(req,res);
 });
 
-//**************************Inicio Recursos Genericos**************************** */
-router.get('/usuarios', (req, res) => {
-    genericoController.getAllUsuarios(req,res);
+router.get('/users/mail', (req, res) => {
+    console.log("Consultar Usuarios por mail: ", req.query);
+    if(!req.query.email || req.query.email =='undefined' || req.query.email == '') 
+        res.status(409).send({ msg: "El campo mail usuario es requerido." });
+    else
+        usuarioController.findAllByMail(req,res);  
 });
 
-router.get('/ratings', (req, res) => {
-    genericoController.getAllRatings(req,res);
+router.get('/users/profesores', (req, res) => {
+    console.log("Consultar Profesor todos los profesores: ", req.params);
+    usuarioController.findAllProfesores(req,res);  
 });
 
-router.get('/foros', (req, res) => {
-    genericoController.getAllForos(req,res);
+router.get('/users/:id', (req, res) => {
+    console.log("Consultar Usuarios por id: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo id usuario es requerido." });
+    else
+        usuarioController.findAllById(req,res);  
 });
 
-router.get('/cursos', (req, res) => {
-    genericoController.getAllCursos(req,res);
+router.get('/users/user/:id/comentarios', (req, res) => {
+    console.log("Consultar Usuarios por comentario id: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo id usuario es requerido." });
+    else
+        usuarioController.findByIdUsuarioByComentarios(req,res);  
 });
 
-router.get('/cursoPorAlumnos', (req, res) => {
-    genericoController.getAllCursoPorAlumnos(req,res);
+router.get('/users/profesor/find', (req, res) => {
+    console.log("Consultar Profesor por id: ", req.query);
+    var notengoDomicilio = (req.query.domicilio =='undefined' || req.query.domicilio == '' || !req.query.domicilio);
+    var notengoNombre = (req.query.nameProfesor =='undefined' || req.query.nameProfesor == '' || !req.query.nameProfesor);
+    var notengoMateria = (req.query.nameMateria =='undefined' || req.query.nameMateria == '' || !req.query.nameMateria);
+    var notengoRating = (req.query.valueRating =='undefined' || req.query.valueRating == '' || !req.query.valueRating);
+    if(notengoRating && notengoDomicilio && notengoMateria && notengoNombre) 
+        res.status(409).send({ msg: "Debe ingresar un campo de busqueda." });
+    else
+        usuarioController.findProfesorMateriaDomicilioRating(req,res);  
+});
+
+
+router.get('/users/profesor/:id', (req, res) => {
+    console.log("Consultar Profesor por id: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo id Profesor es requerido." });
+    else
+        usuarioController.findByIdProfesor(req,res);  
+});
+
+router.get('/users/profesor/:idProfesor/materias', (req, res) => {
+    console.log("Consultar Profesor por id por materias: ", req.params);
+    if(!req.params.idProfesor || req.params.idProfesor =='undefined' || req.params.idProfesor == '') 
+        res.status(409).send({ msg: "El campo id Profesor es requerido." });
+    else
+        usuarioController.findByIdProfesorByMaterias(req,res);  
+});
+
+router.get('/users/profesor/:idProfesor/dondeDaClases', (req, res) => {
+    console.log("Consultar Profesor por id por dondeDaClases: ", req.params);
+    if(!req.params.idProfesor || req.params.idProfesor =='undefined' || req.params.idProfesor == '') 
+        res.status(409).send({ msg: "El campo id Profesor es requerido." });
+    else
+        usuarioController.findAllByIdProfesorByDondeDaClases(req,res);  
+});
+
+router.get('/users/profesor/:idProfesor/tipoClases', (req, res) => {
+    console.log("Consultar Profesor por id por tipoClases: ", req.params);
+    if(!req.params.idProfesor || req.params.idProfesor =='undefined' || req.params.idProfesor == '') 
+        res.status(409).send({ msg: "El campo id Profesor es requerido." });
+    else
+        usuarioController.findByIdProfesorByClases(req,res);  
+});
+
+router.get('/users/profesor/:idProfesor/horarios', (req, res) => {
+    console.log("Consultar Profesor por id por horarios: ", req.params);
+    if(!req.params.idProfesor || req.params.idProfesor =='undefined' || req.params.idProfesor == '') 
+        res.status(409).send({ msg: "El campo id Profesor es requerido." });
+    else
+        usuarioController.findAllByIdProfesorByHorarios(req,res);  
+});
+
+router.post('/users/profesor', (req, res) => {
+    console.log("Crear Profesor : ", req.body);
+    if(!req.body.usuario || req.body.usuario =='undefined' || req.body.usuario == '') 
+        res.status(409).send({ msg: "NO se puede crear el profesor requerido." });
+    else{
+        usuarioController.createUser(req,res);
+    }
+});
+
+//**************************/Fin Recursos Usuario**************************** */
+
+//**************************Inicio Recursos catalogo**************************** */
+router.get('/clases', (req, res) => {
+    console.log("findAll clases");
+    catalogoController.findAllClases(req,res);
 });
 
 router.get('/comentarios', (req, res) => {
-    genericoController.getAllComentarios(req,res);
+    console.log("findAll comentarios");
+    catalogoController.findAllComentarios(req,res);
 });
 
-router.get('/clases', (req, res) => {
-    genericoController.getAllClases(req,res);
+router.get('/dondeDaClases', (req, res) => {
+    console.log("findAll DondeDaClases");
+    catalogoController.findAllDondedaclases(req,res);
 });
 
-
-router.get('/materias', (req, res) => {
-    genericoController.getAllMaterias(req,res);
-});
-
-router.get('/tipoClases', (req, res) => {
-    genericoController.getAllTipoClase(req,res);
-});
-
-router.get('/materias', (req, res) => {
-    genericoController.getAllMaterias(req,res);
-});
-
-router.get('/tags', (req, res) => {
-    genericoController.getAllTag(req,res);
+router.get('/foros', (req, res) => {
+    console.log("findAll foros");
+    catalogoController.findAllForo(req,res);
 });
 
 router.get('/institutos', (req, res) => {
-    genericoController.getAllInstituto(req,res);
+    console.log("findAll Institutos");
+    catalogoController.findAllInstituto(req,res);
 });
 
-router.get('/profesores/cursos', (req, res) => {
-    console.log("Consultar Profesor por cursos: ", req.query);
-    if(!req.query.idProfesor || req.query.idProfesor =='undefined' || req.query.idProfesor == '') 
-        res.status(409).send({ msg: "El campo id usuario es requerido." });
+router.get('/materias', (req, res) => {
+    console.log("findAll materias");
+    catalogoController.findAllMaterias(req,res);
+});
+
+router.get('/ratings', (req, res) => {
+    console.log("findAll ratings");
+    catalogoController.findAllRating(req,res);
+});
+
+router.get('/tags', (req, res) => {
+    console.log("findAll tags");
+    catalogoController.findAllTag(req,res);
+});
+
+router.get('/tipoClases', (req, res) => {
+    console.log("findAll tipoClases");
+    catalogoController.findAllTipoclase(req,res);
+});
+
+router.get('/monedas', (req, res) => {
+    console.log("findAll monedas");
+    catalogoController.findAllMonedas(req,res);
+});
+
+//**************************/Fin Recursos catalogo**************************** */
+
+//**************************/Inicio Recursos foro**************************** */
+router.get('/foros/foro/:id/tags', (req, res) => {
+    console.log("Consultar Foros por id: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo id foro es requerido." });
     else
-        genericoController.getCursosByProfesorById(req,res);
+        foroController.findTagsByIdForo(req,res);  
 });
 
-router.get('/profesores/cursos/:name', (req, res) => {
-    console.log("Consultar Profesor por cursos: ", req.params.name);
+router.get('/foros/foro/:id/respuestas', (req, res) => {
+    console.log("Consultar Foros por id y sus respuestas: ", req.params);
+    if(!req.params.id || req.params.id =='undefined' || req.params.id == '') 
+        res.status(409).send({ msg: "El campo id foro es requerido." });
+    else
+        foroController.findRespuestaByIdForo(req,res);  
+});
+
+router.get('/foros/tags/:name', (req, res) => {
+    console.log("Consultar Foros y Tags por nombre: ", req.params);
     if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo id nombre es requerido." });
+        res.status(409).send({ msg: "El campo nombre Foros y Tags es requerido." });
     else
-        genericoController.getCursosByProfesorByName(req,res);
+        foroController.findAllByNames(req,res);  
 });
 
-router.get('/clases/profesores/:name', (req, res) => {
-    console.log("Consultar profesores por clases: ", req.params.name);
-    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo id nombre es requerido." });
+router.get('/foros/foro', (req, res) => {
+    console.log("Consultar Foros id o nombre: ", req.query);
+    
+    if((!req.query.name && !req.query.id) || (req.query.name =='undefined' 
+        && req.query.id =='undefined') || (req.query.id == '' && req.query.name == '')) 
+        res.status(409).send({ msg: "El campo nombre o id del foro es requerido." });
     else
-        genericoController.getProfesorByClasesByName(req,res);
+        foroController.findForosByIdAndName(req,res);  
 });
 
-router.get('/profesores/clases/materias/:name', (req, res) => {
-    console.log("Consultar profesores por clases: ", req.params.name);
-    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo id nombre es requerido." });
-    else
-        genericoController.getProfesorByClaseByMateriaByName(req,res);
-});
+//**************************/Fin Recursos catalogo**************************** */
 
 
-router.get('/profesores/:name', (req, res) => {
-    console.log("Consultar profesores por clases: ", req.params.name);
-    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo id nombre es requerido." });
-    else
-        genericoController.getProfesorByClaseByMateriaByName1(req,res);
-});
-
-router.get('/cursos/:name', (req, res) => {
-    console.log("Consultar cursos por nombre: ", req.params.name);
-    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo id nombre es requerido." });
-    else
-        genericoController.getCursosByTipoClaseByMateriaByName(req,res);
-});
-
-router.get('/foros/:name', (req, res) => {
-    console.log("Consultar foros por nombre: ", req.params.name);
-    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo id nombre es requerido." });
-    else
-        genericoController.getForoByTagsByName(req,res);
-});
-
-router.get('/tags/foros', (req, res) => {
-    console.log("Consultar foros por nombre: ", req.query.tag);
-    if(!req.query.tag || req.query.tag =='undefined' || req.query.tag == '') 
-        res.status(409).send({ msg: "El campo id nombre es requerido." });
-    else
-        console.log(req.query.tag);
-        res.sendStatus(200);
-});
-
-router.get('/institutos/:name', (req, res) => {
-    console.log("Consultar institutos por nombre: ", req.params.name);
-    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo id nombre es requerido." });
-    else
-        genericoController.getInstitoByName(req,res);
-});
-//************************** Fin Recursos Genericos**************************** */
-
-//************************** Inicio Recursos Usuario**************************** */
-router.get('/usuarios/idUsuario', (req, res) => {
-    if(!req.query.idUsuario || req.query.idUsuario =='undefined' || req.query.idUsuario == '') 
-        res.status(409).send({ msg: "El campo id usuario es requerido." });
-    else
-        usuarioController.getUsuarioById(req,res);
-});
-
-router.get('/usuarios/mail', (req, res) => {
-    if(!req.query.mail || req.query.mail =='undefined' || req.query.mail == '') 
-        res.status(409).send({ msg: "El campo id mail es requerido." });
-    else
-        usuarioController.getUsuarioByMail(req,res);
-});
-
-router.get('/usuarios/mails/:mail', (req, res) => {
-    if(!req.params.mail || req.params.mail =='undefined' || req.params.mail == '') 
-        res.status(409).send({ msg: "El campo id mail es requerido." });
-    else
-        usuarioController.getUsuarioByNameMail(req,res);
-});
-
-router.get('/usuarios/name/:name', (req, res) => {
-    if(!req.params.name || req.params.name =='undefined' || req.params.name == '') 
-        res.status(409).send({ msg: "El campo id mail es requerido." });
-    else
-        usuarioController.getUsuarioByName(req,res);
-});
-
-
-//************************** Fin Recursos Usuario**************************** */
-
-//************************** Inicio Recursos Direccion**************************** */
-router.get('/direcciones', (req, res) => {
-    direccionController.getAllDireccion(req,res);
-});
-
-//EndPoint para leer direccion por id
-router.get('/direcciones',(req, res) =>{
-    if(!req.query.idDireccion || req.query.idDireccion =='undefined' || req.query.idDireccion == '') 
-        res.status(409).send({ msg: "El campo id direccion es requerido." });
-    else
-        direccionController.getDirreccionById(req,res);
-});
-
-//************************** Fin Recursos Direccion**************************** */
-
-// Export API routes
-module.exports = router;
+module.exports = router

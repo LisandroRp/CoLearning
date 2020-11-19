@@ -29,6 +29,24 @@ class ExportadorObjetos extends Component {
             horarios: []
         }
     }
+    createUsuarioBasico(usuario) {
+        var usuarioNuevo
+        return usuarioNuevo = {
+            id_usuario: usuario.id_usuario,
+            nombre_usuario: usuario.nombre_usuario,
+            apellido: usuario.apellido,
+            src: this.profileImage(usuario.id_usuario),
+            esProfesor: usuario.esProfesor,
+            instagram: usuario.instagram,
+            telefono: usuario.telefono,
+            email: usuario.email,
+            whatsApp: usuario.whatsApp,
+            rating: usuario.rating,
+            res_buenas: usuario.res_buenas,
+            res_mejores: usuario.res_mejores,
+            res_cantidad: usuario.res_cantidad
+        }
+    }
     createProfesorHome(profesor) {
         var profesorNuevo
         return profesorNuevo = {
@@ -92,6 +110,7 @@ class ExportadorObjetos extends Component {
         }
     }
     profileImage(id) {
+
         switch (id) {
 
             case 1: return (require("../../assets/Profile/Brad.jpg"))

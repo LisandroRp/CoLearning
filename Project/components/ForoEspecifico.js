@@ -11,13 +11,13 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
-  TouchableWithoutFeedback
+  Image
 } from 'react-native';
 import DropDownItem from 'react-native-drop-down-item';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { AntDesign, SimpleLineIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import ApiController from '../controller/ApiController';
-import HomeClases from './HomeClases';
+import ExportadorObjetos from './exportadores/ExportadorObjetos';
 import { isLoading } from 'expo-font';
 var { height, width } = Dimensions.get('window');
 
@@ -42,7 +42,7 @@ class ForoEspecifico extends Component {
     ApiController.getForo(await this.props.navigation.getParam('id_foro'), this.okForo.bind(this))
     ApiController.getRespuestasForo(await this.props.navigation.getParam('id_foro'), this.okRespuestasForo.bind(this))
   }
-  okForo(foro){
+  okForo(foro) {
     this.setState({ foro: foro[0], isLoadingParams: false })
   }
   okRespuestasForo(respuestas) {
@@ -94,13 +94,22 @@ class ForoEspecifico extends Component {
               <View style={[{ flexDirection: 'row', position: "absolute" }]}>
                 <View style={styles.preguntaContainer} onLayout={this.onLayout}>
                   <View style={[{ flexDirection: 'row', marginBottom: hp(1) }]}>
-                    <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuarioOrigen, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
-                      <Text style={{ fontSize: wp(6), textAlign: "center", color: 'white', alignContent: 'center' }}>
-                        {this.state.foro.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.foro.apellido.slice(0, 1).toUpperCase()}
-                      </Text>
-                    </TouchableOpacity>
+                    {ExportadorObjetos.profileImage(this.state.foro.id_usuario_fk) ?
+                      <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
+                        <Image
+                          source={ExportadorObjetos.profileImage(this.state.foro.id_usuario_fk)}
+                          style={[styles.image, { resizeMode: ((this.state.foro.id_usuario_fk == 0) ? 'contain' : 'contain') }]}
+                        />
+                      </TouchableOpacity>
+                      :
+                      <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
+                        <Text style={{ fontSize: wp(4), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                          {this.state.foro.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.foro.apellido.slice(0, 1).toUpperCase()}
+                        </Text>
+                      </TouchableOpacity>
+                    }
                     <View style={[{ flexDirection: 'column', flex: 1 }]}>
-                      <TouchableOpacity onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
+                      <TouchableOpacity onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
                         <Text numberOfLines={1} style={styles.cardTitulo}>{this.state.foro.nombre_usuario} {this.state.foro.apellido}</Text>
                       </TouchableOpacity>
                       <Text style={[styles.cardSubTitulo2, { marginHorizontal: wp(2) }]}>Preguntado el {this.state.foro.fecha_alta}</Text>
@@ -110,7 +119,7 @@ class ForoEspecifico extends Component {
                   <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
                 </View>
               </View>
-              }
+            }
             <TouchableOpacity style={styles.bubble} onPress={() => this.setState({ modalVisible: true })}>
               <FontAwesome name={"plus"} size={hp(3.3)} color="white"></FontAwesome>
             </TouchableOpacity>
@@ -166,35 +175,44 @@ class ForoEspecifico extends Component {
                 </View>
               </ScrollView>
               {this.state.foro.esAnonimo ?
-              <View style={[{ flexDirection: 'row', position: "absolute" }]}>
-                <View style={styles.preguntaContainer} onLayout={this.onLayout}>
-                  <Text style={styles.titulo}>{this.state.foro.nombre_foro}</Text>
-                  <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
-                  <View style={{ flex: 0, marginTop: hp(1), justifyContent: "flex-end", flexDirection: "row" }}>
-                    <Text style={styles.cardSubTitulo}>Preguntado el {this.state.foro.fecha_alta}</Text>
-                  </View>
-                </View>
-              </View>
-              :
-              <View style={[{ flexDirection: 'row', position: "absolute" }]}>
-                <View style={styles.preguntaContainer} onLayout={this.onLayout}>
-                  <View style={[{ flexDirection: 'row', marginBottom: hp(1) }]}>
-                    <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuarioOrigen, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
-                      <Text style={{ fontSize: wp(6), textAlign: "center", color: 'white', alignContent: 'center' }}>
-                        {this.state.foro.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.foro.apellido.slice(0, 1).toUpperCase()}
-                      </Text>
-                    </TouchableOpacity>
-                    <View style={[{ flexDirection: 'column', flex: 1 }]}>
-                      <TouchableOpacity onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
-                        <Text numberOfLines={1} style={styles.cardTitulo}>{this.state.foro.nombre_usuario} {this.state.foro.apellido}</Text>
-                      </TouchableOpacity>
-                      <Text style={[styles.cardSubTitulo2, { marginHorizontal: wp(2) }]}>Preguntado el {this.state.foro.fecha_alta}</Text>
+                <View style={[{ flexDirection: 'row', position: "absolute" }]}>
+                  <View style={styles.preguntaContainer} onLayout={this.onLayout}>
+                    <Text style={styles.titulo}>{this.state.foro.nombre_foro}</Text>
+                    <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
+                    <View style={{ flex: 0, marginTop: hp(1), justifyContent: "flex-end", flexDirection: "row" }}>
+                      <Text style={styles.cardSubTitulo}>Preguntado el {this.state.foro.fecha_alta}</Text>
                     </View>
                   </View>
-                  <Text style={styles.titulo}>{this.state.foro.nombre_foro}</Text>
-                  <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
                 </View>
-              </View>
+                :
+                <View style={[{ flexDirection: 'row', position: "absolute" }]}>
+                  <View style={styles.preguntaContainer} onLayout={this.onLayout}>
+                    <View style={[{ flexDirection: 'row', marginBottom: hp(1) }]}>
+                    {ExportadorObjetos.profileImage(this.state.foro.id_usuario_fk) ?
+                      <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
+                        <Image
+                          source={ExportadorObjetos.profileImage(this.state.foro.id_usuario_fk)}
+                          style={[styles.image, { resizeMode: ((this.state.foro.id_usuario_fk == 0) ? 'contain' : 'contain') }]}
+                        />
+                      </TouchableOpacity>
+                      :
+                      <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
+                        <Text style={{ fontSize: wp(4), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                          {this.state.foro.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.foro.apellido.slice(0, 1).toUpperCase()}
+                        </Text>
+                      </TouchableOpacity>
+                    }
+                      <View style={[{ flexDirection: 'column', flex: 1 }]}>
+                        <TouchableOpacity onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
+                          <Text numberOfLines={1} style={styles.cardTitulo}>{this.state.foro.nombre_usuario} {this.state.foro.apellido}</Text>
+                        </TouchableOpacity>
+                        <Text style={[styles.cardSubTitulo2, { marginHorizontal: wp(2) }]}>Preguntado el {this.state.foro.fecha_alta}</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.titulo}>{this.state.foro.nombre_foro}</Text>
+                    <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
+                  </View>
+                </View>
               }
             </View>
             <TouchableOpacity style={styles.bubble} onPress={() => this.setState({ modalVisible: true })}>
@@ -378,6 +396,13 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     backgroundColor: "#F28C0F"
   },
+  image: {
+    resizeMode: "contain",
+    height: "100%",
+    width: "100%",
+    borderRadius: 100,
+    justifyContent: 'center',
+},
   cardTitulo: {
     fontSize: wp(4.4),
     color: '#F28C0F',
