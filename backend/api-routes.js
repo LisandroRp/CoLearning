@@ -191,7 +191,19 @@ router.get('/foros/foro', (req, res) => {
         foroController.findForosByIdAndName(req,res);  
 });
 
-//**************************/Fin Recursos catalogo**************************** */
+//**************************/Fin Recursos Fro**************************** */
 
+//**************************/Inicio Recursos Chat**************************** */
+router.get('/chats/:idUsuario', (req, res) => {
+    console.log("Consultar Foros id o nombre: ", req.params);
+    
+    if((!req.params.idUsuario && !req.params.idUsuario) || (req.params.idUsuario =='undefined' 
+        && req.params.idUsuario =='undefined') || (req.params.idUsuario == '' && req.params.idUsuario == '')) 
+        res.status(409).send({ msg: "El campo nombre o id del usuario es requerido." });
+    else
+        foroController.findChatByIdOrigen(req,res);  
+});
+
+//**************************/Fin Recursos chat**************************** */
 
 module.exports = router

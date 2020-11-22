@@ -59,7 +59,7 @@ let findTagsByIdForo = (req, res) =>
     console.log("llegue a leer Buscar foro por id",req.params.id);
     var idBusqueda =  req.params.id;
     console.log(idBusqueda);
-    var sql = ' SELECT f.id_foro,f.id_usuario,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
+    var sql = ' SELECT f.id_foro,f.id_usuario_fk,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
             + ' FROM foro f' 
             + ' Inner join foroportag ft on ft.id_foro_fk = f.id_foro'
             + ' Inner join tag t on ft.id_tag_fk = t.id_tag' 
@@ -92,4 +92,24 @@ let findAllByNames = (req, res) =>
       });
 };
 
-module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName};
+let findChatByIdOrigen = (req, res) =>
+{      
+    console.log("llegue a leer Buscar chat por name",req.params.idUsuario);
+    var idBusqueda = req.params.idUsuario;
+    console.log(idBusqueda);
+    var sql = ' Select u.nombre_usuario,u.apellido,u.esProfesor,u.id_usuario,cc.ultimoMensaje,cc.horaUltimoMensaje    '
+    + ' From chatUsuario cuc' 
+    + ' LEFT join usuario u on u.id_usuario = cuc.id_usuario_fk'   
+    + ' LEFT JOIN chats cc on cc.id_chat = cuc.id_chat_fk' 
+    + ' Where cuc.id_usuario_fk <> ? and  cuc.id_chat_fk in '
+    + ' (select cu.id_chat_fk from chatUsuario cu LEFT JOIN chats c on c.id_chat = cu.id_chat_fk where cu.id_usuario_fk = ? GROUP by cu.id_chatUsuario,cu.id_chat_fk, cu.id_usuario_fk) '
+    + ' GROUP BY u.nombre_usuario,u.apellido,u.esProfesor,u.id_usuario,cc.ultimoMensaje,cc.horaUltimoMensaje';
+    dbConn.query(sql,[idBusqueda,idBusqueda], (err,rows) => {
+        if(err) throw err;      
+        console.log('El foro by id: ' + idBusqueda);
+        console.log(rows);
+        res.send(rows);
+      });
+};
+
+module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen};
