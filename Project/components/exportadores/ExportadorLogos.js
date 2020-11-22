@@ -12,7 +12,16 @@ class ExportadorLogos extends Component {
     }
     //Estrellas
     traerEstrellaLlena() {
-            return require('../../contenido/logos/Star_Llena.png')
+        return require('../../contenido/logos/Star_Llena.png')
+    }
+    traerEstrellaMucho() {
+        return require('../../contenido/logos/Star_3.4.png')
+    }
+    traerEstrellaHalf() {
+        return require('../../contenido/logos/Star_Half.png')
+    }
+    traerEstrellaPoco() {
+        return require('../../contenido/logos/Star_1.4.png')
     }
     traerEstrellaBorde() {
         return require('../../contenido/logos/Star_Borde.png')

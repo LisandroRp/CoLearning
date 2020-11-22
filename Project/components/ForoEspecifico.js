@@ -53,12 +53,21 @@ class ForoEspecifico extends Component {
     var nuevasRespuestas = this.state.respuestas
     if (voto) {
       nuevasRespuestas[index].votos = nuevasRespuestas[index].votos + 1
-      this.setState({ respuestas: nuevasRespuestas })
     }
     else {
       nuevasRespuestas[index].votos = nuevasRespuestas[index].votos - 1
-      this.setState({ respuestas: nuevasRespuestas })
     }
+    this.setState({ respuestas: nuevasRespuestas })
+  }
+  marcarMejorRespuesta(index) {
+    var nuevasRespuestas = this.state.respuestas
+    if (nuevasRespuestas[index].esMejorRespuesta) {
+      nuevasRespuestas[index].esMejorRespuesta = false
+    }
+    else {
+      nuevasRespuestas[index].esMejorRespuesta = true
+    }
+    this.setState({ respuestas: nuevasRespuestas })
   }
   addComment() {
 
@@ -83,8 +92,8 @@ class ForoEspecifico extends Component {
             {this.state.foro.esAnonimo ?
               <View style={[{ flexDirection: 'row', position: "absolute" }]}>
                 <View style={styles.preguntaContainer} onLayout={this.onLayout}>
-                  <Text style={styles.titulo}>{this.state.foro.nombre_foro}</Text>
-                  <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
+                  <Text style={styles.titulo}>{this.state.foro.pregunta}</Text>
+                  <Text style={styles.descripcion}>{this.state.foro.descripcion}</Text>
                   <View style={{ flex: 0, marginTop: hp(1), justifyContent: "flex-end", flexDirection: "row" }}>
                     <Text style={styles.cardSubTitulo}>Preguntado el {this.state.foro.fecha_alta}</Text>
                   </View>
@@ -115,8 +124,8 @@ class ForoEspecifico extends Component {
                       <Text style={[styles.cardSubTitulo2, { marginHorizontal: wp(2) }]}>Preguntado el {this.state.foro.fecha_alta}</Text>
                     </View>
                   </View>
-                  <Text style={styles.titulo}>{this.state.foro.nombre_foro}</Text>
-                  <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
+                  <Text style={styles.titulo}>{this.state.foro.pregunta}</Text>
+                  <Text style={styles.descripcion}>{this.state.foro.descripcion}</Text>
                 </View>
               </View>
             }
@@ -126,6 +135,9 @@ class ForoEspecifico extends Component {
           </View >
         );
       }
+      ///////////////////////
+      //CON RESPUESTAS
+      //////////////////////
       else {
         return (
           <View style={styles.container}>
@@ -153,7 +165,35 @@ class ForoEspecifico extends Component {
                                   <Text style={styles.tituloRespuesta}>{item.nombre_respuesta}</Text>
                                 </View>
                               </View>
-                              <View style={[{ justifyContent: "center" }]}>
+                              <View style={[{ alignItems: "center", flexDirection: "row" }]}>
+                                {
+                                  //////////////////
+                                  //Mejor Respuesta
+                                  //////////////////
+                                }
+                                {this.state.foro.id_usuario == this.props.id_usuario ?
+                                  item.esMejorRespuesta ?
+                                    <TouchableOpacity style={[styles.checkBoxContainer]} onPress={() => this.marcarMejorRespuesta(index)}>
+                                      <View style={[styles.checkBox, {position:  "absolute"}]} />
+                                      <FontAwesome style={[{ textAlign: 'center' }]} name={"check"} size={hp(4)} color="#5EC43A" />
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity style={[styles.checkBoxContainer]} onPress={() => this.marcarMejorRespuesta(index)}>
+                                      <View style={[styles.checkBox, {position:  "relative", marginRight: wp(1.5)}]} />
+                                    </TouchableOpacity>
+                                  :
+                                  item.esMejorRespuesta ?
+                                    <View style={[{ marginRight: wp(2.2) }]}>
+                                      <FontAwesome style={[{ textAlign: 'right' }]} name={"check"} size={hp(4)} color="#5EC43A" />
+                                    </View>
+                                    :
+                                    <View/>
+                                }
+                                {
+                                  //////////////////
+                                  //Mejor Respuesta
+                                  //////////////////
+                                }
                                 <AntDesign style={{ textAlign: 'center' }} name={"caretdown"} size={wp(3.3)} color="#F28C0F" />
                               </View>
                             </View>
@@ -174,11 +214,12 @@ class ForoEspecifico extends Component {
                   ))}
                 </View>
               </ScrollView>
+
               {this.state.foro.esAnonimo ?
                 <View style={[{ flexDirection: 'row', position: "absolute" }]}>
                   <View style={styles.preguntaContainer} onLayout={this.onLayout}>
-                    <Text style={styles.titulo}>{this.state.foro.nombre_foro}</Text>
-                    <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
+                    <Text style={styles.titulo}>{this.state.foro.pregunta}</Text>
+                    <Text style={styles.descripcion}>{this.state.foro.descripcion}</Text>
                     <View style={{ flex: 0, marginTop: hp(1), justifyContent: "flex-end", flexDirection: "row" }}>
                       <Text style={styles.cardSubTitulo}>Preguntado el {this.state.foro.fecha_alta}</Text>
                     </View>
@@ -188,20 +229,20 @@ class ForoEspecifico extends Component {
                 <View style={[{ flexDirection: 'row', position: "absolute" }]}>
                   <View style={styles.preguntaContainer} onLayout={this.onLayout}>
                     <View style={[{ flexDirection: 'row', marginBottom: hp(1) }]}>
-                    {ExportadorObjetos.profileImage(this.state.foro.id_usuario_fk) ?
-                      <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
-                        <Image
-                          source={ExportadorObjetos.profileImage(this.state.foro.id_usuario_fk)}
-                          style={[styles.image, { resizeMode: ((this.state.foro.id_usuario_fk == 0) ? 'contain' : 'contain') }]}
-                        />
-                      </TouchableOpacity>
-                      :
-                      <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
-                        <Text style={{ fontSize: wp(4), textAlign: "center", color: 'white', alignContent: 'center' }}>
-                          {this.state.foro.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.foro.apellido.slice(0, 1).toUpperCase()}
-                        </Text>
-                      </TouchableOpacity>
-                    }
+                      {ExportadorObjetos.profileImage(this.state.foro.id_usuario_fk) ?
+                        <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
+                          <Image
+                            source={ExportadorObjetos.profileImage(this.state.foro.id_usuario_fk)}
+                            style={[styles.image, { resizeMode: ((this.state.foro.id_usuario_fk == 0) ? 'contain' : 'contain') }]}
+                          />
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
+                          <Text style={{ fontSize: wp(4), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                            {this.state.foro.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.foro.apellido.slice(0, 1).toUpperCase()}
+                          </Text>
+                        </TouchableOpacity>
+                      }
                       <View style={[{ flexDirection: 'column', flex: 1 }]}>
                         <TouchableOpacity onPress={() => this.props.onPressGoUsuario(this.state.foro.id_usuario_fk, this.state.foro.nombre_usuario, this.state.foro.esProfesor)}>
                           <Text numberOfLines={1} style={styles.cardTitulo}>{this.state.foro.nombre_usuario} {this.state.foro.apellido}</Text>
@@ -209,8 +250,8 @@ class ForoEspecifico extends Component {
                         <Text style={[styles.cardSubTitulo2, { marginHorizontal: wp(2) }]}>Preguntado el {this.state.foro.fecha_alta}</Text>
                       </View>
                     </View>
-                    <Text style={styles.titulo}>{this.state.foro.nombre_foro}</Text>
-                    <Text style={styles.descripcion}>{this.state.foro.pregunta}</Text>
+                    <Text style={styles.titulo}>{this.state.foro.pregunta}</Text>
+                    <Text style={styles.descripcion}>{this.state.foro.descripcion}</Text>
                   </View>
                 </View>
               }
@@ -402,7 +443,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 100,
     justifyContent: 'center',
-},
+  },
   cardTitulo: {
     fontSize: wp(4.4),
     color: '#F28C0F',
@@ -489,7 +530,25 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: 'white'
-  }
+  },
+  //CheckBox
+  checkBoxContainer: {
+    justifyContent: "center",
+    alignItems: 'center',
+    marginRight: wp(2.2)
+  },
+  checkBox: {
+    height: hp(2.5),
+    width: hp(2.5),
+    backgroundColor: "white",
+    shadowColor: '#00000045',
+    shadowOffset: {
+      width: 0.05,
+      height: 0.55,
+    },
+    shadowOpacity: 2,
+    elevation: 29,
+  },
 })
 
 export default withNavigation(ForoEspecifico);

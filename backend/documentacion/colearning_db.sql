@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-10-2020 a las 00:43:26
+-- Tiempo de generación: 22-11-2020 a las 01:30:01
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.4.10
 
@@ -20,6 +20,27 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `colearning_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `chats`
+--
+
+CREATE TABLE `chats` (
+  `id_chat` int(11) NOT NULL,
+  `id_usuarioOrigen` int(11) NOT NULL,
+  `id_usuarioDestino` int(11) NOT NULL,
+  `ultimoMensaje` text NOT NULL,
+  `horaUltimoMensaje` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `chats`
+--
+
+INSERT INTO `chats` (`id_chat`, `id_usuarioOrigen`, `id_usuarioDestino`, `ultimoMensaje`, `horaUltimoMensaje`) VALUES
+(1, 2, 1, 'hola', '15:30');
 
 -- --------------------------------------------------------
 
@@ -279,16 +300,17 @@ CREATE TABLE `foro` (
   `respuestasCant` varchar(10) NOT NULL,
   `fecha_alta` varchar(50) NOT NULL,
   `resuelto` tinyint(1) NOT NULL,
-  `esAnonimo` double NOT NULL
+  `esAnonimo` double NOT NULL,
+  `descripcion` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Volcado de datos para la tabla `foro`
 --
 
-INSERT INTO `foro` (`id_foro`, `id_usuario_fk`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`, `esAnonimo`) VALUES
-(1, 1, 'Duda Existencial', 'Cuáles son los trucos más sencillos para andar en skate?', 1, '114', '05/12/2019', 1, 0),
-(2, 4, 'Tenis', 'Quien es el más ganador de grand slams de la historia?', 1, '45', '24/06/2020', 0, 0);
+INSERT INTO `foro` (`id_foro`, `id_usuario_fk`, `nombre_foro`, `pregunta`, `esProfesor`, `respuestasCant`, `fecha_alta`, `resuelto`, `esAnonimo`, `descripcion`) VALUES
+(1, 1, 'Duda Existencial', 'Cuáles son los trucos más sencillos para andar en skate?', 1, '114', '05/12/2019', 1, 1, ''),
+(2, 4, 'Tenis', 'Quien es el más ganador de grand slams de la historia?', 1, '45', '24/06/2020', 0, 0, '');
 
 -- --------------------------------------------------------
 
@@ -483,7 +505,7 @@ CREATE TABLE `rating` (
 --
 
 INSERT INTO `rating` (`id_rating`, `votos`, `rating`) VALUES
-(1, 56, 3),
+(1, 56, 3.8),
 (2, 40, 4),
 (3, 67, 5),
 (4, 180, 2),
@@ -631,7 +653,7 @@ INSERT INTO `usuario` (`id_usuario`, `password`, `esProfesor`, `nombre_usuario`,
 (1, 'brad', 1, 'Brad', NULL, 'AlejandroFoglino', '1144373492', 'Foglino', '63853787', 'bradF63@gmail.com', 1, 1, 1),
 (2, 'leonardo', 1, 'Leonardo', NULL, 'LisandroRp', '1144373492', 'Rodriguez', '63853787', 'LeoR97@gmail.com', 2, 1, 2),
 (3, 'johnny', 1, 'Johnny', NULL, 'JohnnyDepp', '1144373492', 'Guzman', '63853787', 'Johnny@gmail.com', 3, 1, 3),
-(4, 'megan', 1, 'Megan', NULL, 'Meganfox', '1144373492', 'Gomez', '63853787', 'Megan@gmail.com', 4, 1, 4),
+(4, 'megan', 1, 'Megan', NULL, 'MeganGomez', '1144373492', 'Gomez', '63853787', 'Megan@gmail.com', 4, 1, 4),
 (5, 'coral', 0, 'Coral', NULL, 'CoralSimanovich', '1144373492', 'Garcia', '63853787', 'Coral@gmail.com', 5, 1, 5),
 (6, 'mark', 1, 'Mark', NULL, 'markwahlberg', '1144373492', 'Fernandez', '67856387', 'mark@gmail.com', 6, 1, 6);
 
@@ -658,6 +680,12 @@ INSERT INTO `usuariopormoneda` (`id_usuario_fk`, `id_moneda_fk`, `monto`) VALUES
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `chats`
+--
+ALTER TABLE `chats`
+  ADD PRIMARY KEY (`id_chat`);
 
 --
 -- Indices de la tabla `clases`
@@ -827,6 +855,12 @@ ALTER TABLE `usuariopormoneda`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
+--
+-- AUTO_INCREMENT de la tabla `chats`
+--
+ALTER TABLE `chats`
+  MODIFY `id_chat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `clases`

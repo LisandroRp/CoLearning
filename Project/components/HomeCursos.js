@@ -14,7 +14,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
 import ApiController from '../controller/ApiController';
-import { withChannelContext } from 'stream-chat-expo';
 
 class HomeCursos extends React.Component {
 
@@ -313,7 +312,6 @@ class HomeCursos extends React.Component {
     }
   }
   render() {
-
     const activeImageStyle = {
       width: this.dimensions.x,
       height: this.dimensions.y,

@@ -22,14 +22,14 @@ class Chat extends React.Component {
 
   state = {
     chatList: [
-      { id_chat: 1, id_userDestino: 1, nombre_usuario: "Pedro", apellido: "Gonzales" },
-      { id_chat: 2, id_userDestino: 2, nombre_usuario: "Juan", apellido: "Gonzales" },
-      { id_chat: 3, id_userDestino: 3, nombre_usuario: "Gabriel", apellido: "Gonzales" }
+      { id_chat: 1, id_usuarioDestino: 1, nombre_usuario: "Pedro", apellido: "Gonzales" },
+      { id_chat: 2, id_usuarioDestino: 2, nombre_usuario: "Juan", apellido: "Gonzales" },
+      { id_chat: 3, id_usuarioDestino: 3, nombre_usuario: "Gabriel", apellido: "Gonzales" }
     ],
     memory: [
-      { id_chat: 1, id_userDestino: 1, nombre_usuario: "Pedro", apellido: "Gonzales" },
-      { id_chat: 2, id_userDestino: 2, nombre_usuario: "Juan", apellido: "Gonzales" },
-      { id_chat: 3, id_userDestino: 3, nombre_usuario: "Gabriel", apellido: "Gonzales" }
+      { id_chat: 1, id_usuarioDestino: 1, nombre_usuario: "Pedro", apellido: "Gonzales" },
+      { id_chat: 2, id_usuarioDestino: 2, nombre_usuario: "Juan", apellido: "Gonzales" },
+      { id_chat: 3, id_usuarioDestino: 3, nombre_usuario: "Gabriel", apellido: "Gonzales" }
     ],
     id_user: 1,
     value: "",
@@ -44,11 +44,11 @@ class Chat extends React.Component {
   ///////////////////////////////////////
 
   marginSize(item) {
-    if (item.id_userDestino != this.state.chatList[this.state.chatList.length - 1].id_userDestino) {
+    if (item.id_usuarioDestino != this.state.chatList[this.state.chatList.length - 1].id_usuarioDestino) {
 
-      return { marginTop: height * 0.028 }
+      return { marginTop: height * 0.015 }
     } else {
-      return { marginBottom: height * 0.028, marginTop: height * 0.028 }
+      return { marginBottom: height * 0.015, marginTop: height * 0.015 }
     }
   }
   whoSend(ultimoSender) {
@@ -136,7 +136,7 @@ class Chat extends React.Component {
             data={this.state.chatList}
             initialNumToRender={50}
             keyExtractor={(item) => {
-              return item.id_userDestino.toString();
+              return item.id_usuarioDestino.toString();
             }}
             renderItem={({ item }) => {
               // console.log("*************************")
@@ -146,10 +146,10 @@ class Chat extends React.Component {
                   {/* <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => {this.props.onPressGoChat(item.id_user, item.userDestino.id_user, item.userDestino.nombre), fireBase.refOff(this.state.id_user, this.state.chatList)}}> */}
                   <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => { this.props.onPressGoChat(item.id_chat, this.state.id_user, item.nombre_usuario + " " + item.apellido) }}>
                     <View style={{ flexDirection: "row" }} >
-                      {ExportadorObjetos.profileImage(item.id_userDestino) ?
+                      {ExportadorObjetos.profileImage(item.id_usuarioDestino) ?
                         <View style={[styles.imageContainer, { borderWidth: 0 }]}>
                           <Image
-                            source={ExportadorObjetos.profileImage(item.id_userDestino)}
+                            source={ExportadorObjetos.profileImage(item.id_usuarioDestino)}
                             style={[styles.image, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
                           />
                         </View>

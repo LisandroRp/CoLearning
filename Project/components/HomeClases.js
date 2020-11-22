@@ -14,7 +14,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import { FontAwesome } from '@expo/vector-icons';
 import ApiController from '../controller/ApiController';
-import { withChannelContext } from 'stream-chat-expo';
 
 class HomeClases extends React.Component {
 
@@ -40,7 +39,9 @@ class HomeClases extends React.Component {
   loadFont = async () => {
     await Font.loadAsync({
       'shakies': require('../assets/fonts/Shakies-TT.ttf'),
+      'mainFont': require('../assets/fonts/LettersForLearners.ttf')
     });
+
     this.setState({ isLoadingFont: false })
   }
   okProfesores = async (profesoresBase) => {
@@ -65,18 +66,18 @@ class HomeClases extends React.Component {
           while (contadorInterno < lenght && profesoresBase[contadorInterno].id_usuario == profesorActual.id_usuario && profesoresBase[contadorInterno].id_materia == materiaActual.id_meteria) {
             arrayDondeClases.push(ExportadorObjetos.createDondeClases(profesoresBase[contadorInterno].id_dondeClases, profesoresBase[contadorInterno].des_dondeClases))
             contadorInterno++
-            contadorDondeClases ++
+            contadorDondeClases++
           }
           flag = 1
-          if(materiaActual.id_meteria != null){
+          if (materiaActual.id_meteria != null) {
             arrayMaterias.push(materiaActual)
           }
         }
         else {
-          if(materiaActual.id_meteria != null && arrayMaterias[arrayMaterias.length-1].id_meteria != materiaActual.id_meteria){
+          if (materiaActual.id_meteria != null && arrayMaterias[arrayMaterias.length - 1].id_meteria != materiaActual.id_meteria) {
             arrayMaterias.push(materiaActual)
           }
-          contadorInterno ++
+          contadorInterno++
         }
       }
       profesorActual.materias = arrayMaterias
@@ -346,15 +347,25 @@ class HomeClases extends React.Component {
       opacity: this.animation
     }
     let React_Native_Rating_Bar = [];
+    var aux = -1
     for (var i = 1; i <= this.state.max_rating && (this.state.activeImage ? this.state.activeImage.id_usuario : 2) != 0; i++) {
+      aux++
       React_Native_Rating_Bar.push(
         <View
           key={i}
         >
           {this.state.activeImage ? (i <= this.state.activeImage.rating.rating
             ? <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()}></Image>
-            : <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaBorde()}></Image>)
-            : <View />
+            : this.state.activeImage.rating.rating > (aux)
+              ? (this.state.activeImage.rating.rating % parseInt(this.state.activeImage.rating.rating)) >= 0.75
+                ? (<Image style={styles.starImage} source={ExportadorLogos.traerEstrellaMucho()} />)
+                : (this.state.activeImage.rating.rating % parseInt(this.state.activeImage.rating.rating)) <= 0.25
+                  ? (<Image style={styles.starImage} source={ExportadorLogos.traerEstrellaPoco()} />)
+                  : (<Image style={styles.starImage} source={ExportadorLogos.traerEstrellaHalf()} />)
+              : (<Image style={styles.starImage} source={ExportadorLogos.traerEstrellaBorde()} />)
+          )
+            :
+            <View />
           }
         </View>
       );
@@ -399,11 +410,11 @@ class HomeClases extends React.Component {
                   <View style={styles.shadowImage}>
                     {this.state.activeImage.src == null ?
                       <Animated.View
-                      style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth(), backgroundColor: (this.state.activeImage.src == null ? "#F28C0F" : "transparent") }]}
+                        style={[styles.image, { borderWidth: this.inactiveBorderImageWidth(), width: this.inactiveImageWidth(), backgroundColor: (this.state.activeImage.src == null ? "#F28C0F" : "transparent") }]}
                       >
-                      <Text style={{ fontSize: wp(20), textAlign: "center", color: 'white', alignContent: 'center' }}>
-                        {this.state.activeImage.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.activeImage.apellido.slice(0, 1).toUpperCase()}
-                      </Text>
+                        <Text style={{ fontSize: wp(20), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                          {this.state.activeImage.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.activeImage.apellido.slice(0, 1).toUpperCase()}
+                        </Text>
                       </Animated.View>
                       :
                       <Animated.Image
@@ -437,24 +448,24 @@ class HomeClases extends React.Component {
 
                       {
                         this.state.activeImage.dondeClases.map((item, index) => (index < 3 ? (
-                        <View>
-                          <Text style={styles.infoDes} numberOfLines={1}>• {item.des_dondeClases}</Text>
-                        </View>
-                      ) : <View/>))
+                          <View>
+                            <Text style={styles.infoDes} numberOfLines={1}>• {item.des_dondeClases}</Text>
+                          </View>
+                        ) : <View />))
                       }
                     </View>
                   </View>
                   <View style={styles.buttonContainer}>
                     {this.state.activeImage.money.des_moneda && this.state.activeImage.money.monto ?
-                    <View style={{ flexDirection: "row", justifyContent: "center" }}>
-                      <View style={[styles.moneyView, styles.shadowMoney]}>
-                        <Text style={styles.moneyText}>{this.state.activeImage.money.des_moneda}</Text>
-                                        <Text style={styles.moneyText}>{this.state.activeImage.money.monto}</Text>
-                        <Text style={styles.moneyText2}>/h</Text>
+                      <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                        <View style={[styles.moneyView, styles.shadowMoney]}>
+                          <Text style={styles.moneyText}>{this.state.activeImage.money.des_moneda}</Text>
+                          <Text style={styles.moneyText}>{this.state.activeImage.money.monto}</Text>
+                          <Text style={styles.moneyText2}>/h</Text>
+                        </View>
                       </View>
-                    </View>
-                    :
-                    <View/>
+                      :
+                      <View />
                     }
                     <TouchableOpacity style={[styles.button, { backgroundColor: this.inactiveImageButton() }]} onPress={() => this.props.onPressGo(this.state.activeImage.id_usuario, this.state.activeImage.nombre_usuario + " " + this.state.activeImage.apellido, this.state.activeImage.des_domicilio, this.state.activeImage.esProfesor)} >
                       <Text style={{ color: 'white' }}>{this.inactiveImageButtonText()}</Text>
@@ -467,7 +478,7 @@ class HomeClases extends React.Component {
               <View style={[{ padding: 10, flexShrink: 1 }]} ref={(view) => (this.viewImage = view)}>
 
                 <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.imageTitulo} />
-                <Text style={{ textAlign: 'left', fontSize: wp(4.4), flexShrink: 1 }}> Aquí podras encontrar cuales son los profesores más populares de la aplicación y los mas cercanos a tu zona actual. Podras encontrar su puntuacion, las clases que enseña y de que manera dicta las clases {'\n'}{'\n'} CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés a partir de los profesores que te comuniques.</Text>
+                <Text style={{ textAlign: 'left', fontWeight: "bold", fontFamily: "mainFont", fontSize: wp(5.8), flexShrink: 1 }}> Aquí podras encontrar cuales son los profesores más populares de la aplicación y los mas cercanos a tu zona actual. Podras encontrar su puntuacion, las clases que enseña y de que manera dicta las clases {'\n'}{'\n'} CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés a partir de los profesores que te comuniques.</Text>
 
               </View>
             )

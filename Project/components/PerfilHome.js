@@ -42,7 +42,7 @@ class PerfilHome extends React.Component {
             ApiController.getDondeClasesProfesor(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
         }
         else {
-            usuario.src= ExportadorObjetos.profileImage(usuario.id_usuario)
+            usuario.src = ExportadorObjetos.profileImage(usuario.id_usuario)
             this.setState({ usuario: usuario, isLoading: false })
         }
     }
@@ -131,34 +131,37 @@ class PerfilHome extends React.Component {
         }
     }
 
-    okChat(id_chat){
-        if(id_chat == null){
+    okChat(id_chat) {
+        if (id_chat == null) {
             ApiController.crearChat(this.okChatCreado.bind(this))
         }
-        else{
+        else {
             this.props.onPressGoChat(id_chat, this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
         }
     }
-    okChatCreado(id_chat){
+    okChatCreado(id_chat) {
         this.props.onPressGoChat(id_chat, this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
     }
     render() {
-        var rating2 = this.state.usuario.rating
+        var aux = -1
         let React_Native_Rating_Bar = [];
         for (var i = 1; i <= this.state.max_rating; i++) {
+            aux++
             React_Native_Rating_Bar.push(
-                <TouchableOpacity
-                    activeOpacity={0.7}
+                <View
                     key={i}
                 >
-                    {i <= rating2
+                    {i <= this.state.usuario.rating
                         ? <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()}></Image>
-                        : <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaBorde()}></Image>
+                        : this.state.usuario.rating > (aux)
+                            ? (this.state.usuario.rating % parseInt(this.state.usuario.rating)) >= 0.75
+                                ? (<Image style={styles.starImage} source={ExportadorLogos.traerEstrellaMucho()} />)
+                                : (this.state.usuario.rating % parseInt(this.state.usuario.rating)) <= 0.25
+                                    ? (<Image style={styles.starImage} source={ExportadorLogos.traerEstrellaPoco()} />)
+                                    : (<Image style={styles.starImage} source={ExportadorLogos.traerEstrellaHalf()} />)
+                            : (<Image style={styles.starImage} source={ExportadorLogos.traerEstrellaBorde()} />)
                     }
-                    {/* <FontAwesome name={i <= rating2
-                        ? 'star'
-                        : 'star'} style={styles.heartImage} size={hp(4)} /> */}
-                </TouchableOpacity>
+                </View>
             );
         }
         if (this.state.isLoading) {
@@ -175,7 +178,7 @@ class PerfilHome extends React.Component {
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View>
                             <View style={{ alignSelf: "center" }}>
-                                <View style={[styles.profileImage, {backgroundColor: (this.state.usuario.src == null ? "#F28C0F" : "transparent")}]}>
+                                <View style={[styles.profileImage, { backgroundColor: (this.state.usuario.src == null ? "#F28C0F" : "transparent") }]}>
                                     {this.state.usuario.src == null ?
                                         <Text style={{ fontSize: wp(25), textAlign: "center", color: 'white', alignContent: 'center' }}>
                                             {this.state.usuario.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.usuario.apellido.slice(0, 1).toUpperCase()}
@@ -336,14 +339,14 @@ class PerfilHome extends React.Component {
                         }
 
                     </ScrollView>
-                    {this.props.navigation.getParam("id_usuario") ? 
-                    <TouchableOpacity style={[styles.dm]} onPress={() => ApiController.getChatByIdUsuarioDestino(this.okChat.bind(this))}>
-                        <FontAwesome name="comments" size={hp(3)} color={"white"} />
-                    </TouchableOpacity>
-                    : 
-                    <View/>   
+                    {this.props.navigation.getParam("id_usuario") ?
+                        <TouchableOpacity style={[styles.dm]} onPress={() => ApiController.getChatByIdUsuarioDestino(this.okChat.bind(this))}>
+                            <FontAwesome name="comments" size={hp(3)} color={"white"} />
+                        </TouchableOpacity>
+                        :
+                        <View />
                     }
-                    
+
                 </View>
             );
         }

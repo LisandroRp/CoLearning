@@ -7,6 +7,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import ExportadorLogos from './exportadores/ExportadorLogos'
 import ApiController from '../controller/ApiController';
 import ExportadorObjetos from './exportadores/ExportadorObjetos';
+import * as Font from 'expo-font';
 
 var { height, width } = Dimensions.get('window');
 
@@ -16,12 +17,15 @@ class UserCalendario extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingFont: true,
             modalVisible: false,
+            id_usuario: this.props.navigation.getParam("id_usuario"),
             max_rating: 5,
             nombre_usuario: "Pedro",
             newRating: 0,
             comentarios: [],
-            esProfesor: true
+            esProfesor: true,
+            comentario: ""
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
@@ -29,6 +33,7 @@ class UserCalendario extends Component {
     componentDidMount = async () => {
         //Traer el esProfesor de los usuarios de cada comentario para mandarlo e ir al perfil de los comentarios
         ApiController.getComentariosByIdProfesor((await this.props.navigation.getParam("id_usuario")) ? await this.props.navigation.getParam("id_usuario") : this.props.id_usuario, this.okComentarios.bind(this))
+        this.loadFont()
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
@@ -45,6 +50,12 @@ class UserCalendario extends Component {
     }
     keyboardWillHide = () => {
         this.setState({ searchBarFocused: false })
+    }
+    loadFont = async () => {
+        await Font.loadAsync({
+            'mainFont': require('../assets/fonts/LettersForLearners.ttf'),
+        });
+        this.setState({ isLoadingFont: false })
     }
 
     marginSize(index) {
@@ -82,27 +93,51 @@ class UserCalendario extends Component {
     starsRowModal() {
 
         var rating2 = this.state.newRating
+        var aux = -1
         let React_Native_Rating_Bar = [];
         for (var i = 1; i <= this.state.max_rating; i++) {
+            aux++
             React_Native_Rating_Bar.push(
-                <TouchableOpacity style={styles.starModalContainer} 
-                activeOpacity={0.7}
-                key={i}
-                onPress={this.vote.bind(this, i)}>
+                <TouchableOpacity style={styles.starModalContainer}
+                    activeOpacity={0.7}
+                    key={i}
+                    onPress={this.vote.bind(this, i)}>
                     {i <= rating2
-                        ? (<Image style={styles.starImageModal} source={ExportadorLogos.traerEstrellaLlena()}/>)
-                        : (<Image style={styles.starImageModal} source={ExportadorLogos.traerEstrellaBorde()}/>)
+                        ? (<Image style={styles.starImageModal} source={ExportadorLogos.traerEstrellaLlena()} />)
+                        : rating2 > (aux)
+                                        ? (<Image style={styles.starImageModal} source={ExportadorLogos.traerEstrellaHalf()} />)
+                                        : (<Image style={styles.starImageModal} source={ExportadorLogos.traerEstrellaBorde()} />)
+                        
                     }
                 </TouchableOpacity>
             );
         }
         return React_Native_Rating_Bar
     }
-    addComment(){
-        this.setState({modalVisible: false})
+    addComment()  {
+        this.setState({ modalVisible: false, isLoading: true})
+        //ApiController.yaComento(this.state.id_usuario, this.okYaVoto.bind(this))
+        this.setState({ modalVisible: false })
+    }
+    okYaVoto(boolean){
+        if(boolean){
+            alert("Usted ya calificó a este profesor")
+        }
+        else{
+            //ApiController.comentar(this.state.id_usuario, this.state.newRating, this.state.comentario, this.okComentario.bind(this))
+        }
+    }
+    okComentario(){
+        //ApiController.traerVotosRating(this.state.id_usuario, this.okTraerVotosRating.bind(this))
+    }
+    okTraerVotosRating(object){
+        //ApiController.updateUsuarioRating(object.rating / object.votos, object.votos, this.okTraerVotosRating.bind(this))
+    }
+    okTraerVotosRating(){
+        //ApiController.getComentariosByIdProfesor(this.state.id_usuario, this.okComentarios.bind(this))
     }
     render() {
-        if (this.state.isLoading) {
+        if (this.state.isLoading || this.state.isLoadingFont) {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
@@ -111,28 +146,48 @@ class UserCalendario extends Component {
             );
         }
         else {
-            return (
-                <View style={styles.container}>
-                    <FlatList
-                        style={styles.contentList}
-                        columnWrapperStyle={styles.listContainer}
-                        data={this.state.comentarios}
-                        initialNumToRender={50}
-                        keyExtractor={(item, index) => {
-                            return index.toString();
-                        }}
-                        renderItem={({ item, index }) => {
-                            return (
-                                <View style={[this.marginSize(index), styles.card]}>
+            if (this.state.comentarios.length == 0) {
+                return (
+                    <View style={styles.noComentariosContainer}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
+                            <Text style={[styles.noComentariosMensaje, { fontFamily: "mainFont" }]}>Este profesor no ha sido calificado</Text>
+                        </View>
+                        {
+                            this.props.navigation.getParam("id_usuario") ?
+                                <TouchableOpacity style={styles.bubble} onPress={() => this.setState({ modalVisible: true })}>
+                                    <FontAwesome name={"plus"} size={hp(3.3)} color="white"></FontAwesome>
+                                </TouchableOpacity>
+                                :
+                                <View />
+                        }
+                        {this.modalComentar()}
+                    </View>
+                )
+            }
+            else {
+                return (
+                    <View style={styles.container}>
+                        <FlatList
+                            style={styles.contentList}
+                            columnWrapperStyle={styles.listContainer}
+                            data={this.state.comentarios}
+                            initialNumToRender={50}
+                            keyExtractor={(item, index) => {
+                                return index.toString();
+                            }}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <View style={[this.marginSize(index), styles.card]}>
                                         <View style={{ flexDirection: "row" }} >
                                             <TouchableOpacity style={styles.imageContainer} onPress={() => this.props.onPressGoPerfil(item.id_usuarioOrigen, item.esProfesor)}>
-                                            {item.src == null ?
-                                                <Text style={{ fontSize: wp(7.7), textAlign: "center", color: 'white', alignContent: 'center' }}>
-                                                    {item.nombre_usuario.slice(0, 1).toUpperCase()}{item.apellido.slice(0, 1).toUpperCase()}
-                                                </Text>
-                                                :
-                                                <Image style={styles.image} source={item.src} />
-                                            }
+                                                {item.src == null ?
+                                                    <Text style={{ fontSize: wp(7.7), textAlign: "center", color: 'white', alignContent: 'center' }}>
+                                                        {item.nombre_usuario.slice(0, 1).toUpperCase()}{item.apellido.slice(0, 1).toUpperCase()}
+                                                    </Text>
+                                                    :
+                                                    <Image style={styles.image} source={item.src} />
+                                                }
                                             </TouchableOpacity>
                                             <View style={{ flexDirection: "column", flex: 1 }} >
                                                 <View style={styles.cardContent}>
@@ -151,55 +206,58 @@ class UserCalendario extends Component {
                                                 </View>
                                             </View>
                                         </View>
-                                </View>
-                            )
+                                    </View>
+                                )
+                            }
+                            } />
+                        {
+                            this.props.navigation.getParam("id_usuario") ?
+                                <TouchableOpacity style={styles.bubble} onPress={() => this.setState({ modalVisible: true })}>
+                                    <FontAwesome name={"plus"} size={hp(3.3)} color="white"></FontAwesome>
+                                </TouchableOpacity>
+                                :
+                                <View />
                         }
-                        } />
-                    {
-                    this.props.navigation.getParam("id_usuario") ?
-                    <TouchableOpacity style={styles.bubble} onPress={() => this.setState({ modalVisible: true })}>
-                        <FontAwesome name={"plus"} size={hp(3.3)} color="white"></FontAwesome>
-                    </TouchableOpacity>
-                    :
-                    <View/>
-                    }
-                    <Modal
+                        {this.modalComentar()}
+                    </View>
+                );
+            }
+        }
+    }
+    modalComentar = () =>
+        <Modal
             animationType="fade"
             visible={this.state.modalVisible}
             transparent={true}
             onRequestClose={() => this.setState({ modalVisible: false })}  >
             <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={Keyboard.dismiss}>
 
-              <View style={styles.modal}>
-                <View style={[styles.starContainerModal, styles.shadowContainerModal]}>
-                    {this.starsRowModal(0)}
+                <View style={styles.modal}>
+                    <View style={[styles.starContainerModal, styles.shadowContainerModal]}>
+                        {this.starsRowModal(0)}
+                    </View>
+                    <TextInput style={[styles.inputDescripcion, styles.shadowContainerModal]}
+                        value={this.state.comentario}
+                        multiline={true}
+                        maxLength={660}
+                        placeholder="Comentario"
+                        placeholderTextColor="grey"
+                        underlineColorAndroid='transparent'
+                        onChangeText={(text) => this.setState({ comentario: text })}
+                    />
+                    <View style={[{ flexDirection: "row", justifyContent: "center" }]}>
+                        <TouchableOpacity style={[styles.buttonContainerLogin]}
+                            onPress={() => this.setState({ modalVisible: false })}>
+                            <Text style={styles.loginText}>Cancelar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.buttonContainerLogin]}
+                            onPress={() => this.addComment()}>
+                            <Text style={styles.loginText}>Agregar</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <TextInput style={[styles.inputDescripcion, styles.shadowContainerModal]}
-                  value={this.state.email}
-                  multiline={true}
-                  maxLength={660}
-                  placeholder="Respuesta"
-                  placeholderTextColor="grey"
-                  underlineColorAndroid='transparent'
-                  onChangeText={(text) => this.setState({ mail: text })}
-                />
-                <View style={[{ flexDirection: "row", justifyContent: "center"}]}>
-                  <TouchableOpacity style={[styles.buttonContainerLogin]}
-                    onPress={() => this.setState({modalVisible: false})}>
-                    <Text style={styles.loginText}>Cancelar</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={[styles.buttonContainerLogin]}
-                    onPress={() => this.addComment()}>
-                    <Text style={styles.loginText}>Agregar</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
             </TouchableOpacity>
-          </Modal>
-                </View>
-            );
-        }
-    }
+        </Modal>
 };
 const resizeMode = 'center';
 const styles = StyleSheet.create({
@@ -208,7 +266,22 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFF7EE",
         flex: 1
     },
-
+    noComentariosContainer: {
+        backgroundColor: "#FFF7EE",
+        justifyContent: "center",
+        flex: 1
+    },
+    fondoImage: {
+        width: wp(80),
+        height: wp(30),
+        resizeMode: 'contain',
+    },
+    noComentariosMensaje: {
+        marginHorizontal: wp(5),
+        textAlign: "center",
+        fontSize: wp(8),
+        color: '#F28C0F'
+    },
     //FlatList
     card: {
         shadowColor: '#00000055',
@@ -323,81 +396,81 @@ const styles = StyleSheet.create({
         elevation: 2
     },
     /*************************************** */
-  //MODAAAAL
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  modal: {
-    flex: 1,
-    marginTop: hp(20),
-    marginBottom: hp(20),
-    marginHorizontal: wp(10),
-    padding: wp(5),
-    backgroundColor: '#FFF7EE',
-    borderRadius: 22,
-    opacity: .95,
-    shadowColor: '#00000035',
-    shadowOffset: {
-      width: 0.01,
-      height: 0.25,
+    //MODAAAAL
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
     },
-    shadowOpacity: 2,
-    shadowRadius: 8,
-    elevation: 2
-  },
-  starModalContainer: {
-      alignItems: "center",
-        flex:1
-  },
-  starContainerModal: {
-    flex: 0.3,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    backgroundColor: '#FFFFFF',
-  },
-  starImageModal: {
-      height: "66%",
-    width: "66%"
-},
-  inputDescripcion: {
-    flex: 1.7,
-    borderBottomColor: '#F5FCFF',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    borderBottomWidth: 1,
-    paddingTop: hp(2.2),
-    paddingHorizontal: hp(2.2),
-    textAlignVertical: "top",
-    fontSize: wp(3.3),
-    marginTop: hp(2.2),
-    marginBottom: hp(2.2),
-    flexDirection: 'column'
-  },
-  buttonContainerLogin: {
-    height: 45,
-    justifyContent: 'center',
-    marginHorizontal: wp(5),
-    alignItems: 'center',
-    borderRadius: 10,
-    paddingHorizontal: wp(3.3),
-    backgroundColor: "#F28C0F"
-  },
-  loginText: {
-    color: 'white'
-  },
-  shadowContainerModal: {
-    shadowColor: "#808080",
-    shadowOffset: {
-      width: 0,
-      height: 2,
+    modal: {
+        flex: 1,
+        marginTop: hp(20),
+        marginBottom: hp(20),
+        marginHorizontal: wp(10),
+        padding: wp(5),
+        backgroundColor: '#FFF7EE',
+        borderRadius: 22,
+        opacity: .95,
+        shadowColor: '#00000035',
+        shadowOffset: {
+            width: 0.01,
+            height: 0.25,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 8,
+        elevation: 2
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    starModalContainer: {
+        alignItems: "center",
+        flex: 1
+    },
+    starContainerModal: {
+        flex: 0.3,
+        borderRadius: 10,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        backgroundColor: '#FFFFFF',
+    },
+    starImageModal: {
+        height: "66%",
+        width: "66%"
+    },
+    inputDescripcion: {
+        flex: 1.7,
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        borderBottomWidth: 1,
+        paddingTop: hp(2.2),
+        paddingHorizontal: hp(2.2),
+        textAlignVertical: "top",
+        fontSize: wp(3.3),
+        marginTop: hp(2.2),
+        marginBottom: hp(2.2),
+        flexDirection: 'column'
+    },
+    buttonContainerLogin: {
+        height: 45,
+        justifyContent: 'center',
+        marginHorizontal: wp(5),
+        alignItems: 'center',
+        borderRadius: 10,
+        paddingHorizontal: wp(3.3),
+        backgroundColor: "#F28C0F"
+    },
+    loginText: {
+        color: 'white'
+    },
+    shadowContainerModal: {
+        shadowColor: "#808080",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
 
-    elevation: 5
-  }
+        elevation: 5
+    }
 })
 export default withNavigation(UserCalendario);

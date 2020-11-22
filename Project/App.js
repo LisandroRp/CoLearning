@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, YellowBox } from 'react-native';
+import { StyleSheet, Text, View, Image, YellowBox} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from '@expo/vector-icons/Ionicons';
@@ -53,9 +52,12 @@ import Planes from './components/Planes'
 import UserDataManager from './components/UserDataManager';
 import ExportadorLogos from './components/exportadores/ExportadorLogos';
 
+require('react-native').unstable_enableLogBox()
 
-YellowBox.ignoreWarnings(['Remote debugger']);
+YellowBox.ignoreWarnings(['']);
+
 console.disableYellowBox = true
+
 var esProfesorTodo = false
 var id_perfil = 0
 var eraMapa = false
@@ -1398,6 +1400,7 @@ class ForoEspecificoScreen extends React.Component {
     return (
       <ForoEspecifico
       onPressGoUsuario={this.buscarUsuario.bind(this)}
+      id_usuario={id_perfil}
       />
     );
 
