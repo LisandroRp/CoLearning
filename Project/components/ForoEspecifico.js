@@ -32,6 +32,8 @@ class ForoEspecifico extends Component {
       respuestas: [],
       marginTop: 0,
       respuestas: [{ id_respuesta: 1, id_foro: 1, id_usuario: 1, nombre_usuario: "Leila Peredaa", esProfesor: false, fecha: "24 de Junio", nombre_respuesta: '5 conseassssssssssssssssdn asfd iluasmfpafmasn mf,as jos', des_respuesta: "1-2-3-4-5", ratingUp: 10, ratingDown: 4, votos: 6 }],
+      tituloComment: "",
+      respuestaComment: "",
       isLoadingParams: true,
       isLoadingRespuestas: true,
       modalVisible: false
@@ -70,13 +72,30 @@ class ForoEspecifico extends Component {
     this.setState({ respuestas: nuevasRespuestas })
   }
   addComment() {
-
+    if(!this.state.tituloComment.trim() || !this.state.respuestaComment.trim()){
+      alert("debe completar el titulo y la respuesta para comentar el foro")
+    }
+    else{
+      this.setState({isLoadingRespuestas: true})
+      ApiController.postRespuestaForo(this.state.foro.id_foro, this.props.id_usuario, this.state.tituloComment, this.state.respuestaComment, this.okRespuesta.bind(this))
+    }
+  }
+  okRespuesta(){
+    ApiController.getRespuestasForo(this.state.foro.id_foro)
   }
   onLayout = (e) => {
     this.setState({
       marginTop: e.nativeEvent.layout.height,
     })
   }
+  marginSize(index) {
+    if (index != this.state.respuestas.length - 1) {
+
+        return { marginTop: hp(2) }
+    } else {
+        return { marginBottom: hp(2), marginTop: hp(2) }
+    }
+}
   render() {
     if (this.state.isLoadingParams || this.state.isLoadingRespuestas) {
       return (
@@ -144,8 +163,8 @@ class ForoEspecifico extends Component {
 
             <View style={[{ flex: 1 }]}>
               <ScrollView style={{ paddingTop: this.state.marginTop + hp(2) }}>
-                <View style={styles.todo}>
-                  {(this.state.respuestas).map((item, index) => (
+              {(this.state.respuestas).map((item, index) => (
+                <View style={[styles.todo, this.marginSize(index)]}>
                     <DropDownItem key={item.id_respuesta.toString()} contentVisible={false}
                       header={
                         <View style={styles.backgroundTitulo}>
@@ -199,7 +218,7 @@ class ForoEspecifico extends Component {
                             </View>
                             <View style={{ flex: 0, marginVertical: hp(1) }}>
                               <View style={[{ flexDirection: 'row', justifyContent: "flex-end", flexWrap: "wrap" }]}>
-                                <Text style={styles.cardSubTitulo}>Respondido el {item.fecha} por </Text>
+                                <Text style={styles.cardSubTitulo}>Respondido el {item.fecha_alta} por </Text>
                                 <Text style={styles.cardSubTituloUsuario} numberOfLines={1} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario} {item.apellido}</Text>
                               </View>
                             </View>
@@ -211,8 +230,8 @@ class ForoEspecifico extends Component {
 
                       <Text style={styles.descripcion}>{item.des_respuesta}</Text>
                     </DropDownItem>
-                  ))}
                 </View>
+                ))}
               </ScrollView>
 
               {this.state.foro.esAnonimo ?
@@ -270,21 +289,21 @@ class ForoEspecifico extends Component {
 
                 <View style={styles.modal}>
                   <TextInput style={styles.inputTitle}
-                    value={this.state.email}
+                    value={this.state.tituloComment}
                     maxLength={33}
                     placeholder="Titulo"
                     placeholderTextColor="grey"
                     underlineColorAndroid='transparent'
-                    onChangeText={(text) => this.setState({ mail: text })}
+                    onChangeText={(text) => this.setState({ tituloComment: text })}
                   />
                   <TextInput style={styles.inputDescripcion}
-                    value={this.state.email}
+                    value={this.state.respuestaComment}
                     multiline={true}
                     maxLength={660}
                     placeholder="Respuesta"
                     placeholderTextColor="grey"
                     underlineColorAndroid='transparent'
-                    onChangeText={(text) => this.setState({ mail: text })}
+                    onChangeText={(text) => this.setState({ respuestaComment: text })}
                   />
                   <View style={[{ flexDirection: "row", justifyContent: "center" }]}>
                     <TouchableOpacity style={[styles.buttonContainerLogin]}
@@ -315,7 +334,6 @@ const styles = StyleSheet.create({
   todo: {
     backgroundColor: '#F5F4F4',
     marginHorizontal: wp("4"),
-    marginVertical: hp("2"),
     borderRadius: 10,
     opacity: 2,
     shadowColor: '#00000035',

@@ -121,8 +121,8 @@ let crearForo = (req, res) =>
 {      
     console.log("El usuario que quiere crear un foro es: ",req.body.idUsuario);
     var sql = 'INSERT INTO `foro`(`id_usuario_fk`, `nombre_foro`, `pregunta`, `fecha_alta`, `esAnonimo`, `descripcion`) ' +
-    'VALUES (?,?,?,'+ getDate() +',?,?)'
-    dbConn.query(sql,[req.body.idUsuario, req.body.titulo, req.body.pregunta, req.body.esAnonimo, req.body.descripcion], (err,rows) => {
+    'VALUES (?,?,?,?,?,?)'
+    dbConn.query(sql,[req.body.idUsuario, req.body.titulo, req.body.pregunta, getDate() ,req.body.esAnonimo, req.body.descripcion], (err,rows) => {
         if(err) throw err;      
         console.log(rows);
         res.send(rows);
@@ -141,4 +141,19 @@ let crearForoTags = (req, res) =>
         res.send(rows);
       });
 };
-module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen, crearForo, crearForoTags};
+
+let crearRespuestaForo = (req, res) =>
+{      
+    console.log("idForo: ",req.body.idForo);
+    console.log("idUsuario: ",req.body.idUsuario);
+    console.log("titulo: ",req.body.titulo);
+    console.log("respuesta: ",req.body.respuesta);
+    var sql = 'INSERT INTO `respuesta`(`id_foro_fk`, `id_usuario_fk`, `nombre_respuesta`, `des_respuesta`, `fecha_alta`) ' +
+    'VALUES (?,?,?,?,?)'
+    dbConn.query(sql,[req.body.idForo, req.body.idUsuario, req.body.titulo, req.body.respuesta, getDate()], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+        res.send(rows);
+      });
+};
+module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen, crearForo, crearForoTags, crearRespuestaForo};

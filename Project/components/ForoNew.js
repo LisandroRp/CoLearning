@@ -13,18 +13,19 @@ import {
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
   ActivityIndicator,
-  Animated
+  Animated,
+  Modal
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { SearchBar } from 'react-native-elements';
-import RNPickerSelect from 'react-native-picker-select';
+import * as Font from 'expo-font';
 import { Entypo, MaterialCommunityIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ApiController from '../controller/ApiController';
 
 
 var { height, width } = Dimensions.get('window');
-
+const pedro = new Date
 class EjerciciosNew extends Component {
 
   constructor(props) {
@@ -41,9 +42,11 @@ class EjerciciosNew extends Component {
       id_idioma: 0,
       animation: false,
       isLoading: true,
+      isLoadingFont: true,
       actualizando: false,
       modalGuardarVisible: false,
       animationStyle: false,
+      modalVisible: false,
 
       startValue: new Animated.Value(0),
       endValue: 1,
@@ -55,12 +58,21 @@ class EjerciciosNew extends Component {
   }
   componentDidMount = async () => {
     ApiController.getTags(this.okTags.bind(this))
+    this.loadFont()
     this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
     this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
     this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
   }
   okTags(tags){
     this.setState({tagsBase: tags, memory: tags, isLoading: false})
+  }
+  loadFont = async () => {
+    await Font.loadAsync({
+      'shakies': require('../assets/fonts/Shakies-TT.ttf'),
+      'mainFont': require('../assets/fonts/LettersForLearners.ttf')
+    });
+
+    this.setState({ isLoadingFont: false })
   }
   keyboardDidShow = () => {
     this.setState({ searchBarFocused: true })
@@ -188,25 +200,35 @@ class EjerciciosNew extends Component {
     }
 }
   crearForo(){
-    ApiController.postForo(this.props.id_usuario, this.state.titulo, this.state.pregunta, this.state.esAnonimo, this.state.descripcion, this.okForo.bind(this))
+    if(!this.state.titulo.trim() || !this.state.pregunta.trim()){
+      alert("Debe completar el titulo y la pregunta para crear un foro")
+    }
+    else{
+      ApiController.postForo(this.props.id_usuario, this.state.titulo, this.state.pregunta, this.state.esAnonimo, this.state.descripcion, this.okForo.bind(this))
+    }
   }
   okForo(res){
-    var error = false
     if(res){
-      for(var i = 0; i < this.state.tags.length; i++){
-        error = ApiController.postForoTags(res.insertId, this.state.tags[i].id_tag)
+      try{
+        this.subitTags(res.insertId)
       }
-      if(error == false){
-        this.props.onPressVolver()
+      catch{
+        alert("Ocurrio un error al relacionar los tags")
       }
+      this.setState({modalVisible: true})
     }
     else{
       alert("Ocurrio un error al crear el foro")
     }
   }
+  subitTags(id_foro){
+    for(var i = 0; i < this.state.tags.length; i++){
+      ApiController.postForoTags(id_foro, this.state.tags[i].id_tag)
+    }
+  }
   render() {
 
-    if (this.state.isLoading) {
+    if (this.state.isLoading || this.state.isLoadingFont) {
       return (
         <View style={styles.container}>
           <ActivityIndicator size="large" color="#F28C0F" style={{flex: 1}}></ActivityIndicator>
@@ -352,6 +374,27 @@ class EjerciciosNew extends Component {
               } />
 
           </Animated.View>
+          <Modal
+            animationType="fade"
+            visible={this.state.modalVisible}
+            transparent={true}
+            onRequestClose={() => this.setState({ modalVisible: false })}  >
+<TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={Keyboard.dismiss}>
+            <View style={[styles.modal, styles.shadow]}>
+              <View style={{flex: 0.60, justifyContent: "center", flexDirection: 'column'}}>
+                <Text style={styles.textModal}>Se ha creado exitosamente el foro</Text>
+                <Text style={styles.textModal}>{this.state.titulo}</Text>
+              </View>
+              <View style={styles.modal2}>
+
+                <TouchableOpacity onPress={() => {this.setState({ modalVisible: false }), this.props.onPressVolver()}} style={styles.modalExisteButtonAceptar}>
+                  <Text style={styles.textButton}>Aceptar</Text>
+
+                </TouchableOpacity>
+              </View>
+            </View>
+            </TouchableOpacity>
+          </Modal>
         </View>
       );
     }
@@ -559,6 +602,58 @@ screenButtonText: {
     backgroundColor: "white",
     padding: 10,
     flexDirection: 'row',
+  },
+  //Modal
+  //MODAAAAL
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  modal: {
+    marginTop: hp(40),
+    marginBottom: hp(44),
+    paddingTop: hp(1.5),
+    borderColor: '#F28C0F',
+    borderWidth: 2,
+    backgroundColor: '#FFF7EE',
+    borderRadius: 22,
+    opacity: .95,
+  },
+  modal2: {
+    flex: 0.40,
+    flexDirection: 'row',
+    borderColor: '#F28C0F',
+    borderTopWidth: 2,
+    bottom: 0,
+    opacity: .95
+  },
+  textModal: {
+    color: '#F28C0F',
+    marginHorizontal: wp(5),
+    fontSize: wp(6),
+    alignSelf: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontFamily: "mainFont"
+  },
+  textButton: {
+    color: '#F28C0F',
+    marginHorizontal: wp(5),
+    fontSize: wp(4.8),
+    alignSelf: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    paddingTop: hp(0.1),
+    fontFamily: "mainFont"
+  },
+  modalExisteButtonAceptar: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: "center",
+    borderBottomRightRadius: 22,
+    borderBottomLeftRadius: 22
   }
 })
 

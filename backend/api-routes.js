@@ -191,7 +191,9 @@ router.get('/foros/foro', (req, res) => {
     else
         foroController.findForosByIdAndName(req,res);  
 });
-
+/////////////////////
+//Crear Foro
+/////////////////////
 //EndPoint para crear Foro
 router.post('/crearForo/foro',(req, res) =>{
     console.log("Crear Foro: ", req.body);
@@ -208,6 +210,18 @@ router.post('/crearForoTag/foroTag',(req, res) =>{
         res.status(409).send({ msg: "Ha ocurrido un error" });
     else
         foroController.crearForoTags(req,res); 
+});
+/////////////////////
+//Crear Foro
+/////////////////////
+
+//EndPoint para crear ForoTags
+router.post('/crearRespuesta/foro/respuesta',(req, res) =>{
+    console.log("Crear RespuestaForo: ", req.body);
+    if(!req.body.titulo || !req.body.respuesta) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+        foroController.crearRespuestaForo(req,res); 
 });
 
 

@@ -3,7 +3,8 @@ import { Component } from 'react';
 //  var ip = '172.20.10.5';
 var ip = '192.168.1.25';
 //var ip = '172.20.10.8';
-var url = 'http://'+ip+':8088/apiColearning';
+var url = 'http://'+ip+':8088/apiColearning'; //Local
+//var url = 'https://enigmatic-sierra-01588.herokuapp.com/apiColearning' //Nube
 const key ="AIzaSyCdgRdU-qT9RXGnIBSyEUNVvCJtGhai1Ck"
 
 class ApiController extends Component {
@@ -195,6 +196,19 @@ postForoTags(id_foro, id_tag) {
         return false;
     }).catch((err) => console.log(err)).then((res) => {
         return true;
+    }).catch((err) => console.log(err));
+}
+postRespuestaForo(id_foro, id_usuario, titulo, respuesta, okRespuesta) {
+    let uri = url+'/crearRespuesta/foro/respuesta'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idForo: id_foro, idUsuario: id_usuario, titulo: titulo, respuesta: respuesta }),
+    }).then((res) => {
+        return false;
+    }).catch((err) => console.log(err)).then((res) => {
+        okRespuesta();
     }).catch((err) => console.log(err));
 }
 //********************** */
