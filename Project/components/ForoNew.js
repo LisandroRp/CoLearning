@@ -143,8 +143,8 @@ class EjerciciosNew extends Component {
     this.setState({ tag: value })
   };
   agregarTag(tag) {
-    if (this.tagElegido(tag.id_tag) || this.state.tags.length > 10) {
-      if(this.state.tags.length > 10){
+    if (this.tagElegido(tag.id_tag) || this.state.tags.length >= 10) {
+      if(this.state.tags.length >= 10){
         alert("Ha superado la cantidad maxima de tags.")
       }
       else{
@@ -188,7 +188,21 @@ class EjerciciosNew extends Component {
     }
 }
   crearForo(){
-    this.props.onPressVolver()
+    ApiController.postForo(this.props.id_usuario, this.state.titulo, this.state.pregunta, this.state.esAnonimo, this.state.descripcion, this.okForo.bind(this))
+  }
+  okForo(res){
+    var error = false
+    if(res){
+      for(var i = 0; i < this.state.tags.length; i++){
+        error = ApiController.postForoTags(res.insertId, this.state.tags[i].id_tag)
+      }
+      if(error == false){
+        this.props.onPressVolver()
+      }
+    }
+    else{
+      alert("Ocurrio un error al crear el foro")
+    }
   }
   render() {
 
@@ -499,7 +513,8 @@ checkBox: {
     height: hp(2.5),
     width: hp(2.5),
     backgroundColor: "white",
-    position: 'absolute'
+    position: 'absolute',
+    marginLeft: wp(1)
 },
 shadow: {
     shadowColor: '#00000045',

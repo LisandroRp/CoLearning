@@ -60,9 +60,9 @@ class UserCalendario extends Component {
 
     marginSize(index) {
         if (index != this.state.comentarios.length - 1) {
-            return { marginBottom: hp(3), marginTop: hp(3) }
+            return { marginBottom: hp(2), marginTop: hp(2) }
         } else {
-            return { marginBottom: hp(3) }
+            return { marginBottom: hp(2) }
         }
     }
     vote(i) {

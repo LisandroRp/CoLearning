@@ -1,17 +1,18 @@
 import React from 'react';
 import { GiftedChat } from 'react-native-gifted-chat'; // 0.3.0
 import { View, Image, StyleSheet, ActivityIndicator, FlatList, SafeAreaView, TouchableOpacity, StatusBar, Text, Dimensions } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import { SearchBar, ThemeConsumer } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 
 import fireBase from '../FirebaseList';
 import ExportadorObjetos from './exportadores/ExportadorObjetos'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import ApiController from '../controller/ApiController';
 
 var { height, width } = Dimensions.get('window');
 
-class Chat extends React.Component {
+class ChatList extends React.Component {
 
   constructor(props) {
     super(props);
@@ -22,29 +23,33 @@ class Chat extends React.Component {
 
   state = {
     chatList: [
-      { id_chat: 1, id_usuarioDestino: 1, nombre_usuario: "Pedro", apellido: "Gonzales" },
-      { id_chat: 2, id_usuarioDestino: 2, nombre_usuario: "Juan", apellido: "Gonzales" },
-      { id_chat: 3, id_usuarioDestino: 3, nombre_usuario: "Gabriel", apellido: "Gonzales" }
+      { id_chat: 1, id_usuario: 1, nombre_usuario: "Pedro", apellido: "Gonzales" },
+      { id_chat: 2, id_usuario: 2, nombre_usuario: "Juan", apellido: "Gonzales" },
+      { id_chat: 3, id_usuario: 3, nombre_usuario: "Gabriel", apellido: "Gonzales" }
     ],
     memory: [
-      { id_chat: 1, id_usuarioDestino: 1, nombre_usuario: "Pedro", apellido: "Gonzales" },
-      { id_chat: 2, id_usuarioDestino: 2, nombre_usuario: "Juan", apellido: "Gonzales" },
-      { id_chat: 3, id_usuarioDestino: 3, nombre_usuario: "Gabriel", apellido: "Gonzales" }
+      { id_chat: 1, id_usuario: 1, nombre_usuario: "Pedro", apellido: "Gonzales" },
+      { id_chat: 2, id_usuario: 2, nombre_usuario: "Juan", apellido: "Gonzales" },
+      { id_chat: 3, id_usuario: 3, nombre_usuario: "Gabriel", apellido: "Gonzales" }
     ],
-    id_user: 1,
+    id_user: this.props.id_usuario,
     value: "",
-    isLoading: false,
+    isLoading: true,
     flag: false
   };
 
   componentDidMount() {
+    ApiController.getChatsByIdUsuario(this.props.id_usuario, this.okChats.bind(this))
   }
-
+  okChats(chatList){
+    console.log(chatList)
+    this.setState({chatList: chatList, memory: chatList, isLoading: false})
+  }
 
   ///////////////////////////////////////
 
   marginSize(item) {
-    if (item.id_usuarioDestino != this.state.chatList[this.state.chatList.length - 1].id_usuarioDestino) {
+    if (item.id_usuario != this.state.chatList[this.state.chatList.length - 1].id_usuario) {
 
       return { marginTop: height * 0.015 }
     } else {
@@ -136,7 +141,7 @@ class Chat extends React.Component {
             data={this.state.chatList}
             initialNumToRender={50}
             keyExtractor={(item) => {
-              return item.id_usuarioDestino.toString();
+              return item.id_usuario.toString();
             }}
             renderItem={({ item }) => {
               // console.log("*************************")
@@ -144,12 +149,12 @@ class Chat extends React.Component {
               return (
                 <View>
                   {/* <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => {this.props.onPressGoChat(item.id_user, item.userDestino.id_user, item.userDestino.nombre), fireBase.refOff(this.state.id_user, this.state.chatList)}}> */}
-                  <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => { this.props.onPressGoChat(item.id_chat, this.state.id_user, item.nombre_usuario + " " + item.apellido) }}>
+                  <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => { this.props.onPressGoChat(item.id_chat, item.id_usuario, item.nombre_usuario + " " + item.apellido) }}>
                     <View style={{ flexDirection: "row" }} >
-                      {ExportadorObjetos.profileImage(item.id_usuarioDestino) ?
+                      {ExportadorObjetos.profileImage(item.id_usuario) ?
                         <View style={[styles.imageContainer, { borderWidth: 0 }]}>
                           <Image
-                            source={ExportadorObjetos.profileImage(item.id_usuarioDestino)}
+                            source={ExportadorObjetos.profileImage(item.id_usuario)}
                             style={[styles.image, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
                           />
                         </View>
@@ -275,4 +280,4 @@ const styles = StyleSheet.create({
     color: "#f66"
   }
 })
-export default withNavigation(Chat);
+export default withNavigation(ChatList);

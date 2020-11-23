@@ -243,13 +243,6 @@ class PerfilEdit extends React.Component {
     //************************ */
     //Contacto
     //************************ */
-    marginSize(index) {
-        if (index != this.state.nuevasMaterias.length - 1) {
-            return { marginBottom: hp(1.5), marginTop: hp(1.5) }
-        } else {
-            return { marginBottom: hp(1.5) }
-        }
-    }
     //************************ */
     //Donde Clases
     //************************ */
@@ -500,7 +493,7 @@ class PerfilEdit extends React.Component {
             return
         }
     }
-    marginSize(item) {
+    marginSizeMaterias(item) {
         if (this.state.materiasBase.length != 0) {
             if (item.id_materia != this.state.materiasBase[this.state.materiasBase.length - 1].id_materia) {
 
@@ -803,7 +796,7 @@ class PerfilEdit extends React.Component {
                             renderItem={({ item }) => {
                                 return (
                                     <View style={{ flex: 1 }}>
-                                        <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.guardarMaterias(this.state.nuevasMaterias, item)}>
+                                        <TouchableOpacity style={[this.marginSizeMaterias(item), styles.card]} onPress={() => this.guardarMaterias(this.state.nuevasMaterias, item)}>
                                             <Text>{item.nombre_materia}</Text>
                                         </TouchableOpacity>
                                     </View>

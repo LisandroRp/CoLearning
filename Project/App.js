@@ -341,11 +341,12 @@ class ChatListScreen extends React.Component {
     return (
       <ChatList
         onPressGoChat={this.pasarChat.bind(this)}
+        id_usuario={id_perfil}
       />
     );
   }
-  pasarChat( id_chat, id_userOrigen, nombre_chatDestino) {
-    this.props.navigation.navigate('ChatEspecifico', {id_userOrigen: id_userOrigen, id_chat: id_chat , nombre_chatDestino: nombre_chatDestino });
+  pasarChat( id_chat, id_userDestino, nombre_chatDestino) {
+    this.props.navigation.navigate('ChatEspecifico', {id_userDestino: id_userDestino, id_chat: id_chat , nombre_chatDestino: nombre_chatDestino });
   }
 }
 class ChatEspecificoScreen extends React.Component {
@@ -374,6 +375,7 @@ class ChatEspecificoScreen extends React.Component {
     return (
       <ChatEspecifico
         onPressGoChat={this.pasarChat.bind(this)}
+        id_usuario={id_perfil}
       />
     );
   }
@@ -443,8 +445,8 @@ class PerfilHomeScreen extends React.Component {
   buscarClase() {
     this.props.navigation.navigate('Profesores', {});
   }
-  goChat( id_chat, nombre_chatDestino) {
-    this.props.navigation.navigate('ChatEspecifico', {id_userOrigen: id_perfil, id_chat: id_chat , nombre_chatDestino: nombre_chatDestino });
+  goChat( id_chat, id_userDestino, nombre_chatDestino) {
+    this.props.navigation.navigate('ChatEspecifico', {id_userDestino: id_userDestino, id_chat: id_chat , nombre_chatDestino: nombre_chatDestino });
   }
 }
 class PerfilEditScreen extends React.Component {
@@ -1367,6 +1369,7 @@ class ForoNewScreen extends React.Component {
     return (
       <ForoNew
         onPressVolver={this.volver.bind(this)}
+        id_usuario={id_perfil}
       />
     );
 

@@ -171,6 +171,53 @@ getRespuestasForo(id_foro, okForo) {
             okForo(data);
         })
 }
+postForo(id_usuario, titulo, pregunta, esAnonimo, descripcion, okForo) {
+    let uri = url+'/crearForo/foro'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idUsuario: id_usuario, titulo: titulo, pregunta: pregunta, esAnonimo: esAnonimo, descripcion: descripcion}),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okForo(res);
+    }).catch((err) => console.log(err));
+}
+postForoTags(id_foro, id_tag) {
+    let uri = url+'/crearForoTag/foroTag'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idForo: id_foro, idTag: id_tag }),
+    }).then((res) => {
+        return false;
+    }).catch((err) => console.log(err)).then((res) => {
+        return true;
+    }).catch((err) => console.log(err));
+}
+//********************** */
+//Chats
+//********************** */
+    getChatsByIdUsuario(id_usuario, okChats){
+        let uri = url+'/chats/'+ id_usuario
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okChats(data);
+        })
+    }
+    getExisteChat(id_usuarioOrigen, id_usuarioDestino, okChat) {
+        let uri = url+'/chats/usuario/find?idUsuarioOrigen=' + id_usuarioOrigen + '&idUsuarioDestino=' + id_usuarioDestino
+        fetch(uri).then(res => {
+            return res.json()
+        }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+            then(data => {
+                okChat(data);
+            })
+    }
 //********************** */
 //Apis
 //********************** */

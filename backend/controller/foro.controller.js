@@ -1,5 +1,10 @@
 var dbConn = require('../config/db.config');
 
+function getDate(){
+  date = new Date
+  return (date.getDate().toString() + "/" + date.getMonth().toString() + "/" + date.getFullYear().toString())
+}
+
 let findForosByName = (req, res) =>
 {      
     console.log("llegue a leer Buscar foro por name",req.params.name);
@@ -59,7 +64,7 @@ let findTagsByIdForo = (req, res) =>
     console.log("llegue a leer Buscar foro por id",req.params.id);
     var idBusqueda =  req.params.id;
     console.log(idBusqueda);
-    var sql = ' SELECT f.id_foro,f.id_usuario_fk,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
+    var sql = ' SELECT f.id_foro,f.id_usuario_fk,f.nombre_foro,f.pregunta, f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
             + ' FROM foro f' 
             + ' Inner join foroportag ft on ft.id_foro_fk = f.id_foro'
             + ' Inner join tag t on ft.id_tag_fk = t.id_tag' 
@@ -78,7 +83,7 @@ let findAllByNames = (req, res) =>
     //var idBusqueda =  '%'+req.params.name+ '%';
     var idBusqueda = '%'.concat(req.params.name.concat('%'));
     console.log(idBusqueda);
-    var sql = ' SELECT u.nombre_usuario,u.apellido, f.id_foro,f.id_usuario_fk as id_usuario,f.nombre_foro,f.pregunta,f.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto,t.id_tag,t.nombre_tag'
+    var sql = ' SELECT u.nombre_usuario,u.apellido, f.id_foro,f.id_usuario_fk as id_usuario,f.nombre_foro,f.pregunta,u.esProfesor,f.respuestasCant,f.fecha_alta,f.resuelto, f.esAnonimo,t.id_tag,t.nombre_tag'
     + ' FROM foro f' 
     + ' left join foroportag ft on ft.id_foro_fk = f.id_foro'
     + ' left join tag t on ft.id_tag_fk = t.id_tag'
@@ -112,4 +117,28 @@ let findChatByIdOrigen = (req, res) =>
       });
 };
 
-module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen};
+let crearForo = (req, res) =>
+{      
+    console.log("El usuario que quiere crear un foro es: ",req.body.idUsuario);
+    var sql = 'INSERT INTO `foro`(`id_usuario_fk`, `nombre_foro`, `pregunta`, `fecha_alta`, `esAnonimo`, `descripcion`) ' +
+    'VALUES (?,?,?,'+ getDate() +',?,?)'
+    dbConn.query(sql,[req.body.idUsuario, req.body.titulo, req.body.pregunta, req.body.esAnonimo, req.body.descripcion], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+        res.send(rows);
+      });
+};
+
+let crearForoTags = (req, res) =>
+{      
+    console.log("idForo: ",req.body.idForo);
+    console.log("idTag: ",req.body.idTag);
+    var sql = 'INSERT INTO `foroportag`(`id_foro_fk`, `id_tag_fk`) ' +
+    'VALUES (?,?)'
+    dbConn.query(sql,[req.body.idForo, req.body.idTag], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+        res.send(rows);
+      });
+};
+module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen, crearForo, crearForoTags};

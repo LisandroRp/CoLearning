@@ -153,10 +153,13 @@ class Foros extends Component {
                                                     item.esAnonimo ?
                                                     <View/>
                                                     :
-                                                    <View style={[{ flexDirection: 'row', flexWrap: "wrap", flex: 1 }]}>
-                                                        <Text style={styles.cardSubTitulo}> por </Text>
-                                                        <Text style={styles.cardSubTituloUsuario} numberOfLines={1} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario} {item.apellido}</Text>
-                                                    </View>
+                                                    <Text style={styles.cardSubTitulo}> por </Text>
+                                                    }
+                                                    {
+                                                    item.esAnonimo ?
+                                                    <View/>
+                                                    :
+                                                    <Text style={styles.cardSubTituloUsuario} numberOfLines={1} onPress={() => this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario, item.esProfesor)}>{item.nombre_usuario} {item.apellido}</Text>
                                                     }
                                                 </View>
                                             </View>
@@ -238,7 +241,6 @@ const styles = StyleSheet.create({
         color: "black"
     },
     cardSubTituloUsuario: {
-        marginTop: 1,
         fontSize: wp(3.3),
         color: '#F28C0F',
         fontWeight: 'bold'

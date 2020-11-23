@@ -131,16 +131,16 @@ class PerfilHome extends React.Component {
         }
     }
 
-    okChat(id_chat) {
-        if (id_chat == null) {
+    okChat(chat) {
+        if (chat == null) {
             ApiController.crearChat(this.okChatCreado.bind(this))
         }
         else {
-            this.props.onPressGoChat(id_chat, this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
+            this.props.onPressGoChat(chat[0].id_chat, this.state.usuario.id_usuario, this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
         }
     }
     okChatCreado(id_chat) {
-        this.props.onPressGoChat(id_chat, this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
+        this.props.onPressGoChat(id_chat, this.state.usuario.id_usuario,  this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
     }
     render() {
         var aux = -1
@@ -340,7 +340,7 @@ class PerfilHome extends React.Component {
 
                     </ScrollView>
                     {this.props.navigation.getParam("id_usuario") ?
-                        <TouchableOpacity style={[styles.dm]} onPress={() => ApiController.getChatByIdUsuarioDestino(this.okChat.bind(this))}>
+                        <TouchableOpacity style={[styles.dm]} onPress={() => ApiController.getExisteChat(this.props.id_usuario, this.state.usuario.id_usuario, this.okChat.bind(this))}>
                             <FontAwesome name="comments" size={hp(3)} color={"white"} />
                         </TouchableOpacity>
                         :

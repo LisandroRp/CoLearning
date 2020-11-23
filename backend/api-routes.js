@@ -3,6 +3,7 @@ const router = express.Router()
 const usuarioController =   require('./controller/usuaurio.controller');
 const catalogoController =   require('./controller/catalogo.controller');
 const foroController =   require('./controller/foro.controller');
+const chatController =   require('./controller/chat.controller');
 
 //**************************Inicio Recursos Usuario **************************** */
 router.get('/users', (req, res) => {
@@ -191,9 +192,39 @@ router.get('/foros/foro', (req, res) => {
         foroController.findForosByIdAndName(req,res);  
 });
 
+//EndPoint para crear Foro
+router.post('/crearForo/foro',(req, res) =>{
+    console.log("Crear Foro: ", req.body);
+    if(!req.body.idUsuario || !req.body.titulo || !req.body.pregunta || !req.body.descripcion) 
+        res.status(409).send(false);
+    else
+        foroController.crearForo(req,res); 
+});
+
+//EndPoint para crear ForoTags
+router.post('/crearForoTag/foroTag',(req, res) =>{
+    console.log("Crear ForoTags: ", req.body);
+    if(!req.body.idForo || !req.body.idTag) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+        foroController.crearForoTags(req,res); 
+});
+
+
 //**************************/Fin Recursos Fro**************************** */
 
 //**************************/Inicio Recursos Chat**************************** */
+router.get('/chats/usuario/find', (req, res) => {
+    console.log("Consultar chat por id: ", req.query);
+    var idUsuarioOrigen = (req.query.idUsuarioOrigen =='undefined' || req.query.idUsuarioOrigen == '' || !req.query.idUsuarioOrigen);
+    var idUsuarioDestino = (req.query.idUsuarioDestino =='undefined' || req.query.idUsuarioDestino == '' || !req.query.idUsuarioDestino);
+    console.log(idUsuarioOrigen + " " + idUsuarioDestino)
+    if(idUsuarioOrigen && idUsuarioDestino) 
+        res.status(409).send({ msg: "No Se pudo ejecutar la busqueda." });
+    else
+        chatController.existeChat(req,res);  
+});
+
 router.get('/chats/:idUsuario', (req, res) => {
     console.log("Consultar Foros id o nombre: ", req.params);
     
@@ -201,7 +232,7 @@ router.get('/chats/:idUsuario', (req, res) => {
         && req.params.idUsuario =='undefined') || (req.params.idUsuario == '' && req.params.idUsuario == '')) 
         res.status(409).send({ msg: "El campo nombre o id del usuario es requerido." });
     else
-        foroController.findChatByIdOrigen(req,res);  
+        chatController.findChatByIdOrigen(req,res);  
 });
 
 //**************************/Fin Recursos chat**************************** */

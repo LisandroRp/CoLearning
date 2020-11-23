@@ -73,16 +73,16 @@ class Chat extends React.Component {
     return {
       nombre: "Lisandro",
       avatar: '',
-      id_user: this.props.navigation.getParam('id_userOrigen'),
-      _id: this.props.navigation.getParam('id_userOrigen'), // need for gifted-chat
+      id_user: this.props.id_usuario,
+      _id: this.props.id_usuario, // need for gifted-chat
     };
   }
   get userDestino() {
     return {
       nombre: this.props.navigation.getParam('nombre_chatDestino'),
       avatar: '',
-      id_user: 2,
-      _id: 2, // need for gifted-chat
+      id_user: this.props.navigation.getParam('id_userDestino'),
+      _id: this.props.navigation.getParam('id_userDestino'), // need for gifted-chat
     };
   }
 
