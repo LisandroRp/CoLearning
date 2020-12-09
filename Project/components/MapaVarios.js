@@ -160,30 +160,39 @@ class MapaVarios extends Component {
       /////////////////////
       <View style={[styles.cardContainer, styles.shadow]}>
         <View style={{ justifyContent: "center" }}>
-          
-            {ExportadorObjetos.profileImage(item.id_usuario) ?
-              <View style={[styles.cardImageContainer, {borderWidth: 0}]}>
+
+          {ExportadorObjetos.profileImage(item.id_usuario) ?
+            <View style={[styles.cardImageContainer, { borderWidth: 0 }]}>
               <Image
                 source={ExportadorObjetos.profileImage(item.id_usuario)}
                 style={[styles.cardImage, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
               />
-              </View>
-              :
-              <View style={[styles.cardImageContainer, {borderWidth: 1.5}]}>
+            </View>
+            :
+            <View style={[styles.cardImageContainer, { borderWidth: 1.5 }]}>
               <Text style={{ fontSize: hp(5), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
                 {item.nombre_usuario.slice(0, 1).toUpperCase()}
               </Text>
-              </View>
-            } 
+            </View>
+          }
         </View>
 
         <View style={{ flexDirection: 'column', flex: 1 }}>
           <Text style={styles.cardTitle} numberOfLines={2}>{item.nombre_usuario}{item.apellido ? ('\n' + item.apellido) : ""}</Text>
           <Text style={styles.cardDireccion}>{item.des_domicilio}</Text>
-          <View style={styles.cardMoneyContainer}>
-            <Text style={styles.cardSubTituloMoney}>A partir de: </Text>
-            <Text style={styles.cardSubTituloMoneyMonto}>{item.des_moneda}{item.monto}/h</Text>
-          </View>
+          {item.nombre_materia ?
+            <Text style={[styles.cardMateria]} numberOfLines={1}>{item.nombre_materia}</Text>
+            :
+            <View />
+          }
+          {item.des_moneda && item.monto ?
+            <View style={styles.cardMoneyContainer}>
+              <Text style={styles.cardSubTituloMoney}>A partir de: </Text>
+              <Text style={styles.cardSubTituloMoneyMonto}>{item.des_moneda}{item.monto}/h</Text>
+            </View>
+            :
+            <View />
+          }
           <View style={{ flexDirection: 'row', justifyContent: "center" }}>
             <TouchableOpacity style={styles.cardButton} onPress={() => this.props.onPressMap(item.id_usuario, item.nombre_usuario, item.apellido, item.des_domicilio, this.state.tipoMapa)}><Text style={styles.cardButtonText}>Calcular Recorrido</Text></TouchableOpacity>
             <TouchableOpacity style={{ justifyContent: 'center', flex: 1, paddingLeft: wp(4) }} onPress={() => this.props.onPressGoProfesor(item.id_usuario, item.nombre_usuario, item.des_domicilio, true)}>
@@ -262,8 +271,14 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: wp(3),
     textAlign: 'center',
-    marginBottom: hp(2),
     marginTop: hp(0.5)
+  },
+  cardMateria: {
+    color: 'black',
+    fontWeight: "bold",
+    fontSize: wp(3.3),
+    textAlign: 'center',
+    marginBottom: hp(2),
   },
   cardButton: {
     backgroundColor: '#F28C0F',

@@ -6,6 +6,7 @@ import { withNavigation } from 'react-navigation';
 
 import fireBase from '../FirebaseList';
 import ExportadorObjetos from './exportadores/ExportadorObjetos'
+import ExportadorLogos from './exportadores/ExportadorLogos'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ApiController from '../controller/ApiController';
@@ -41,9 +42,8 @@ class ChatList extends React.Component {
   componentDidMount() {
     ApiController.getChatsByIdUsuario(this.props.id_usuario, this.okChats.bind(this))
   }
-  okChats(chatList){
-    console.log(chatList)
-    this.setState({chatList: chatList, memory: chatList, isLoading: false})
+  okChats(chatList) {
+    this.setState({ chatList: chatList, memory: chatList, isLoading: false })
   }
 
   ///////////////////////////////////////
@@ -56,16 +56,16 @@ class ChatList extends React.Component {
       return { marginBottom: height * 0.015, marginTop: height * 0.015 }
     }
   }
-  whoSend(ultimoSender) {
-    if (ultimoSender === "") {
+  whoSend(id_usuarioUltimoMensaje, nombreChat) {
+    if (id_usuarioUltimoMensaje === "") {
       return ''
     }
     else {
-      if (ultimoSender.user.id_user == this.state.id_user) {
+      if (id_usuarioUltimoMensaje == this.state.id_user) {
         return "Yo: "
       }
       else {
-        return ultimoSender.user.nombre + ": "
+        return nombreChat + ": "
       }
     }
   }
@@ -119,70 +119,84 @@ class ChatList extends React.Component {
       );
     }
     else {
-      return (
-        <SafeAreaView style={styles.container}>
-          <View style={{ backgroundColor: '#F28C0F' }}>
-            <SearchBar
-              placeholder="Buscar..."
-              platform='ios'
-              onChangeText={value => this.searchChat(value)}
-              value={this.state.value}
-              inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5) }}
-              placeholderTextColor='rgba(0, 0, 0, 0.3)'
-              cancelButtonProps={{ buttonTextStyle: { color: 'white', paddingTop: 0 } }}
-              containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3) }}
-              buttonStyle={{}}
-              searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
-            />
+      if (this.state.chatList.length == 0) {
+        return (
+          <View style={styles.noComentariosContainer}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
+              <Text style={[styles.noComentariosMensaje, { fontFamily: "mainFont" }]}>No tienes ningun chat activo</Text>
+            </View>
           </View>
-          <FlatList
-            style={styles.contentList}
-            columnWrapperStyle={styles.listContainer}
-            data={this.state.chatList}
-            initialNumToRender={50}
-            keyExtractor={(item) => {
-              return item.id_usuario.toString();
-            }}
-            renderItem={({ item }) => {
-              // console.log("*************************")
-              // console.log(item)
-              return (
-                <View>
-                  {/* <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => {this.props.onPressGoChat(item.id_user, item.userDestino.id_user, item.userDestino.nombre), fireBase.refOff(this.state.id_user, this.state.chatList)}}> */}
-                  <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => { this.props.onPressGoChat(item.id_chat, item.id_usuario, item.nombre_usuario + " " + item.apellido) }}>
-                    <View style={{ flexDirection: "row" }} >
-                      {ExportadorObjetos.profileImage(item.id_usuario) ?
-                        <View style={[styles.imageContainer, { borderWidth: 0 }]}>
-                          <Image
-                            source={ExportadorObjetos.profileImage(item.id_usuario)}
-                            style={[styles.image, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
-                          />
-                        </View>
-                        :
-                        <View style={[styles.imageContainer, { borderWidth: 2 }]}>
-                          <Text style={{ fontSize: wp(7), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
-                            {item.nombre_usuario.slice(0, 1).toUpperCase()}{item.apellido.slice(0, 1).toUpperCase()}
-                          </Text>
-                        </View>
-                      }
-                      <View style={styles.cardContent}>
-                        <Text style={styles.cardTitulo}>{item.nombre_usuario + " " + item.apellido}</Text>
-                        <View style={styles.cardMessageContainer}>
-                          <View style={{ flexDirection: "row" }} >
-                            <Text style={styles.cardSubTituloMessage}>Yo: </Text>
-                            <Text style={styles.cardSubTituloMessage}>hola</Text>
+        )
+      }
+      else {
+        return (
+          <SafeAreaView style={styles.container}>
+            <View style={{ backgroundColor: '#F28C0F' }}>
+              <SearchBar
+                placeholder="Buscar..."
+                platform='ios'
+                onChangeText={value => this.searchChat(value)}
+                value={this.state.value}
+                inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5) }}
+                placeholderTextColor='rgba(0, 0, 0, 0.3)'
+                cancelButtonProps={{ buttonTextStyle: { color: 'white', paddingTop: 0 } }}
+                containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3) }}
+                buttonStyle={{}}
+                searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
+              />
+            </View>
+            <FlatList
+              style={styles.contentList}
+              columnWrapperStyle={styles.listContainer}
+              data={this.state.chatList}
+              initialNumToRender={50}
+              keyExtractor={(item) => {
+                return item.id_usuario.toString();
+              }}
+              renderItem={({ item }) => {
+                // console.log("*************************")
+                // console.log(item)
+                return (
+                  <View>
+                    {/* <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => {this.props.onPressGoChat(item.id_user, item.userDestino.id_user, item.userDestino.nombre), fireBase.refOff(this.state.id_user, this.state.chatList)}}> */}
+                    <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => { this.props.onPressGoChat(item.id_chat, item.id_usuario, item.nombre_usuario + " " + item.apellido) }}>
+                      <View style={{ flexDirection: "row" }} >
+                        {ExportadorObjetos.profileImage(item.id_usuario) ?
+                          <TouchableOpacity style={[styles.imageContainer, { borderWidth: 0 }]} onPress={() => { this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario + " " + item.apellido, item.esProfesor) }}>
+                            <Image
+                              source={ExportadorObjetos.profileImage(item.id_usuario)}
+                              style={[styles.image, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
+                            />
+                          </TouchableOpacity>
+                          :
+                          <TouchableOpacity style={[styles.imageContainer, { borderWidth: 2 }]} onPress={() => { this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario + " " + item.apellido, item.esProfesor) }}>
+                            <Text style={{ fontSize: wp(7), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
+                              {item.nombre_usuario.slice(0, 1).toUpperCase()}{item.apellido.slice(0, 1).toUpperCase()}
+                            </Text>
+                          </TouchableOpacity>
+                        }
+                        <View style={styles.cardContent}>
+                          <TouchableOpacity onPress={() => { this.props.onPressGoUsuario(item.id_usuario, item.nombre_usuario + " " + item.apellido, item.esProfesor) }}>
+                            <Text style={styles.cardTitulo}>{item.nombre_usuario + " " + item.apellido}</Text>
+                          </TouchableOpacity>
+                          <View style={styles.cardMessageContainer}>
+                            <View style={{ flexDirection: "row" }} >
+                              <Text style={styles.cardSubTituloMessage}>{this.whoSend(item.id_usuarioUltimoMensaje, item.nombre_usuario)}</Text>
+                              <Text style={styles.cardSubTituloMessage}>{item.ultimoMensaje}</Text>
+                            </View>
+                            <Text style={styles.cardSubTituloHours}>{item.horaUltimoMensaje}</Text>
                           </View>
-                          <Text style={styles.cardSubTituloHours}>23:25</Text>
                         </View>
                       </View>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              )
-            }
-            } />
-        </SafeAreaView>
-      );
+                    </TouchableOpacity>
+                  </View>
+                )
+              }
+              } />
+          </SafeAreaView>
+        );
+      }
     }
   }
 }
@@ -195,6 +209,22 @@ const styles = StyleSheet.create({
   StatusBar: {
     height: hp(3),
     backgroundColor: "black"
+  },
+  noComentariosContainer: {
+    backgroundColor: "#FFF7EE",
+    justifyContent: "center",
+    flex: 1
+  },
+  fondoImage: {
+    width: wp(80),
+    height: wp(30),
+    resizeMode: 'contain',
+  },
+  noComentariosMensaje: {
+    marginHorizontal: wp(5),
+    textAlign: "center",
+    fontSize: wp(8),
+    color: '#F28C0F'
   },
   // FlatList
 

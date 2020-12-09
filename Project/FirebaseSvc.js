@@ -156,9 +156,14 @@ class FirebaseSvc {
   };
 
   refOn = (id_chat, callback) => {
+    try{
       this.refChat(id_chat)
       .limitToLast(20)
-      .on('child_added', snapshot => callback(this.parse(snapshot)));
+      .on('child_added', snapshot => callback(this.parse(snapshot))).catch((err) => (console.log(err)))
+    }
+    catch{
+      callback([])
+    }
   }
 
   get timestamp() {

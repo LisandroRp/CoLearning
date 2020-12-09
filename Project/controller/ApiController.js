@@ -30,6 +30,30 @@ getUsuarioById(id_usuario, okUsuario) {
             okUsuario(data[0]);
         })
 }
+updateChangePassword(email, oldPassword, newPassword, okChange) {
+    let uri = url+'/users/changePassword'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, newPassword: newPassword, oldPassword: oldPassword }),
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+    then(data => {
+        okChange();
+    })
+}
+postUser(nombre, apellido, email, password, okCreate) {
+    let uri = url+'/users/postUser'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: nombre, apellido: apellido, email: email, password: password }),
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err), okCreate(false)])).
+    then(data => {
+        okCreate(true);
+    })
+}
 getHorarios(usuario, okHorarios) {
     let uri = url+'/users/profesor/' + usuario.id_usuario + '/horarios'
     fetch(uri).then(res => {
@@ -231,6 +255,32 @@ postRespuestaForo(id_foro, id_usuario, titulo, respuesta, okRespuesta) {
             then(data => {
                 okChat(data);
             })
+    }
+    postCrearChat(id_usuarioOrigen, id_usuarioDestino, okChatCreado) {
+        let uri = url+'/chats/crearChat'
+        fetch(uri, {
+            method: 'POST',
+            mode: "cors",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idUsuarioOrigen: id_usuarioOrigen, idUsuarioDestino: id_usuarioDestino }),
+        }).then((res) => {
+            return res.json();
+        }).catch((err) => console.log(err)).then((res) => {
+            okChatCreado(res);
+        }).catch((err) => console.log(err));
+    }
+    postUltimoMensaje(id_chat, id_usuarioOrigen, mensaje) {
+        let uri = url+'/chats/ultimoMensaje'
+        fetch(uri, {
+            method: 'POST',
+            mode: "cors",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idChat: id_chat, idUsuarioOrigen: id_usuarioOrigen, mensaje: mensaje }),
+        }).then((res) => {
+            return res.json();
+        }).catch((err) => console.log(err)).then((res) => {
+            return res.json();
+        }).catch((err) => console.log(err));
     }
 //********************** */
 //Apis

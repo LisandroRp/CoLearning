@@ -28,16 +28,24 @@ class LogIn extends Component {
     }
   }
 
-  checkChange() {
-    //ApiController.getUsuario(this.checkUsuario.bind(this), this.state.username)
-    this.props.onPress()
+changePassword(){
+  ApiController.updateChangePassword(this.state.mail, this.state.oldPassword, this.state.newPassword, this.okChange.bind(this))
+}
+checkChange() {
+    ApiController.getUsuarioByMail(this.state.mail, this.checkUsuario.bind(this))
 }
 
 checkUsuario(data) {
-    if (data.password == this.state.oldPassword && this.state.newPassword != null) {
-        ApiController.changePassword(this.state.mail, this.state.newPassword, this.okChange.bind(this));
+  console.log(data)
+    if (data != undefined && data.password == this.state.oldPassword && this.state.newPassword != null) {
+      ApiController.updateChangePassword(this.state.mail, this.state.oldPassword, this.state.newPassword, this.okChange.bind(this))
     } else {
-        alert("Volver a intentar");
+      if(data == undefined){
+        alert("No existe un usuario con el email " + this.state.mail );
+      }
+        else{
+          alert("La contraseña antigua es incorrecta");
+        }
     }
 }
 
@@ -70,11 +78,11 @@ okChange() {
 
           <View style={styles.inputContainer}>
             <TextInput style={styles.inputs}
-              value={this.state.password}
-              placeholder="Contraseña Anterior"
+              value={this.state.oldPassword}
+              placeholder="Contraseña Antigua"
               secureTextEntry={true}
               underlineColorAndroid='transparent'
-              onChangeText={(text) => this.setState({ password: text })}
+              onChangeText={(text) => this.setState({ oldPassword: text })}
             />
             <View style={styles.logoSocialMedia}>
               <Feather style={[{ textAlign: "center" }]} name={"lock"} size={hp(2.5)} color='#F28C0F'></Feather>
@@ -82,11 +90,11 @@ okChange() {
           </View>
           <View style={styles.inputContainer}>
             <TextInput style={styles.inputs}
-              value={this.state.password}
+              value={this.state.newPassword}
               placeholder="Contraseña Nueva"
               secureTextEntry={true}
               underlineColorAndroid='transparent'
-              onChangeText={(text) => this.setState({ password: text })}
+              onChangeText={(text) => this.setState({ newPassword: text })}
             />
             <View style={styles.logoSocialMedia}>
               <Feather style={[{ textAlign: "center" }]} name={"unlock"} size={hp(2.5)} color='#F28C0F'></Feather>
@@ -99,7 +107,7 @@ okChange() {
             <Text style={styles.loginText}>Cancelar</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.buttonContainerLogin]}
-            onPress={() => this.okChange()}>
+            onPress={() => this.checkChange()}>
             <Text style={styles.loginText}>Cambiar</Text>
           </TouchableOpacity>
           </View>

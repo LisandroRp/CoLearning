@@ -102,6 +102,24 @@ router.post('/users/profesor', (req, res) => {
     }
 });
 
+router.post('/users/changePassword', (req, res) => {
+    console.log("Cambiar contraseña : ", req.body);
+    if(!req.body.email || !req.body.oldPassword || !req.body.newPassword) 
+        res.status(409).send({ msg: "NO se puede cambiar la contraseña." });
+    else{
+        usuarioController.changeUserPassword(req,res);
+    }
+});
+
+router.post('/users/postUser', (req, res) => {
+    console.log("Crear Usuario : ", req.body);
+    if(!req.body.email || !req.body.nombre || !req.body.apellido || !req.body.email) 
+        res.status(409).send({ msg: "NO se pudo crear el usuario." });
+    else{
+        usuarioController.postUser(req,res);
+    }
+});
+
 //**************************/Fin Recursos Usuario**************************** */
 
 //**************************Inicio Recursos catalogo**************************** */
@@ -249,6 +267,21 @@ router.get('/chats/:idUsuario', (req, res) => {
         chatController.findChatByIdOrigen(req,res);  
 });
 
+router.post('/chats/crearChat',(req, res) =>{
+    console.log("Crear Chat: ", req.body);
+    if(!req.body.idUsuarioOrigen || !req.body.idUsuarioDestino) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+        chatController.crearChat(req,res); 
+});
+
+router.post('/chats/ultimoMensaje',(req, res) =>{
+    console.log("Update ultimoMensaje: ", req.body);
+    if(!req.body.idChat || !req.body.idUsuarioOrigen || !req.body.mensaje) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+        chatController.updateUltimoMensaje(req,res); 
+});
 //**************************/Fin Recursos chat**************************** */
 
 module.exports = router

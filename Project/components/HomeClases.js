@@ -478,7 +478,7 @@ class HomeClases extends React.Component {
               <View style={[{ padding: 10, flexShrink: 1 }]} ref={(view) => (this.viewImage = view)}>
 
                 <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.imageTitulo} />
-                <Text style={{ textAlign: 'left', fontWeight: "bold", fontFamily: "mainFont", fontSize: wp(5.8), flexShrink: 1 }}> Aquí podras encontrar cuales son los profesores más populares de la aplicación y los mas cercanos a tu zona actual. Podras encontrar su puntuacion, las clases que enseña y de que manera dicta las clases {'\n'}{'\n'} CoLearning te recomienda una gran variedad de profesores a partir de las distintas clases que notamos de tu interés a partir de los profesores que te comuniques.</Text>
+                <Text style={{ textAlign: 'left', fontWeight: "bold", fontFamily: "mainFont", fontSize: wp(5.8), flexShrink: 1 }}> Aquí podrás encontrar los mejores profesores, los más populares, la forma en que dictan sus clases, su valoración y la cercanía con tu zona. {'\n'}{'\n'} CoLearning te recomienda gran cantidad y variedad de opciones, según tu interés, a partir de tus búsquedas.</Text>
 
               </View>
             )

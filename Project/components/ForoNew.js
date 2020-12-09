@@ -63,8 +63,8 @@ class EjerciciosNew extends Component {
     this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
     this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
   }
-  okTags(tags){
-    this.setState({tagsBase: tags, memory: tags, isLoading: false})
+  okTags(tags) {
+    this.setState({ tagsBase: tags, memory: tags, isLoading: false })
   }
   loadFont = async () => {
     await Font.loadAsync({
@@ -124,12 +124,12 @@ class EjerciciosNew extends Component {
     }
   }
   marginSize(item) {
-    if(this.state.tagsBase.length != 0){
+    if (this.state.tagsBase.length != 0) {
       if (item.id_tag != this.state.tagsBase[this.state.tagsBase.length - 1].id_tag) {
 
         return { marginTop: hp(1.5) }
       } else {
-        return { marginBottom: hp(1.5), marginTop:  hp(1.5) }
+        return { marginBottom: hp(1.5), marginTop: hp(1.5) }
       }
     }
   }
@@ -156,10 +156,10 @@ class EjerciciosNew extends Component {
   };
   agregarTag(tag) {
     if (this.tagElegido(tag.id_tag) || this.state.tags.length >= 10) {
-      if(this.state.tags.length >= 10){
+      if (this.state.tags.length >= 10) {
         alert("Ha superado la cantidad maxima de tags.")
       }
-      else{
+      else {
         alert("El tag ya ha sido seleccionado previamente.")
       }
     } else {
@@ -195,34 +195,34 @@ class EjerciciosNew extends Component {
     this.setState({ tags: tagsElegidosNew })
   }
   isAnonimo() {
-    if(this.state.esAnonimo){
-      return <TouchableOpacity onPress={() => this.setState({esAnonimo: false})}><FontAwesome name={"check"} size={hp(4)} color="#5EC43A" /></TouchableOpacity>
+    if (this.state.esAnonimo) {
+      return <TouchableOpacity onPress={() => this.setState({ esAnonimo: false })}><FontAwesome name={"check"} size={hp(4)} color="#5EC43A" /></TouchableOpacity>
     }
-}
-  crearForo(){
-    if(!this.state.titulo.trim() || !this.state.pregunta.trim()){
+  }
+  crearForo() {
+    if (!this.state.titulo.trim() || !this.state.pregunta.trim()) {
       alert("Debe completar el titulo y la pregunta para crear un foro")
     }
-    else{
+    else {
       ApiController.postForo(this.props.id_usuario, this.state.titulo, this.state.pregunta, this.state.esAnonimo, this.state.descripcion, this.okForo.bind(this))
     }
   }
-  okForo(res){
-    if(res){
-      try{
+  okForo(res) {
+    if (res) {
+      try {
         this.subitTags(res.insertId)
       }
-      catch{
+      catch {
         alert("Ocurrio un error al relacionar los tags")
       }
-      this.setState({modalVisible: true})
+      this.setState({ modalVisible: true })
     }
-    else{
+    else {
       alert("Ocurrio un error al crear el foro")
     }
   }
-  subitTags(id_foro){
-    for(var i = 0; i < this.state.tags.length; i++){
+  subitTags(id_foro) {
+    for (var i = 0; i < this.state.tags.length; i++) {
       ApiController.postForoTags(id_foro, this.state.tags[i].id_tag)
     }
   }
@@ -231,7 +231,7 @@ class EjerciciosNew extends Component {
     if (this.state.isLoading || this.state.isLoadingFont) {
       return (
         <View style={styles.container}>
-          <ActivityIndicator size="large" color="#F28C0F" style={{flex: 1}}></ActivityIndicator>
+          <ActivityIndicator size="large" color="#F28C0F" style={{ flex: 1 }}></ActivityIndicator>
         </View>
       );
     } else {
@@ -278,32 +278,32 @@ class EjerciciosNew extends Component {
                   <Text style={styles.screenButtonTagText}>
                     Tags
                       </Text>
-                  <View style={{ backgroundColor: 'white', borderRadius: 10, padding: 5, marginLeft:wp(3) }}>
+                  <View style={{ backgroundColor: 'white', borderRadius: 10, padding: 5, marginLeft: wp(3) }}>
                     <Text style={[styles.screenButtonTagNumber]}>
                       {this.state.tags.length}/10
                       </Text>
                   </View>
                 </TouchableOpacity>
-                <View style={{ flexDirection: "row", justifyContent: 'center', flex: 0.5}}>
-                <View style={{justifyContent: 'center', alignItems: "flex-end", flex: 1.1, marginRight: wp(3)}}>
-                <Text style={{fontSize: wp(4)}}>Anónimo: </Text>
-                </View>
-                <View style={[styles.checkBoxContainer]}>
-                    <TouchableOpacity style={[styles.checkBox, styles.shadow]} onPress={() => this.setState({esAnonimo: true})} />
+                <View style={{ flexDirection: "row", justifyContent: 'center', flex: 0.5 }}>
+                  <View style={{ justifyContent: 'center', alignItems: "flex-end", flex: 1.1, marginRight: wp(3) }}>
+                    <Text style={{ fontSize: wp(4) }}>Anónimo: </Text>
+                  </View>
+                  <View style={[styles.checkBoxContainer]}>
+                    <TouchableOpacity style={[styles.checkBox, styles.shadow]} onPress={() => this.setState({ esAnonimo: true })} />
                     {this.isAnonimo()}
+                  </View>
                 </View>
-                </View>
-                <View style={{ flexDirection: "row", marginTop: hp(5), flex: 1}}>
-                <TouchableOpacity style={styles.button} onPress={() => { this.props.onPressVolver() }}>
-                            <Text style={styles.screenButtonText}>
-                                Cancelar
+                <View style={{ flexDirection: "row", marginTop: hp(5), flex: 1 }}>
+                  <TouchableOpacity style={styles.button} onPress={() => { this.props.onPressVolver() }}>
+                    <Text style={styles.screenButtonText}>
+                      Cancelar
                             </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => { this.crearForo() }}>
-                            <Text style={styles.screenButtonText}>
-                                Crear
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button} onPress={() => { this.crearForo() }}>
+                    <Text style={styles.screenButtonText}>
+                      Crear
                             </Text>
-                        </TouchableOpacity>
+                  </TouchableOpacity>
                 </View>
 
               </View>
@@ -312,26 +312,26 @@ class EjerciciosNew extends Component {
           </KeyboardAvoidingView>
           <Animated.View style={[styles.fullScreenAnimate, this.animationStyle(), { opacity: this.state.startValue }]}>
             <ScrollView>
-            <FlatList
-              style={{ paddingTop: hp(14), paddingBottom: hp(14), flex: 1 }}
-              columnWrapperStyle={styles.listContainer}
-              data={this.state.tagsBase}
-              numColumns={2}
-              initialNumToRender={50}
-              keyExtractor={(item) => {
-                return item.id_tag.toString();
-              }}
-              renderItem={({ item }) => {
-                return (
-                  <View style={{ flex: 1 }}>
-                    <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.agregarTag(item)}>
-                      <Text>{item.nombre_tag}</Text>
-                    </TouchableOpacity>
-                  </View>
-                )
-              }
-              } />
-              </ScrollView>
+              <FlatList
+                style={{ paddingTop: hp(14), paddingBottom: hp(14), flex: 1 }}
+                columnWrapperStyle={styles.listContainer}
+                data={this.state.tagsBase}
+                numColumns={2}
+                initialNumToRender={50}
+                keyExtractor={(item) => {
+                  return item.id_tag.toString();
+                }}
+                renderItem={({ item }) => {
+                  return (
+                    <View style={{ flex: 1 }}>
+                      <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.agregarTag(item)}>
+                        <Text>{item.nombre_tag}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )
+                }
+                } />
+            </ScrollView>
           </Animated.View>
           <Animated.View style={[styles.headerAnimatedContainer, { transform: [{ translateY: this.state.startValueSearchBar }] }]}>
             <View style={[styles.searchBar]}>
@@ -364,7 +364,7 @@ class EjerciciosNew extends Component {
                   <View style={{ flexDirection: "row" }}>
                     <View style={[styles.headerCard]} onPress={() => this.props.onPressGo()}>
                       <TouchableOpacity onPress={() => this.quitarTag(item.id_tag)}>
-                        <Entypo style={{marginRight: wp(1)}} name={"circle-with-cross"} size={hp(3)} color="#F28C0F"></Entypo>
+                        <Entypo style={{ marginRight: wp(1) }} name={"circle-with-cross"} size={hp(3)} color="#F28C0F"></Entypo>
                       </TouchableOpacity>
                       <Text style={{ fontSize: wp(3.3) }}>{item.nombre_tag}</Text>
                     </View>
@@ -379,20 +379,20 @@ class EjerciciosNew extends Component {
             visible={this.state.modalVisible}
             transparent={true}
             onRequestClose={() => this.setState({ modalVisible: false })}  >
-<TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={Keyboard.dismiss}>
-            <View style={[styles.modal, styles.shadow]}>
-              <View style={{flex: 0.60, justifyContent: "center", flexDirection: 'column'}}>
-                <Text style={styles.textModal}>Se ha creado exitosamente el foro</Text>
-                <Text style={styles.textModal}>{this.state.titulo}</Text>
-              </View>
-              <View style={styles.modal2}>
+            <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={Keyboard.dismiss}>
+              <View style={[styles.modal, styles.shadow]}>
+                <View style={{ flex: 0.60, justifyContent: "center", flexDirection: 'column' }}>
+                  <Text style={styles.textModal}>Se ha creado exitosamente el foro</Text>
+                  <Text style={styles.textModal}>{this.state.titulo}</Text>
+                </View>
+                <View style={styles.modal2}>
 
-                <TouchableOpacity onPress={() => {this.setState({ modalVisible: false }), this.props.onPressVolver()}} style={styles.modalExisteButtonAceptar}>
-                  <Text style={styles.textButton}>Aceptar</Text>
+                  <TouchableOpacity onPress={() => { this.setState({ modalVisible: false }), this.props.onPressVolver() }} style={styles.modalExisteButtonAceptar}>
+                    <Text style={styles.textButton}>Aceptar</Text>
 
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
             </TouchableOpacity>
           </Modal>
         </View>
@@ -518,17 +518,17 @@ const styles = StyleSheet.create({
     margin: wp(2.2),
     borderBottomColor: '#FFFFFF',
   },
-  
-  shadowContainer:{
+
+  shadowContainer: {
     shadowColor: "#808080",
-  shadowOffset: {
-    width: 0,
-    height: 2,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   },
-  shadowOpacity: 0.25,
-  shadowRadius: 3.84,
-  elevation: 5
-},
   //Botones
   tagButton: {
     backgroundColor: "#F28C0F",
@@ -551,23 +551,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: 'flex-start',
     flex: 0.8
-},
-checkBox: {
+  },
+  checkBox: {
     height: hp(2.5),
     width: hp(2.5),
     backgroundColor: "white",
     position: 'absolute',
     marginLeft: wp(1)
-},
-shadow: {
+  },
+  shadow: {
     shadowColor: '#00000045',
     shadowOffset: {
-        width: 0.05,
-        height: 0.55,
+      width: 0.05,
+      height: 0.55,
     },
     shadowOpacity: 2,
     elevation: 29,
-},
+  },
   button: {
     flex: 1,
     backgroundColor: '#F28C0F',
@@ -578,11 +578,11 @@ shadow: {
     marginHorizontal: wp(3),
     alignSelf: 'flex-start',
     opacity: .95,
-},
-screenButtonText: {
-  color: 'white',
-  fontSize: wp(4.4)
-},
+  },
+  screenButtonText: {
+    color: 'white',
+    fontSize: wp(4.4)
+  },
   // FlatList
   card: {
     shadowColor: '#00000045',

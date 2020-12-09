@@ -65,9 +65,9 @@ class Foros extends Component {
 
     marginSize(item) {
         if (item.id_foro != this.state.foros[this.state.foros.length - 1].id_foro) {
-            return { marginTop: height * 0.028 }
+            return { marginTop: hp(2) }
         } else {
-            return { marginBottom: height * 0.028, marginTop: height * 0.028 }
+            return { marginBottom: hp(2), marginTop: hp(2) }
         }
     }
 
@@ -87,7 +87,7 @@ class Foros extends Component {
 
             return forosLowercase.indexOf(searchTermLowercase) > -1;
         });
-        this.setState({ profesores: filterDeForos });
+        this.setState({ foros: filterDeForos });
         this.setState({ value })
     };
 

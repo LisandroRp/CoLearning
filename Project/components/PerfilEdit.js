@@ -39,7 +39,7 @@ class PerfilEdit extends React.Component {
             nuevasMaterias: [],
             nuevasDondeClases: [],
             nuevasTipoClases: [],
-            nuevaMoneda: 1,
+            nuevaMoneda: 0,
             nuevoMonto: '100',
             nuevaMoney: {},
 
@@ -107,7 +107,8 @@ class PerfilEdit extends React.Component {
             nuevasTipoClases: usuario.tipoClases,
             nuevasDondeClases: usuario.dondeClases,
             nuevaMoney: usuario.money,
-            nuevaMoneda: usuario.money.id_moneda,
+            nuevoMonto: (usuario.money.monto == null ? 0 : usuario.money.monto),
+            nuevaMoneda: (usuario.money.id_moneda == null ? 0 : usuario.money.id_moneda),
             nuevoNombre: usuario.nombre_usuario,
             nuevoApellido: usuario.apellido,
             nuevoDomicilio: usuario.domicilio,
@@ -497,7 +498,7 @@ class PerfilEdit extends React.Component {
         if (this.state.materiasBase.length != 0) {
             if (item.id_materia != this.state.materiasBase[this.state.materiasBase.length - 1].id_materia) {
 
-                return { marginTop: hp(1) }
+                return { marginTop: hp(2) }
             } else {
                 return { marginBottom: hp(2), marginTop: hp(2) }
             }
@@ -517,7 +518,8 @@ class PerfilEdit extends React.Component {
         this.setState({ materia: value })
     };
     addNewMoney() {
-        if(this.state.nuevaMoneda != 0){
+        console.log(this.state.nuevaMoneda)
+        if(this.state.nuevaMoneda != 0 && this.state.nuevaMoneda != null){
         var nuevaMoneda = this.buscarMoneda()
         var newMoney = {
             id_moneda: nuevaMoneda.id_moneda,

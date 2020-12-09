@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, YellowBox} from 'react-native';
+import { StyleSheet, Text, View, Image, YellowBox, TouchableOpacity} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from '@expo/vector-icons/Ionicons';
-import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import {
   createSwitchNavigator,
   createAppContainer
@@ -241,114 +241,6 @@ class MapaUnicoScreen extends React.Component {
 //******************************************* */
 //******************CHAT******************** */
 //******************************************* */
-class LogInScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Chats",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: 'white',
-    };
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
-  }
-  render() {
-    return (
-      <LogIn
-      onPressLogin={this.pasarChat.bind(this)}
-      onPressCreate={this.createAccount.bind(this)}
-      />
-    );
-  }
-  pasarChat(name, email, avatar) {
-    this.props.navigation.navigate('ChatList', { name: name, email: email, avatar: avatar });
-  }
-  createAccount(){
-    this.props.navigation.navigate('CreateAccount')
-  }
-}
-class CreateAccountScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Chats",
-      headerStyle: {
-        backgroundColor: '#6BA8FF',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: '#A01A50',
-    };
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
-  }
-  render() {
-    return (
-      <CreateAccount
-      onPressLogin={this.pasarChat.bind(this)}
-      onPressCreate={this.createAccount.bind(this)}
-      />
-    );
-  }
-  pasarChat(name, email, avatar) {
-    this.props.navigation.navigate('ChatList', { name: name, email: email, avatar: avatar });
-  }
-  createAccount(){
-    this.props.navigation.navigate('CreateAccount')
-  }
-}
-class ChatListScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: "Chats",
-      headerStyle: {
-        backgroundColor: '#F28C0F',
-        height: hp(10),
-        borderBottomWidth: 0
-      },
-      headerTitleStyle: {
-        fontSize: hp(2),
-      }, 
-      headerTintColor: 'white',
-    };
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-    }
-  }
-  render() {
-    return (
-      <ChatList
-        onPressGoChat={this.pasarChat.bind(this)}
-        id_usuario={id_perfil}
-      />
-    );
-  }
-  pasarChat( id_chat, id_userDestino, nombre_chatDestino) {
-    this.props.navigation.navigate('ChatEspecifico', {id_userDestino: id_userDestino, id_chat: id_chat , nombre_chatDestino: nombre_chatDestino });
-  }
-}
 class ChatEspecificoScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
@@ -383,32 +275,6 @@ class ChatEspecificoScreen extends React.Component {
     this.props.navigation.navigate('cursoEspecifico', { id_curso: id_curso });
   }
 }
-const ChatListStackNavigator = createStackNavigator(
-  {
-    ChatListScreen: {
-      screen: ChatListScreen,
-      navigationOptions: ({ navigation }) => {
-        return {
-          // headerLeft: () => <SomeElement />
-          headerLeft: () =>
-            <Icon
-              style={{ paddingLeft: wp(5), color: 'white' }}
-              onPress={() => navigation.openDrawer()}
-              name="md-menu"
-              size={hp(3.3)}
-            />
-          ,
-        }
-      }     
-    },
-    CreateAccount: CreateAccountScreen,
-    ChatEspecifico: ChatEspecificoScreen
-  },
-  {
-    initialRouteName: 'ChatListScreen',
-  }
-);
-
 //******************************************* */
 //******************PERFIL******************* */
 //******************************************* */
@@ -607,7 +473,7 @@ const PerfilTabNavigatorProfesor = createBottomTabNavigator({
         fontSize: hp(2),
       }, 
       headerRight: () =>
-      ( !eraMapa ?
+      ( (!eraMapa  && navigation.getParam("id_usuario") != id_perfil) ?
         <View style={{ flexDirection: 'row' }}>
           <FontAwesome name="map-marker" style={{ paddingRight: wp(5), color: 'white' }}
             onPress={() => navigation.navigate("mapaUnico", {id: navigation.getParam('id_usuario'), nombre: navigation.getParam('nombre_profesor'), apellido: navigation.getParam('apellido'), domicilio: navigation.getParam('domicilio'), tipo: 'Unico', mapa: false })}
@@ -796,7 +662,8 @@ const PerfilUsuarioStackNavigator = createStackNavigator(
         }
       }     
     },
-    perfilEdit: PerfilEditScreen
+    perfilEdit: PerfilEditScreen,
+    ChatEspecifico: ChatEspecificoScreen
 })
 ////////////////
 const PerfilProfesorStackNavigator = createStackNavigator(
@@ -866,6 +733,155 @@ class PerfilValidationScreen extends React.Component {
     }
   }
 }
+//******************************************* */
+//******************CHAT******************** */
+//******************************************* */
+class LogInScreen extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Chats",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+  render() {
+    return (
+      <LogIn
+      onPressLogin={this.pasarChat.bind(this)}
+      onPressCreate={this.createAccount.bind(this)}
+      />
+    );
+  }
+  pasarChat(name, email, avatar) {
+    this.props.navigation.navigate('ChatList', { name: name, email: email, avatar: avatar });
+  }
+  createAccount(){
+    this.props.navigation.navigate('CreateAccount')
+  }
+}
+class CreateAccountScreen extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Chats",
+      headerStyle: {
+        backgroundColor: '#6BA8FF',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: '#A01A50',
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+  render() {
+    return (
+      <CreateAccount
+      onPressLogin={this.pasarChat.bind(this)}
+      onPressCreate={this.createAccount.bind(this)}
+      />
+    );
+  }
+  pasarChat(name, email, avatar) {
+    this.props.navigation.navigate('ChatList', { name: name, email: email, avatar: avatar });
+  }
+  createAccount(){
+    this.props.navigation.navigate('CreateAccount')
+  }
+}
+class ChatListScreen extends React.Component {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "Chats",
+      headerStyle: {
+        backgroundColor: '#F28C0F',
+        height: hp(10),
+        borderBottomWidth: 0
+      },
+      headerTitleStyle: {
+        fontSize: hp(2),
+      }, 
+      headerTintColor: 'white',
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+  render() {
+    return (
+      <ChatList
+        onPressGoChat={this.pasarChat.bind(this)}
+        onPressGoUsuario={this.pasarUsuario.bind(this)}
+        id_usuario={id_perfil}
+      />
+    );
+  }
+  pasarChat( id_chat, id_userDestino, nombre_chatDestino) {
+    this.props.navigation.navigate('ChatEspecifico', {id_userDestino: id_userDestino, id_chat: id_chat , nombre_chatDestino: nombre_chatDestino });
+  }
+  pasarUsuario(id_usuario, nombre_usuario, esProfesor) {
+    if(esProfesor){
+      this.props.navigation.navigate('profesorEspecifico', {id_usuario: id_usuario, nombre_usuario: nombre_usuario, esProfesor: esProfesor});
+    }
+    else{
+      this.props.navigation.navigate('usuarioEspecifico', {id_usuario: id_usuario, nombre_usuario: nombre_usuario, esProfesor: esProfesor});
+    }
+  }
+}
+const ChatListStackNavigator = createStackNavigator(
+  {
+    ChatListScreen: {
+      screen: ChatListScreen,
+      navigationOptions: ({ navigation }) => {
+        return {
+          // headerLeft: () => <SomeElement />
+          headerLeft: () =>
+            <Icon
+              style={{ paddingLeft: wp(5), color: 'white' }}
+              onPress={() => navigation.openDrawer()}
+              name="md-menu"
+              size={hp(3.3)}
+            />
+          ,
+        }
+      }     
+    },
+    CreateAccount: CreateAccountScreen,
+    ChatEspecifico: ChatEspecificoScreen,
+    usuarioEspecifico: PerfilHomeScreen,
+    mapaUnico: MapaUnicoScreen,
+    profesorEspecifico: PerfilTabNavigatorProfesor
+  },
+  {
+    initialRouteName: 'ChatListScreen',
+  }
+);
+
 //******************************************* */
 //******************Clases******************** */
 //******************************************* */
@@ -1561,11 +1577,15 @@ const DrawerConfig = {
 }
 const customDrawerComponent = (props) => (
   <View style={{ flex: 1 }}>
-    <ScrollView style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0 }}>
+    <ScrollView style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0, flex: 1 }}>
     <LinearGradient colors={['#F28C0F', '#F28C0F']} style={styles.profile}>
       <Image style={styles.imageDrawer} source={ExportadorLogos.traerLogoBlanco()}></Image>
     </LinearGradient>
-      <DrawerItems {...props} style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0 }} />
+    <DrawerItems {...props} style={{ borderTopWidth: 0, marginTop: 0, paddingTop: 0 }} />
+    <TouchableOpacity style={{flex: 1, alignItems: "center", justifyContent: "flex-end", marginTop: hp(33), flexDirection: "row", padding: wp(5)}} onPress={() => props.navigation.navigate('switchLogIn')}>
+      <Entypo style={{opacity: 0.6}} name={"log-out"} size={wp(6.6)} color="white" />
+      <Text style={{ color: "white", fontWeight: "bold", fontSize: wp(3.5), marginLeft: wp(2)}}>Cerrar Sesión</Text>
+    </TouchableOpacity>  
     </ScrollView>
   </View>
 )
@@ -1608,7 +1628,7 @@ const AppDrawerNavigator = createDrawerNavigator({
   Planes: {
     screen: PlanStackNavigator,
     navigationOptions: {
-      title: "Planes",
+      title: "Clases",
       drawerIcon: (esProfesorTodo ?  ({ tintColor }) => ([<FontAwesome5 name="money-check-alt" size={24} color={tintColor} />]) : ({ tintColor }) => ([<MaterialCommunityIcons name="school" size={24} color={tintColor} />]))
     }
   },

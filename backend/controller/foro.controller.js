@@ -22,7 +22,7 @@ let findForosByName = (req, res) =>
 let findForosByIdAndName = (req, res) =>
 {      
     console.log("llegue a leer Buscar foro por id",req.query);
-    var sql = 'SELECT u.nombre_usuario,u.apellido, f.* FROM foro f inner join usuario u on f.id_usuario_fk = u.id_usuario WHERE ';
+    var sql = 'SELECT u.nombre_usuario,u.apellido, u.esProfesor, f.* FROM foro f inner join usuario u on f.id_usuario_fk = u.id_usuario WHERE ';
     var idBusqueda;
     if(req.query.id !='undefined' && req.query.id != '' && req.query.id){
       idBusqueda  =  req.query.id;
@@ -156,4 +156,5 @@ let crearRespuestaForo = (req, res) =>
         res.send(rows);
       });
 };
+
 module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen, crearForo, crearForoTags, crearRespuestaForo};

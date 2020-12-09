@@ -28,13 +28,13 @@ class Clases extends Component {
         };
     }
     componentDidMount = async () => {
-        console.log(await this.props.navigation.getParam("nombre_profesor"))
         ApiController.getProfesoresFilter(await this.props.navigation.getParam("nombre_profesor"), await this.props.navigation.getParam("materia"), await this.props.navigation.getParam("des_domicilio"), await this.props.navigation.getParam("rating"), this.okProfesores.bind(this))
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
     }
     okProfesores(profesoresBase) {
+        console.log(profesoresBase)
         this.setState({ profesores: profesoresBase, memory: profesoresBase, isLoading: false })
     }
     keyboardDidShow = () => {
@@ -200,6 +200,11 @@ class Clases extends Component {
                                             <View style={styles.cardContent}>
                                                 <Text style={styles.cardTitulo} numberOfLines={2}>{item.nombre_usuario + " " + item.apellido}</Text>
                                                 <Text style={styles.cardSubTitulo} numberOfLines={2}>{item.des_domicilio}</Text>
+                                                {item.nombre_materia ? 
+                                                    <Text style={[styles.cardSubTituloMateria]} numberOfLines={1}>{item.nombre_materia}</Text>
+                                                :
+                                                <View/>
+                                                }
                                                 {item.des_moneda && item.monto ?
                                                     <View style={{ flex: 1, flexDirection: "row", marginLeft: 2, marginTop: 5 }}>
                                                         <Text style={styles.cardSubTituloMoney}>A partir de: </Text>
@@ -370,6 +375,13 @@ const styles = StyleSheet.create({
         marginTop: 1,
         marginLeft: 2,
         fontSize: wp(3),
+        color: "black"
+    },
+    cardSubTituloMateria: {
+        marginTop: 1,
+        marginLeft: 2,
+        fontWeight: "bold",
+        fontSize: wp(3.3),
         color: "black"
     },
     cardSubTituloMoney: {

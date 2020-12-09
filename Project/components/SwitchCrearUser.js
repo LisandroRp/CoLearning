@@ -35,16 +35,26 @@ class SwitchCrearUser extends Component {
   checkPassword() {
     if(this.state.password == this.state.confirmPassword)
     {
-      this.fireBaseUserCreate()
+      ApiController.getUsuarioByMail(this.state.email, this.okUser.bind(this))
+      //this.fireBaseUserCreate()
       //ApiController.createUser(this.okUser.bind(this), usuario)
       //this.props.onPressCancel()
     }
   }
+  okUser(user){
+    if(user == undefined){
+      ApiController.postUser(this.state.nombre, this.state.apellido, this.state.email, this.state.password, this.okCreate.bind(this))
+    }
+    else{
+      alert("Ya existe un usuario con el email " + this.state.email)
+    }
+  }
 
-  okUser(boolean) {
+  okCreate(boolean) {
     if(boolean){
       alert("Se ha creado su usuario correctamente");
-      this.fireBaseUserCreate();
+      this.props.onPressCancel()
+      //this.fireBaseUserCreate();
     }
     else{
       alert("Hubo un problema, intentelo denuevo mas tarde");

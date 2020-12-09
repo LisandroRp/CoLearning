@@ -18,6 +18,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { AntDesign, SimpleLineIcons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import ApiController from '../controller/ApiController';
 import ExportadorObjetos from './exportadores/ExportadorObjetos';
+import ExportadorLogos from './exportadores/ExportadorLogos'
 import { isLoading } from 'expo-font';
 var { height, width } = Dimensions.get('window');
 
@@ -160,7 +161,6 @@ class ForoEspecifico extends Component {
       else {
         return (
           <View style={styles.container}>
-
             <View style={[{ flex: 1 }]}>
               <ScrollView style={{ paddingTop: this.state.marginTop + hp(2) }}>
               {(this.state.respuestas).map((item, index) => (
@@ -274,6 +274,16 @@ class ForoEspecifico extends Component {
                   </View>
                 </View>
               }
+              {this.state.respuestas.length == 0 ? 
+              <View style={styles.noComentariosContainer}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
+                            <Text style={[styles.noComentariosMensaje, { fontFamily: "mainFont" }]}>El foro no ha sido respondido aún</Text>
+                        </View>
+                </View>
+                :
+                <View/>
+            }
             </View>
             <TouchableOpacity style={styles.bubble} onPress={() => this.setState({ modalVisible: true })}>
               <FontAwesome name={"plus"} size={hp(3.3)} color="white"></FontAwesome>
@@ -331,6 +341,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFF7EE'
   },
+  noComentariosContainer: {
+        position: "absolute",
+        alignSelf: "center",
+        top: hp(40)
+    },
+    fondoImage: {
+        width: wp(80),
+        height: wp(30),
+        resizeMode: 'contain',
+    },
+    noComentariosMensaje: {
+        marginHorizontal: wp(5),
+        textAlign: "center",
+        fontSize: wp(8),
+        color: '#F28C0F'
+    },
   todo: {
     backgroundColor: '#F5F4F4',
     marginHorizontal: wp("4"),

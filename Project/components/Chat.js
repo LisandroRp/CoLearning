@@ -4,6 +4,7 @@ import { View, Image, StyleSheet, ActivityIndicator, FlatList, Modal, TextInput,
 import { withNavigation } from 'react-navigation';
 
 import firebaseSvc from '../FirebaseSvc';
+import ApiController from "../controller/ApiController";
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -105,7 +106,7 @@ class Chat extends React.Component {
             renderBubble={props => customBubles(props)}
             messages={this.state.messages}
             //onSend={firebaseSvc.send}
-            onSend={messages => firebaseSvc.send(this.state.id_chat, messages)}
+            onSend={messages => {firebaseSvc.send(this.state.id_chat, messages), ApiController.postUltimoMensaje(this.state.id_chat, this.props.id_usuario, messages[0].text)}}
             user={this.userOrigen}
             inverted={true}
             send={props => customSend(props)}
