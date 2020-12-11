@@ -50,12 +50,12 @@ class ChatList extends React.Component {
 
   marginSize(item) {
     if (item.id_usuario != this.state.chatList[this.state.chatList.length - 1].id_usuario) {
-
       return { marginTop: height * 0.015 }
     } else {
       return { marginBottom: height * 0.015, marginTop: height * 0.015 }
     }
   }
+  
   whoSend(id_usuarioUltimoMensaje, nombreChat) {
     if (id_usuarioUltimoMensaje === "") {
       return ''

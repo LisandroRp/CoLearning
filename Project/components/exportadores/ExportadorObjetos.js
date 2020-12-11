@@ -22,7 +22,7 @@ class ExportadorObjetos extends Component {
             rating: usuario.rating,
             votos: usuario.votos,
             materias: [],
-            money: { id_moneda: usuario.id_moneda, des_moneda: usuario.des_moneda, monto: usuario.monto },
+            money: { id_moneda: usuario.id_moneda, des_moneda: usuario.des_moneda, monto: usuario.monto, codigo: usuario.codigo },
             res_buenas: usuario.res_buenas,
             res_mejores: usuario.res_mejores,
             res_cantidad: usuario.res_cantidad,

@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { View, Image, StyleSheet, ActivityIndicator, FlatList, Modal, TextInput, TouchableOpacity, StatusBar, TouchableWithoutFeedback, Text, Keyboard, Dimensions } from 'react-native';
-import { SearchBar, Icon } from 'react-native-elements';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Image, StyleSheet, ActivityIndicator, TouchableOpacity, Modal, StatusBar, Text, Keyboard, Dimensions } from 'react-native';
 import { withNavigation } from 'react-navigation';
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import ApiController from '../controller/ApiController';
-import { isLoading } from 'expo-font';
+import ExportadorLogos from './exportadores/ExportadorLogos'
 import { ScrollView } from 'react-native-gesture-handler';
 
 var { height, width } = Dimensions.get('window');
@@ -56,9 +53,9 @@ class Planes extends Component {
     keyboardWillHide = () => {
         this.setState({ searchBarFocused: false })
     }
-plan(){
-    
-}
+    plan() {
+
+    }
     render() {
         if (this.state.isLoading) {
             return (
@@ -69,29 +66,69 @@ plan(){
             );
         }
         else {
-            return (
-                <ScrollView style={styles.container}>
-                    {/* <View style={{ backgroundColor: "#F28C0F", justifyContent: "center", alignItems: "center", height: hp(10) }}>
-                    <View style={[{}]} onPress={() => this.props.navigation.openDrawer()}>
-                        <Ionicons style={{}} name={"md-menu"} size={hp(3)} color='white'/>
-                    </View>
-                    </View> */}
-                    {this.state.planes.map((item) => (
-                        <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.plan()}>
-                            <View style={{ flexDirection: "column" }} >
-
-                                <View style={styles.cardContent}>
-                                    <Text numberOfLines={1} style={styles.cardTitulo}>{item.nombre_plan}</Text>
-                                </View>
-                                <View style={styles.cardContent}>
-                                    <Text style={styles.cardSubTitulo}>{item.des_plan}</Text>
-                                </View>
-                            </View>
+            if (!this.props.esProfesor) {
+                return (
+                    <View style={styles.noComentariosContainer}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
+                            <Text style={[styles.noComentariosMensaje, { fontFamily: "mainFont" }]}>
+                                Si desea convertirse en un profesor en CoLearning presione el botón de abajo para enviar una solicitud y que evaluemos tu situación.
+                        </Text>
+                        </View>
+                        <TouchableOpacity style={styles.buscarButton} onPress={() => { this.setState({modalVisible: true})}}>
+                            <Text style={styles.screenButtonText}>
+                                Enviar Solicitud
+                        </Text>
                         </TouchableOpacity>
-                    ))
-                    }
-                </ScrollView>
-            )
+                        <Modal
+                            animationType="fade"
+                            visible={this.state.modalVisible}
+                            transparent={true}
+                            onRequestClose={() => this.setState({ modalVisible: false })}  >
+                            <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={Keyboard.dismiss}>
+                                <View style={[styles.modal, styles.shadow]}>
+                                    <View style={{ flex: 0.60, justifyContent: "center", flexDirection: 'column' }}>
+                                        <Text style={styles.textModal}>Solicitud Enviada</Text>
+                                        <Text style={styles.textModal}>{this.state.titulo}</Text>
+                                    </View>
+                                    <View style={styles.modal2}>
+
+                                        <TouchableOpacity onPress={() => { this.setState({ modalVisible: false })}} style={styles.modalExisteButtonAceptar}>
+                                            <Text style={styles.textButton}>Aceptar</Text>
+
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        </Modal>
+                    </View>
+                )
+            }
+            else {
+                return (
+                    <ScrollView style={styles.container}>
+                        {/* <View style={{ backgroundColor: "#F28C0F", justifyContent: "center", alignItems: "center", height: hp(10) }}>
+                        <View style={[{}]} onPress={() => this.props.navigation.openDrawer()}>
+                            <Ionicons style={{}} name={"md-menu"} size={hp(3)} color='white'/>
+                        </View>
+                        </View> */}
+                        {this.state.planes.map((item) => (
+                            <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => this.plan()}>
+                                <View style={{ flexDirection: "column" }} >
+
+                                    <View style={styles.cardContent}>
+                                        <Text numberOfLines={1} style={styles.cardTitulo}>{item.nombre_plan}</Text>
+                                    </View>
+                                    <View style={styles.cardContent}>
+                                        <Text style={styles.cardSubTitulo}>{item.des_plan}</Text>
+                                    </View>
+                                </View>
+                            </TouchableOpacity>
+                        ))
+                        }
+                    </ScrollView>
+                )
+            }
         }
     }
 };
@@ -149,5 +186,96 @@ const styles = StyleSheet.create({
         fontSize: wp(3),
         color: "black"
     },
+    noComentariosContainer: {
+        backgroundColor: "#FFF7EE",
+        justifyContent: "center",
+        flex: 1
+    },
+    fondoImage: {
+        width: wp(80),
+        height: wp(30),
+        resizeMode: 'contain',
+    },
+    noComentariosMensaje: {
+        marginHorizontal: wp(5),
+        textAlign: "center",
+        fontSize: wp(8),
+        color: '#F28C0F'
+    },
+    //Boton
+    buscarButton: {
+        backgroundColor: '#F28C0F',
+        borderRadius: 10,
+        alignItems: 'center',
+        margin: hp(2),
+        alignSelf: 'center',
+        opacity: .95,
+        paddingHorizontal: 10
+    },
+    screenButtonText: {
+        marginVertical: hp(1.5),
+        color: 'white',
+        fontSize: wp(4.4)
+    },
+    //MODAAAAL
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  modal: {
+    marginTop: hp(40),
+    marginBottom: hp(44),
+    paddingTop: hp(1.5),
+    borderColor: '#F28C0F',
+    borderWidth: 2,
+    backgroundColor: '#FFF7EE',
+    borderRadius: 22,
+    opacity: .95,
+  },
+  modal2: {
+    flex: 0.40,
+    flexDirection: 'row',
+    borderColor: '#F28C0F',
+    borderTopWidth: 2,
+    bottom: 0,
+    opacity: .95
+  },
+  shadow: {
+    shadowColor: '#00000045',
+    shadowOffset: {
+      width: 0.05,
+      height: 0.55,
+    },
+    shadowOpacity: 2,
+    elevation: 29,
+  },
+  textModal: {
+    color: '#F28C0F',
+    marginHorizontal: wp(5),
+    fontSize: wp(6),
+    alignSelf: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontFamily: "mainFont"
+  },
+  textButton: {
+    color: '#F28C0F',
+    marginHorizontal: wp(5),
+    fontSize: wp(4.8),
+    alignSelf: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    paddingTop: hp(0.1),
+    fontFamily: "mainFont"
+  },
+  modalExisteButtonAceptar: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: "center",
+    borderBottomRightRadius: 22,
+    borderBottomLeftRadius: 22
+  }
 })
 export default withNavigation(Planes);

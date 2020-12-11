@@ -108,7 +108,53 @@ getTipoClases(okTipoClases) {
             okTipoClases(data);
         })
 }
-
+//********************** */
+//Comentarios
+//********************** */
+getComentariosUsuario(id_usuarioOrigen, id_usuarioDestino, okComentarios) {
+    let uri = url+'/user/comentarios/'+ id_usuarioOrigen +'/' + id_usuarioDestino
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okComentarios(data);
+        })
+}
+postComentario(id_usuarioOrigen, id_usuarioDestino, rating, comentario, okComentario) {
+    let uri = url+'/user/newComentario'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idUsuarioOrigen: id_usuarioOrigen, idUsuarioDestino: id_usuarioDestino, rating: rating, comentario: comentario }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okComentario(res);
+    }).catch((err) => console.log(err));
+}
+getPromedioByIdProfesor(id_usuario, okPromedio) {
+    let uri = url+'/user/rating/'+ id_usuario
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okPromedio(data[0]);
+        })
+}
+updateRating(id_rating, rating, votos, okRating) {
+    let uri = url+'/user/updateRating'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idRating: id_rating, votos: votos, rating: rating }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okRating(res);
+    }).catch((err) => console.log(err));
+}
 //********************** */
 //Profesores
 //********************** */
@@ -285,6 +331,7 @@ postRespuestaForo(id_foro, id_usuario, titulo, respuesta, okRespuesta) {
 //********************** */
 //Apis
 //********************** */
+//Google
     getCoordenadas(direccion,okCoordenadas) {
         let urigoogle = 'https://maps.googleapis.com/maps/api/geocode/json?address='+direccion+'&key=' + key
         
@@ -318,7 +365,22 @@ postRespuestaForo(id_foro, id_usuario, titulo, respuesta, okRespuesta) {
                 alert("No Existe Ruta con el Transporte Seleccionado");
             }));
     }
-    
+//Currency
+getCurrency(oldCurrency, newCurrency, okCurrency) {
+    let uriCurrency = 'https://free.currconv.com/api/v7/convert?q=' + oldCurrency + '_' + newCurrency.codigo +'&compact=ultra&apiKey=d193b37a9716366f2645'
+    fetch(uriCurrency).then(res => {
+        return res.json()
+    }).catch((err) => {
+        console.log(err)
+
+    }).
+        then(data => {
+            okCurrency(newCurrency, data);
+        }).catch((err => {
+            console.log(err);
+            alert("No funcionan las converciones en este momento");
+        }));
+}
 }
 
 export default new ApiController();

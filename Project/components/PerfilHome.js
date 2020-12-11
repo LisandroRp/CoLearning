@@ -6,13 +6,17 @@ import {
     StatusBar,
     SafeAreaView,
     Image,
+    Modal,
     ScrollView,
+    Keyboard,
     FlatList,
     ActivityIndicator,
-    TouchableOpacity
+    TouchableOpacity,
+    TextInput
 } from "react-native";
 import { FontAwesome, FontAwesome5, Ionicons, AntDesign, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
 import DropDownItem from 'react-native-drop-down-item';
+import RNPickerSelect from 'react-native-picker-select';
 import { withNavigation } from 'react-navigation';
 
 import ApiController from "../controller/ApiController";
@@ -22,20 +26,45 @@ import ExportadorContacto from './exportadores/ExportadorContacto'
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
+function createData(item) {
+    return {
+        key: item.id_moneda,
+        label: item.des_moneda,
+        value: item.id_moneda
+    };
+}
+function createNuevaMoney(item, monto) {
+    return {
+        codigo: item.codigo,
+        des_moneda: item.des_moneda,
+        id_moneda: item.id_moneda,
+        monto: monto
+    };
+}
 class PerfilHome extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingMonedas: true,
+            modalVisible: false,
             max_rating: 5,
-            usuario: {}
+            usuario: {},
+            nuevaMoney: {},
+            nuevaMoneda: "",
+            nuevoMonto: "",
+            monedasBase: []
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
     componentDidMount = async () => {
         ApiController.getUsuarioById((await this.props.navigation.getParam("id_usuario")) ? await this.props.navigation.getParam("id_usuario") : this.props.id_usuario, this.okUsuario.bind(this))
+        ApiController.getMonedas(this.okMonedas.bind(this))
+    }
+    okMonedas(monedas){
+        this.setState({monedasBase: monedas, isLoadingMonedas: false})
     }
     okUsuario(usuario) {
         if (usuario.esProfesor) {
@@ -57,7 +86,13 @@ class PerfilHome extends React.Component {
     }
     okMateriasProfesor(usuario, materias) {
         usuario.materias = materias
-        this.setState({ usuario: usuario, isLoading: false })
+        this.setState({
+            usuario: usuario,
+            nuevaMoney: usuario.money,
+            nuevaMoneda: usuario.money.id_moneda,
+            nuevoMonto: usuario.money.monto,
+            isLoading: false
+        })
     }
 
     vote(i) {
@@ -142,6 +177,40 @@ class PerfilHome extends React.Component {
     okChatCreado(chat) {
         this.props.onPressGoChat(chat.insertId, this.state.usuario.id_usuario,  this.state.usuario.nombre_usuario + " " + this.state.usuario.apellido)
     }
+    moneyPikerList(item) {
+        var moneyPiker = []
+        for (var i = 0; i < item.length; i++) {
+            moneyPiker.push(createData(item[i]));
+        }
+        return moneyPiker
+    }
+    addNewMoney() {
+        if(this.state.nuevaMoneda != 0 && this.state.nuevaMoneda != null){
+            var nuevaMoneda = this.buscarMoneda()
+            ApiController.getCurrency(this.state.nuevaMoney.codigo, nuevaMoneda, this.okCurrency.bind(this))
+        }
+        else{
+            alert("Debe seleccionarse un tipo de moneda")
+        }
+    }
+    okCurrency(nuevaMoneda, nuevoMonto){
+
+        this.setState({ 
+            nuevoMonto: (Object.values(nuevoMonto)[0] * this.state.nuevoMonto).toFixed(2),
+            nuevaMoneda: nuevaMoneda.id_moneda,
+            nuevaMoney: createNuevaMoney(nuevaMoneda, (Object.values(nuevoMonto)[0] * this.state.nuevoMonto).toFixed(2)),
+            modalVisible: false
+        })
+    }
+    buscarMoneda() {
+        var contador = 0;
+        while (contador < this.state.monedasBase.length) {
+            if (this.state.monedasBase[contador].id_moneda == this.state.nuevaMoneda) {
+                return this.state.monedasBase[contador]
+            }
+            contador++;
+        }
+    }
     render() {
         var aux = -1
         let React_Native_Rating_Bar = [];
@@ -164,7 +233,7 @@ class PerfilHome extends React.Component {
                 </View>
             );
         }
-        if (this.state.isLoading) {
+        if (this.state.isLoading || this.state.isLoadingMonedas) {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
@@ -196,11 +265,11 @@ class PerfilHome extends React.Component {
                             </View>
                             {
                                 this.state.usuario.esProfesor ?
-                                    <View style={[styles.moneyView, styles.shadowMoney]}>
-                                        <Text style={styles.moneyText}>{this.state.usuario.money.des_moneda ? this.state.usuario.money.des_moneda : "$"}</Text>
-                                        <Text style={styles.moneyText}>{this.state.usuario.money.monto ? this.state.usuario.money.monto : 0}</Text>
+                                    <TouchableOpacity style={[styles.moneyView, styles.shadowMoney]} onPress={() => this.setState({modalVisible: true})}>
+                                        <Text style={styles.moneyText}>{this.state.usuario.money.des_moneda ? this.state.nuevaMoney.des_moneda : "$"}</Text>
+                                        <Text style={styles.moneyText}>{this.state.usuario.money.monto ? this.state.nuevoMonto : 0}</Text>
                                         <Text style={styles.moneyText2}>/h</Text>
-                                    </View>
+                                    </TouchableOpacity>
                                     :
                                     <View />
                             }
@@ -347,6 +416,40 @@ class PerfilHome extends React.Component {
                         <View />
                     }
 
+                    <Modal
+                        animationType="fade"
+                        visible={this.state.modalVisible}
+                        transparent={true}
+                        onRequestClose={() => this.setState({ modalVisible: false })}  >
+                        <TouchableOpacity style={[styles.modalContainer, styles.shadow]} activeOpacity={1} onPress={Keyboard.dismiss}>
+
+                            <View style={styles.modal}>
+                                <View style={[{ flexDirection: "row", justifyContent: 'space-between' }]}>
+                                    <RNPickerSelect
+                                        useNativeAndroidPickerStyle={false}
+                                        placeholder={{
+                                            label: "$$",
+                                            value: 0
+                                        }}
+                                        placeholderTextColor="black"
+                                        style={{
+                                            inputIOS: [styles.inputMoney, styles.shadowLight],
+                                            inputAndroid: [styles.inputMoney, styles.shadowLight]
+                                        }}
+                                        value={this.state.nuevaMoneda}
+                                        onValueChange={(id_monedaNueva) => this.setState({ nuevaMoneda: id_monedaNueva })}
+                                        items={this.moneyPikerList(this.state.monedasBase)}
+                                    />
+                                </View>
+                                <View style={[{ flexDirection: "row" }]}>
+                                    <TouchableOpacity style={[styles.buttonContainerModalMoney]}
+                                        onPress={() => this.addNewMoney()}>
+                                        <Text style={styles.loginText}>Aceptar</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    </Modal>
                 </View>
             );
         }
@@ -589,6 +692,85 @@ const styles = StyleSheet.create({
         color: 'black',
         textAlign: "center",
         textDecorationLine: 'underline',
+    },
+    //SHADOW
+    shadow: {
+        shadowColor: '#00000045',
+        shadowOffset: {
+            width: 0.01,
+            height: 0.25,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 8,
+        elevation: 2
+    },
+    shadowLight: {
+        shadowColor: "#808080",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+
+        elevation: 5
+    },
+    //SHADOW
+    //MODAL
+    /*************************************** */
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center"
+    },
+    modal: {
+        flex: 1,
+        marginVertical: hp(42),
+        marginHorizontal: wp(25),
+        padding: hp(2),
+        alignSelf: "center",
+        backgroundColor: '#FFF7EE',
+        borderRadius: 22,
+        opacity: .95,
+        alignItems: "center"
+    },
+    inputMoney: {
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        borderBottomWidth: 1,
+        fontSize: wp(3.5),
+        marginHorizontal: wp(2),
+        height: hp(5),
+        paddingHorizontal: hp(2.2),
+        flexDirection: 'column',
+        textAlign: 'center'
+    },
+    inputMonto: {
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        borderBottomWidth: 1,
+        flex: 1,
+        marginHorizontal: wp(2),
+        fontSize: wp(3.5),
+        height: hp(5),
+        paddingHorizontal: hp(2.2),
+        flexDirection: 'column',
+        textAlign: 'center'
+    },
+    buttonContainerModalMoney: {
+        paddingVertical: hp(1.5),
+        marginTop: hp(2),
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        paddingHorizontal: wp(3.3),
+        backgroundColor: "#F28C0F"
+    },
+    loginText: {
+        fontSize: wp(3.3),
+        color: 'white'
     }
+    //MODAL
 });
 export default withNavigation(PerfilHome);

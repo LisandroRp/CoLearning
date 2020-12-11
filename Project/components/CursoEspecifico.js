@@ -92,6 +92,7 @@ class CursoEspecifico extends React.Component {
             return { marginBottom: hp(3), marginTop: hp(3) }
         }
     }
+    
     render() {
         var rating2 = this.state.rating
         let React_Native_Rating_Bar = [];

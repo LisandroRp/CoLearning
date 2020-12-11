@@ -60,11 +60,12 @@ class UserCalendario extends Component {
 
     marginSize(index) {
         if (index != this.state.comentarios.length - 1) {
-            return { marginBottom: hp(2), marginTop: hp(2) }
+          return { marginTop: hp(2) }
         } else {
-            return { marginBottom: hp(2) }
+          return { marginBottom: hp(2), marginTop: hp(2) }
         }
     }
+
     vote(i) {
         this.setState({ newRating: i })
     }
@@ -115,27 +116,38 @@ class UserCalendario extends Component {
         return React_Native_Rating_Bar
     }
     addComment()  {
-        this.setState({ modalVisible: false, isLoading: true})
-        //ApiController.yaComento(this.state.id_usuario, this.okYaVoto.bind(this))
-        this.setState({ modalVisible: false })
-    }
-    okYaVoto(boolean){
-        if(boolean){
-            alert("Usted ya calificó a este profesor")
+        if(this.state.newRating == 0 || !this.state.comentario.trim()){
+            if(this.state.newRating == 0){
+                alert("Debe seleccionar una cantidad de estrellas")
+            }
+            else{
+                alert("Debe escribir un comentario")
+            }
         }
         else{
-            //ApiController.comentar(this.state.id_usuario, this.state.newRating, this.state.comentario, this.okComentario.bind(this))
+            ApiController.getComentariosUsuario(this.props.id_usuario, this.state.id_usuario, this.okYaVoto.bind(this))
+        }     
+    }
+    okYaVoto(comentarios){
+        if(comentarios.length != 0){
+            alert("Usted ya ha calificado a este profesor")
         }
+        else{
+            this.setState({ modalVisible: false })
+            ApiController.postComentario(this.props.id_usuario, this.state.id_usuario, this.state.newRating, this.state.comentario, this.okComentario.bind(this))
+        }     
     }
-    okComentario(){
-        //ApiController.traerVotosRating(this.state.id_usuario, this.okTraerVotosRating.bind(this))
+    okComentario() {
+        ApiController.getPromedioByIdProfesor(this.state.id_usuario, this.okPromedio.bind(this))
     }
-    okTraerVotosRating(object){
-        //ApiController.updateUsuarioRating(object.rating / object.votos, object.votos, this.okTraerVotosRating.bind(this))
+    okPromedio(rating){
+        console.log(rating)
+        ApiController.updateRating(rating.id_rating, rating.rating, rating.votos, this.okRating.bind(this))
     }
-    okTraerVotosRating(){
-        //ApiController.getComentariosByIdProfesor(this.state.id_usuario, this.okComentarios.bind(this))
+    okRating  = async () =>  {
+        //ApiController.getComentariosByIdProfesor((await this.props.navigation.getParam("id_usuario")) ? await this.props.navigation.getParam("id_usuario") : this.props.id_usuario, this.okComentarios.bind(this))
     }
+
     render() {
         if (this.state.isLoading || this.state.isLoadingFont) {
             return (
@@ -251,7 +263,7 @@ class UserCalendario extends Component {
                             <Text style={styles.loginText}>Cancelar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.buttonContainerLogin]}
-                            onPress={() => this.addComment()}>
+                            onPress={() => {this.addComment()}}>
                             <Text style={styles.loginText}>Agregar</Text>
                         </TouchableOpacity>
                     </View>

@@ -57,6 +57,7 @@ class Clases extends Component {
             return { marginBottom: height * 0.028, marginTop: height * 0.028 }
         }
     }
+    
     filtrarPrecio() {
         var clasesPrecio = []
         for (var i = 0; i < this.state.profesores.length; i++) {

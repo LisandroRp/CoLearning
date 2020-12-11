@@ -1529,6 +1529,7 @@ class PlanMenuScreen extends React.Component {
     return (
       <Planes
           onPressGoUsuario={this.buscarUsuario.bind(this)}
+          esProfesor={esProfesorTodo}
       />
     );
 

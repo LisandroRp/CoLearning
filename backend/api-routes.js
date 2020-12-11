@@ -119,7 +119,35 @@ router.post('/users/postUser', (req, res) => {
         usuarioController.postUser(req,res);
     }
 });
-
+//**************************/Comentarios**************************** */
+router.get('/user/comentarios/:idUsuarioOrigen/:idUsuarioDestino', (req, res) => {
+    console.log("Consultar Comentarios del id_usuario: ", req.params);
+    if(!req.params.idUsuarioOrigen || !req.params.idUsuarioDestino) 
+        res.status(409).send({ msg: "El campo id_usuario no existe" });
+    else
+    usuarioController.getComentariosByIdUsuario(req,res);  
+});
+router.post('/user/newComentario',(req, res) =>{
+    console.log("Crear Nuevo Comentario: ", req.body);
+    if(!req.body.idUsuarioOrigen || !req.body.idUsuarioDestino) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.postNuevoComentario(req,res); 
+});
+router.get('/user/rating/:idUsuario', (req, res) => {
+    console.log("Consultar Promedio del id_usuario: ", req.params);
+    if(!req.params.idUsuario) 
+        res.status(409).send({ msg: "El campo id_usuario no existe" });
+    else
+    usuarioController.getPromedioByIdProfesor(req,res);  
+});
+router.post('/user/updateRating',(req, res) =>{
+    console.log("Update Nuevo Rating: ", req.body);
+    if(!req.body.idRating || !req.body.votos || !req.body.rating) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.updateNuevoRating(req,res); 
+});
 //**************************/Fin Recursos Usuario**************************** */
 
 //**************************Inicio Recursos catalogo**************************** */

@@ -1,6 +1,10 @@
 var dbConn = require('../config/db.config');
 var mysql = require('mysql');
 
+function getDate(){
+  date = new Date
+  return (date.getDate().toString() + "/" + date.getMonth().toString() + "/" + date.getFullYear().toString())
+}
 
 let findAll = (req, res) => {
   console.log("llegue todos los usuarios");
@@ -17,7 +21,7 @@ let findAllById = (req, res) => {
   console.log("llegue a leer Buscar usuario por id", req.params.id);
   var idBusqueda = req.params.id;
   console.log(idBusqueda);
-  var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,d.latitude,d.longitude, m.id_moneda, m.des_moneda,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
+  var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,d.latitude,d.longitude, m.id_moneda, m.des_moneda, m.codigo,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
     + ' FROM usuario u'
     + ' left join domicilio d on d.id_domicilio = u.id_domicilio_fk'
     + ' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
@@ -204,6 +208,58 @@ let findByIdUsuarioByComentarios = (req, res) => {
   });
 };
 
+let getComentariosByIdUsuario = (req, res) => {
+  console.log("Filtrar comentarios con el id_usuarioOrigen: " + req.params.idUsuarioOrigen);
+  console.log("id_usuarioDestino: " + req.params.idUsuarioDestino);
+  var sql = 'SELECT u.nombre_usuario,u.apellido, u.esProfesor, c.*, u.src'
+    + ' FROM usuario u'
+    + ' Inner join comentarios c on c.id_usuarioOrigen = u.id_usuario'
+    + ' WHERE c.id_usuarioOrigen = ? AND c.id_usuarioDestino = ? ';
+  dbConn.query(sql, [req.params.idUsuarioOrigen, req.params.idUsuarioDestino], (err, rows) => {
+    if (err) throw err;
+    console.log(rows);
+    res.send(rows);
+  });
+};
+let postNuevoComentario = (req, res) => {
+  console.log("Insertar nuevo comentario con el id_usuarioOrigen: " + req.body.idUsuarioOrigen);
+  console.log("id_usuarioDestino: " + req.body.idUsuarioDestino);
+  console.log("Insertar nuevo comentario con el id_usuarioOrigen: " + req.body.idUsuarioOrigen);
+
+  var sql = 'INSERT INTO `comentarios`(`des_comentario`, `id_usuarioDestino`, `id_usuarioOrigen`, `rating_comentario`, `fecha_alta`)'
+   + 'VALUES (?, ?, ?, ?, ?)'
+  dbConn.query(sql,[req.body.comentario, req.body.idUsuarioDestino, req.body.idUsuarioOrigen, req.body.rating, getDate()], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+};
+
+let getPromedioByIdProfesor = (req, res) => {
+  console.log("Get Promedio profesor con id: " + req.params.idUsuario);
+
+  var sql = 'SELECT AVG(c.rating_comentario) as rating, r.votos, r.id_rating FROM comentarios c '
+  + 'JOIN usuario u ON c.id_usuarioDestino = u.id_usuario '
+  + 'JOIN rating r ON r.id_rating = u.id_rating_fk '
+  + 'WHERE c.id_usuarioDestino = ?'
+  dbConn.query(sql,[req.params.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+};
+
+let updateNuevoRating = (req, res) => {
+  console.log("Update nuevo rating con el id_usuario: " + req.body.idRating);
+
+  var sql = 'UPDATE rating SET votos = ?, rating = ? WHERE  id_rating = ?'
+  dbConn.query(sql,[(req.body.votos + 1), req.body.rating.toFixed(1), req.body.idRating], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+};
+
 let findProfesorMateriaDomicilioRating = (req, res) => {
   console.log("llegue a leer Buscar varios valores a busacar", req.query);
   var values = [];
@@ -383,5 +439,6 @@ let changeUserPassword = (req, res) => {
 module.exports = {
   findAll, findAllById, findByIdProfesor, findAllByIdProfesorByDondeDaClases,
   findByIdProfesorByMaterias, findByIdProfesorByClases, findAllByMail,
-  findAllByIdProfesorByHorarios, findByIdUsuarioByComentarios, findProfesorMateriaDomicilioRating, findAllProfesores, changeUserPassword, postUser
+  findAllByIdProfesorByHorarios, findByIdUsuarioByComentarios, findProfesorMateriaDomicilioRating, findAllProfesores, changeUserPassword, postUser, getComentariosByIdUsuario,
+  postNuevoComentario, getPromedioByIdProfesor, updateNuevoRating
 };
