@@ -333,20 +333,20 @@ INSERT INTO `foroportag` (`id_foro_fk`, `id_tag_fk`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `horariosdelprofesor`
+-- Estructura de tabla para la tabla `usuarioHorarios`
 --
 
-CREATE TABLE `horariosdelprofesor` (
+CREATE TABLE `usuarioHorarios` (
   `id_usuario_fk` int(11) NOT NULL,
   `dia` int(11) NOT NULL,
   `turno` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Volcado de datos para la tabla `horariosdelprofesor`
+-- Volcado de datos para la tabla `usuarioHorarios`
 --
 
-INSERT INTO `horariosdelprofesor` (`id_usuario_fk`, `dia`, `turno`) VALUES
+INSERT INTO `usuarioHorarios` (`id_usuario_fk`, `dia`, `turno`) VALUES
 (4, 0, 0),
 (4, 3, 0),
 (4, 5, 2);
@@ -472,19 +472,19 @@ INSERT INTO `moneda` (`id_moneda`, `des_moneda`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `profesorporclase`
+-- Estructura de tabla para la tabla `tipoClasesProfesor`
 --
 
-CREATE TABLE `profesorporclase` (
+CREATE TABLE `tipoClasesProfesor` (
   `id_clase_fk` int(11) NOT NULL,
   `id_usuario_fk` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Volcado de datos para la tabla `profesorporclase`
+-- Volcado de datos para la tabla `tipoClasesProfesor`
 --
 
-INSERT INTO `profesorporclase` (`id_clase_fk`, `id_usuario_fk`) VALUES
+INSERT INTO `tipoClasesProfesor` (`id_clase_fk`, `id_usuario_fk`) VALUES
 (1, 1),
 (2, 4);
 
@@ -539,11 +539,11 @@ INSERT INTO `respuesta` (`id_respuesta`, `id_foro_fk`, `id_usuario_fk`, `nombre_
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `respuestaforo`
+-- Estructura de tabla para la tabla `usuarioRespuestas`
 --
 
-CREATE TABLE `respuestaforo` (
-  `id_respuestaForo` int(11) NOT NULL,
+CREATE TABLE `usuarioRespuestas` (
+  `id_usuarioRespuestas` int(11) NOT NULL,
   `id_usuario_fk` int(11) NOT NULL,
   `res_buenas` int(11) NOT NULL,
   `res_mejores` int(11) NOT NULL,
@@ -551,10 +551,10 @@ CREATE TABLE `respuestaforo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Volcado de datos para la tabla `respuestaforo`
+-- Volcado de datos para la tabla `usuarioRespuestas`
 --
 
-INSERT INTO `respuestaforo` (`id_respuestaForo`, `id_usuario_fk`, `res_buenas`, `res_mejores`, `res_cantidad`) VALUES
+INSERT INTO `usuarioRespuestas` (`id_usuarioRespuestas`, `id_usuario_fk`, `res_buenas`, `res_mejores`, `res_cantidad`) VALUES
 (1, 4, 100, 54, 150),
 (2, 1, 100, 54, 150);
 
@@ -605,20 +605,20 @@ INSERT INTO `tag` (`id_tag`, `nombre_tag`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipoclase`
+-- Estructura de tabla para la tabla `tipoClases`
 --
 
-CREATE TABLE `tipoclase` (
+CREATE TABLE `tipoClases` (
   `id_tipoClases` int(11) NOT NULL,
   `des_tipoClases` varchar(50) NOT NULL,
   `descripcion` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Volcado de datos para la tabla `tipoclase`
+-- Volcado de datos para la tabla `tipoClases`
 --
 
-INSERT INTO `tipoclase` (`id_tipoClases`, `des_tipoClases`, `descripcion`) VALUES
+INSERT INTO `tipoClases` (`id_tipoClases`, `des_tipoClases`, `descripcion`) VALUES
 (1, 'Particular', 'Clase dictada en su Casa'),
 (2, 'Grupal', 'Clase dictada en domicilio'),
 (3, 'Virtual', 'Clase dictada en instituto');
@@ -766,9 +766,9 @@ ALTER TABLE `foroportag`
   ADD PRIMARY KEY (`id_foro_fk`,`id_tag_fk`);
 
 --
--- Indices de la tabla `horariosdelprofesor`
+-- Indices de la tabla `usuarioHorarios`
 --
-ALTER TABLE `horariosdelprofesor`
+ALTER TABLE `usuarioHorarios`
   ADD PRIMARY KEY (`id_usuario_fk`,`dia`,`turno`);
 
 --
@@ -802,9 +802,9 @@ ALTER TABLE `moneda`
   ADD PRIMARY KEY (`id_moneda`);
 
 --
--- Indices de la tabla `profesorporclase`
+-- Indices de la tabla `tipoClasesProfesor`
 --
-ALTER TABLE `profesorporclase`
+ALTER TABLE `tipoClasesProfesor`
   ADD PRIMARY KEY (`id_clase_fk`,`id_usuario_fk`);
 
 --
@@ -820,10 +820,10 @@ ALTER TABLE `respuesta`
   ADD PRIMARY KEY (`id_respuesta`);
 
 --
--- Indices de la tabla `respuestaforo`
+-- Indices de la tabla `usuarioRespuestas`
 --
-ALTER TABLE `respuestaforo`
-  ADD PRIMARY KEY (`id_respuestaForo`),
+ALTER TABLE `usuarioRespuestas`
+  ADD PRIMARY KEY (`id_usuarioRespuestas`),
   ADD UNIQUE KEY `id_usuario_fk` (`id_usuario_fk`);
 
 --
@@ -833,9 +833,9 @@ ALTER TABLE `tag`
   ADD PRIMARY KEY (`id_tag`);
 
 --
--- Indices de la tabla `tipoclase`
+-- Indices de la tabla `tipoClases`
 --
-ALTER TABLE `tipoclase`
+ALTER TABLE `tipoClases`
   ADD PRIMARY KEY (`id_tipoClases`);
 
 --
@@ -935,10 +935,10 @@ ALTER TABLE `respuesta`
   MODIFY `id_respuesta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `respuestaforo`
+-- AUTO_INCREMENT de la tabla `usuarioRespuestas`
 --
-ALTER TABLE `respuestaforo`
-  MODIFY `id_respuestaForo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `usuarioRespuestas`
+  MODIFY `id_usuarioRespuestas` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `tag`
@@ -947,9 +947,9 @@ ALTER TABLE `tag`
   MODIFY `id_tag` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
--- AUTO_INCREMENT de la tabla `tipoclase`
+-- AUTO_INCREMENT de la tabla `tipoClases`
 --
-ALTER TABLE `tipoclase`
+ALTER TABLE `tipoClases`
   MODIFY `id_tipoClases` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --

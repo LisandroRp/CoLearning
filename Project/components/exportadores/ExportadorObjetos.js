@@ -12,6 +12,7 @@ class ExportadorObjetos extends Component {
             apellido: usuario.apellido,
             src: this.profileImage(usuario.id_usuario),
             esProfesor: usuario.esProfesor,
+            id_domicilio: usuario.id_domicilio,
             domicilio: usuario.des_domicilio,
             dondeClases: [],
             tipoClases: [],

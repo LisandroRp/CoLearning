@@ -110,10 +110,10 @@ let findAllTag= (req, res) =>
 
 let findAllTipoclase= (req, res) =>
 {      
-    console.log("llegue todos los tipoclase");
-    dbConn.query('SELECT * FROM tipoclase', (err,rows) => {
+    console.log("llegue todos los tipoClases");
+    dbConn.query('SELECT * FROM tipoClases', (err,rows) => {
         if(err) throw err;      
-        console.log('Todos los tipoclase:');
+        console.log('Todos los tipoClases:');
         console.log(rows);
         res.send(rows);
       });

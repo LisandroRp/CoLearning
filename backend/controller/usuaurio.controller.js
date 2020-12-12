@@ -21,13 +21,13 @@ let findAllById = (req, res) => {
   console.log("llegue a leer Buscar usuario por id", req.params.id);
   var idBusqueda = req.params.id;
   console.log(idBusqueda);
-  var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.des_domicilio,d.latitude,d.longitude, m.id_moneda, m.des_moneda, m.codigo,um.monto,rf.id_respuestaForo, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
+  var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, u.esProfesor, u.instagram, u.whatsApp, u.telefono, u.email, d.id_domicilio, d.des_domicilio,d.latitude,d.longitude, m.id_moneda, m.des_moneda, m.codigo,um.monto,rf.id_usuarioRespuestas, rf.res_buenas,rf.res_mejores,rf.res_cantidad,r.votos,r.rating'
     + ' FROM usuario u'
     + ' left join domicilio d on d.id_domicilio = u.id_domicilio_fk'
     + ' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
     + ' left join moneda m on m.id_moneda = um.id_moneda_fk'
     + ' left join rating r on r.id_rating = u.id_rating_fk'
-    + ' left join respuestaforo rf on rf.id_usuario_fk = u.id_usuario'
+    + ' left join usuarioRespuestas rf on rf.id_usuario_fk = u.id_usuario'
     + ' WHERE id_usuario=?';
   dbConn.query(sql, [idBusqueda], (err, rows) => {
     if (err) throw err;
@@ -101,8 +101,8 @@ let findByIdProfesorByClases = (req, res) => {
   console.log(idBusqueda);
   var sql = 'SELECT u.nombre_usuario,tp.id_tipoClases, tp.des_tipoClases'
     + ' FROM usuario u'
-    + ' Inner join profesorporclase cp on cp.id_usuario_fk = u.id_usuario'
-    + ' Inner join tipoclase tp on tp.id_tipoClases = cp.id_clase_fk'
+    + ' Inner join tipoClasesProfesor cp on cp.id_usuario_fk = u.id_usuario'
+    + ' Inner join tipoClases tp on tp.id_tipoClases = cp.id_clase_fk'
     + ' WHERE id_usuario = ? and esProfesor = 1';
   console.log(sql);
   dbConn.query(sql, [idBusqueda], (err, rows) => {
@@ -178,7 +178,7 @@ let findAllByIdProfesorByHorarios = (req, res) => {
   console.log(idBusqueda);
   var sql = 'SELECT hp.dia, hp.turno'
     + ' FROM usuario u'
-    + ' Inner join horariosdelprofesor hp on hp.id_usuario_fk = u.id_usuario '
+    + ' Inner join usuarioHorarios hp on hp.id_usuario_fk = u.id_usuario '
     + ' WHERE u.id_usuario = ? and u.esProfesor = 1';
   console.log(sql);
   dbConn.query(sql, [idBusqueda], (err, rows) => {
@@ -436,9 +436,132 @@ let changeUserPassword = (req, res) => {
 
 // };
 
+let updateUsuario = (req, res) => {
+
+  var sql = 'UPDATE usuario SET '
+  + 'nombre_usuario = ?, instagram = ?, whatsApp = ?, apellido = ?, telefono = ?, email = ? WHERE id_usuario = ?'
+  dbConn.query(sql,[req.body.nombre, req.body.instagram, req.body.whatsApp, req.body.apellido, req.body.telefono, req.body.email, req.body.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+
+};
+let updateDomicilio = (req, res) => {
+
+  var sql = 'UPDATE `domicilio` SET `des_domicilio`= ? WHERE id_domicilio = ?'
+  dbConn.query(sql,[req.body.desDomicilio, req.body.idDomicilio], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+
+};
+let updateMoney = (req, res) => {
+
+  var sql = 'UPDATE `usuariopormoneda` SET `id_moneda_fk` = ?,`monto` = ? WHERE id_usuario_fk = ?'
+  dbConn.query(sql,[req.body.money.id_moneda, req.body.money.monto, req.body.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+
+};
+let deleteDondeClases = (req, res) => {
+
+  console.log("*******************")
+  console.log("Delete Donde Clases")
+  console.log("*******************")
+
+  var sql = 'DELETE FROM `dondedaclasesporprofesor` WHERE id_usuario_fk = ?'
+  dbConn.query(sql,[req.body.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+
+};
+let deleteTipoClases = (req, res) => {
+
+  console.log("*******************")
+  console.log("Delete Tipo Clases")
+  console.log("*******************")
+
+  var sql = 'DELETE FROM `tipoClasesProfesor` WHERE id_usuario_fk = ?'
+  dbConn.query(sql,[req.body.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+
+};
+let deleteMaterias = (req, res) => {
+
+  console.log("*******************")
+  console.log("Delete Materias")
+  console.log("*******************")
+
+  var sql = 'DELETE FROM `materiaporprofesor` WHERE id_usuario_fk = ?'
+  dbConn.query(sql,[req.body.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+
+};
+let postDondeClases = (req, res) => {
+  
+  for(var i = 0; i < req.body.dondeClases.length; i++){
+    var sql = 'INSERT INTO `dondedaclasesporprofesor` (`id_dondeDaClases_fk`, `id_usuario_fk`) VALUES (?, ?)'
+    dbConn.query(sql,[req.body.dondeClases[i].id_dondeClases, req.body.idUsuario], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+        //res.send(rows);
+      });
+  }
+  res.send();
+};
+let postTipoClases = (req, res) => {
+
+  for(var i = 0; i < req.body.tipoClases.length; i++){
+    var sql = 'INSERT INTO `tipoClasesProfesor` (`id_clase_fk`, `id_usuario_fk`) VALUES (?, ?)'
+    dbConn.query(sql,[req.body.tipoClases[i].id_tipoClases, req.body.idUsuario], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+        //res.send(rows);
+      });
+  }
+  res.send();
+};
+let postMaterias = (req, res) => {
+
+  for(var i = 0; i < req.body.materias.length; i++){
+    var sql = 'INSERT INTO `materiaporprofesor`(`id_materia_fk`, `id_usuario_fk`, `des_materia`) VALUES (?, ?, ?)'
+    dbConn.query(sql,[req.body.materias[i].id_materia, req.body.idUsuario, req.body.materias[i].des_materia], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+        //res.send(rows);
+      });
+  }
+  res.send();
+};
+let UpdateUsuarioRespuestas = (req, res) => {
+
+  var sql = 'UPDATE usuarioRespuestas SET res_cantidad = (res_cantidad + 1) WHERE id_usuario_fk = ?'
+  dbConn.query(sql,[req.body.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+
+};
 module.exports = {
   findAll, findAllById, findByIdProfesor, findAllByIdProfesorByDondeDaClases,
   findByIdProfesorByMaterias, findByIdProfesorByClases, findAllByMail,
   findAllByIdProfesorByHorarios, findByIdUsuarioByComentarios, findProfesorMateriaDomicilioRating, findAllProfesores, changeUserPassword, postUser, getComentariosByIdUsuario,
-  postNuevoComentario, getPromedioByIdProfesor, updateNuevoRating
+  postNuevoComentario, getPromedioByIdProfesor, updateNuevoRating,
+  updateUsuario, updateDomicilio, updateMoney, 
+  deleteDondeClases, deleteTipoClases, deleteMaterias,
+  postDondeClases, postTipoClases, postMaterias,
+  UpdateUsuarioRespuestas
 };

@@ -33,7 +33,8 @@ class UserContactoEdit extends Component {
         this.state = {
             perfil: {},
             isLoading: true,
-            cambios: false,
+            cambiosHorarios: false,
+            cambiosContacto: false,
             usuario: {
                 id_usuario: 1,
                 esProfesor: true,
@@ -53,11 +54,10 @@ class UserContactoEdit extends Component {
                 whatsApp: "1144373492",
                 horarios: [{ dia: 1, turno: 1 }]
             },
-            contactoNuevo: [],
-            horariosNuevo: [],
+            nuevoContacto: [],
+            nuevosHorarios: [],
             dias: ["L", "Ma", "Mi", "J", "V", "S", "D"],
             turnos: ["Mañana", "Tarde", "Noche"],
-            nuevosHorarios: [],
             endValue: 1,
             duration: 500,
             startValueContactBar: new Animated.Value(0),
@@ -67,18 +67,18 @@ class UserContactoEdit extends Component {
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
     }
-    componentDidMount(){
+    componentDidMount() {
         ApiController.getUsuarioById(this.props.id_usuario, this.okUsuario.bind(this))
     }
-    okUsuario(usuario){
+    okUsuario(usuario) {
         ApiController.getHorarios(ExportadorObjetos.createUsuario(usuario), this.okHorarios.bind(this))
     }
-    okHorarios(usuario, horarios){
+    okHorarios(usuario, horarios) {
         usuario.horarios = horarios
         this.setState({
             usuario: usuario,
-            contactoNuevo: this.contactoList(usuario),
-            horariosNuevo: usuario.horarios,
+            nuevoContacto: this.contactoList(usuario),
+            nuevosHorarios: usuario.horarios,
             isLoading: false
         })
     }
@@ -89,23 +89,23 @@ class UserContactoEdit extends Component {
         }
     }
     animateContactBar() {
-        if(this.state.cambios){
+        if (this.state.cambiosContacto || this.state.cambiosHorarios) {
             this.setState({ animationStyle: true })
-            if(this.state.contactoNuevo.length > 2){
+            if (this.state.nuevoContacto.length > 2) {
                 Animated.timing(this.state.startValueContactBar, {
                     toValue: this.state.endValueContactBar,
                     duration: this.state.durationContactBar,
                     useNativeDriver: true,
                 }).start();
             }
-            if(this.state.contactoNuevo.length > 0 && this.state.contactoNuevo.length < 3){
+            if (this.state.nuevoContacto.length > 0 && this.state.nuevoContacto.length < 3) {
                 Animated.timing(this.state.startValueContactBar, {
                     toValue: this.state.endValueContactBar,
                     duration: this.state.durationContactBar,
                     useNativeDriver: true,
                 }).start();
             }
-            if(this.state.contactoNuevo.length < 1){
+            if (this.state.nuevoContacto.length < 1) {
                 Animated.timing(this.state.startValueContactBar, {
                     toValue: this.state.endValueContactBar,
                     duration: this.state.durationContactBar,
@@ -113,14 +113,14 @@ class UserContactoEdit extends Component {
                 }).start();
             }
         }
-        else{
+        else {
             this.setState({ animationStyle: true })
             Animated.timing(this.state.startValueContactBar, {
                 toValue: this.state.endValueContactBar,
                 duration: this.state.durationContactBar,
                 useNativeDriver: true,
             }).start();
-        }  
+        }
     }
     desAnimateContactBar(id_contacto) {
         Animated.timing(this.state.startValueContactBar, {
@@ -128,12 +128,12 @@ class UserContactoEdit extends Component {
             duration: this.state.durationContactBar,
             useNativeDriver: true,
         }).start();
-        if(id_contacto == false){
+        if (id_contacto == false) {
             setTimeout(() => this.setState({ animationStyle: false }), 500)
         }
-        else{
-            setTimeout(() => this.setState({ animationStyle: false, contactoNuevo: this.agregarContacto(id_contacto)}), 500)
-        }    
+        else {
+            setTimeout(() => this.setState({ animationStyle: false, nuevoContacto: this.agregarContacto(id_contacto) }), 500)
+        }
     }
     //************************ */
     //Contacto
@@ -156,14 +156,14 @@ class UserContactoEdit extends Component {
         return contactoList
     }
     cambiarContacto(index, des_contacto) {
-        var contactoNuevo = this.state.contactoNuevo
+        var contactoNuevo = this.state.nuevoContacto
         contactoNuevo[index].des_contacto = des_contacto
-        this.setState({ contactoNuevo: contactoNuevo, cambios: true })
+        this.setState({ nuevoContacto: contactoNuevo, cambiosContacto: true })
     }
     sacarContacto(index) {
-        var contactoNuevo = this.state.contactoNuevo
+        var contactoNuevo = this.state.nuevoContacto
         contactoNuevo.splice(index, 1)
-        this.setState({ contactoNuevo: contactoNuevo, cambios: true })
+        this.setState({ nuevoContacto: contactoNuevo, cambiosContacto: true })
     }
     contactoEdit(index, item) {
 
@@ -255,16 +255,16 @@ class UserContactoEdit extends Component {
         }
     }
     agregarContacto(id_contacto) {
-        var contactoList = this.state.contactoNuevo
-        console.log(this.state.contactoNuevo)
+        var contactoList = this.state.nuevoContacto
+
         var flag = false
-        for(var i = 0; i < contactoList.length; i++){
-            if(contactoList[i].id_contacto == (id_contacto-1)){
+        for (var i = 0; i < contactoList.length; i++) {
+            if (contactoList[i].id_contacto == (id_contacto - 1)) {
                 flag = true
             }
         }
-        if (id_contacto == 1 ) {
-            if(flag){
+        if (id_contacto == 1) {
+            if (flag) {
                 alert("Instagram ya está en la lista")
                 return contactoList
             }
@@ -272,7 +272,7 @@ class UserContactoEdit extends Component {
             return contactoList
         }
         if (id_contacto == 2) {
-            if(flag){
+            if (flag) {
                 alert("Telefono ya está en la lista")
                 return contactoList
             }
@@ -280,7 +280,7 @@ class UserContactoEdit extends Component {
             return contactoList
         }
         if (id_contacto == 3) {
-            if(flag){
+            if (flag) {
                 alert("Email ya está en la lista")
                 return contactoList
             }
@@ -288,7 +288,7 @@ class UserContactoEdit extends Component {
             return contactoList
         }
         if (id_contacto == 4) {
-            if(flag){
+            if (flag) {
                 alert("WhatsApp ya está en la lista")
                 return contactoList
             }
@@ -302,8 +302,8 @@ class UserContactoEdit extends Component {
     //Horarios
     isCheckHorario(dia, turno) {
         var contador = 0;
-        while (contador < this.state.horariosNuevo.length) {
-            if (this.state.horariosNuevo[contador].dia == dia && this.state.horariosNuevo[contador].turno == turno) {
+        while (contador < this.state.nuevosHorarios.length) {
+            if (this.state.nuevosHorarios[contador].dia == dia && this.state.nuevosHorarios[contador].turno == turno) {
                 return <TouchableOpacity onPress={() => this.checkClases(true, dia, turno)}><FontAwesome name={"check"} size={hp(4)} color="#5EC43A" /></TouchableOpacity>
             }
             contador++
@@ -314,21 +314,21 @@ class UserContactoEdit extends Component {
 
         if (esTick) {
             var horarios = []
-            for (var i = 0; i < this.state.horariosNuevo.length; i++) {
-                if (this.state.horariosNuevo[i].dia != dia || this.state.horariosNuevo[i].turno != turno) {
-                    horarios.push(this.state.horariosNuevo[i])
+            for (var i = 0; i < this.state.nuevosHorarios.length; i++) {
+                if (this.state.nuevosHorarios[i].dia != dia || this.state.nuevosHorarios[i].turno != turno) {
+                    horarios.push(this.state.nuevosHorarios[i])
                 }
             }
         }
         else {
-            var horarios = this.state.horariosNuevo
+            var horarios = this.state.nuevosHorarios
             var nuevoHorario = {
                 dia: dia,
                 turno: turno
             }
             horarios.push(nuevoHorario)
         }
-        this.setState({ cambios: true, horariosNuevo: horarios })
+        this.setState({ cambiosHorarios: true, nuevosHorarios: horarios })
     }
     turnos(cellIndex) {
         if (cellIndex === 0) {
@@ -371,7 +371,7 @@ class UserContactoEdit extends Component {
         }
     }
     showButton() {
-        if (this.state.cambios) {
+        if (this.state.cambiosHorarios || this.state.cambiosContacto) {
             return (
                 <TouchableOpacity style={styles.buscarButton} onPress={() => { this.onPressSave() }}>
                     <Text style={styles.screenButtonText}>
@@ -382,7 +382,42 @@ class UserContactoEdit extends Component {
         }
     }
     onPressSave() {
-
+        this.setState({ isLoading: true })
+        if (this.state.cambiosContacto == true) {
+            if (this.state.nuevoContacto.find(contacto => contacto.id_contacto == 2)) {
+                var usuario = {
+                    id_usuario: this.state.usuario.id_usuario,
+                    nombre_usuario: this.state.usuario.nombre_usuario,
+                    apellido: this.state.usuario.apellido,
+                    instagram: this.state.nuevoContacto.find(contacto => contacto.id_contacto == 0) ? this.state.nuevoContacto.find(contacto => contacto.id_contacto == 0).des_contacto : null,
+                    telefono: this.state.nuevoContacto.find(contacto => contacto.id_contacto == 1) ? this.state.nuevoContacto.find(contacto => contacto.id_contacto == 1).des_contacto : null,
+                    email: this.state.nuevoContacto.find(contacto => contacto.id_contacto == 2).des_contacto,
+                    whatsApp: this.state.nuevoContacto.find(contacto => contacto.id_contacto == 3) ? this.state.nuevoContacto.find(contacto => contacto.id_contacto == 3).des_contacto : null
+                }
+            }
+            else {
+                alert("Debe ingresar un Email antes de guardar los cambios")
+                this.setState({ isLoading: false })
+                return;
+            }
+            ApiController.updateUsuario(usuario, this.okUsuarioSave.bind(this))
+        }
+        else {
+            this.okUsuarioSave();
+        }
+    }
+    okUsuarioSave() {
+        if (this.state.cambiosHorarios) {
+            ApiController.delateUsuarioHorarios(this.state.usuario.id_usuario, this.okDelateUsuarioHorarios.bind(this))
+        } else {
+            this.okHorariosSave()
+        }
+    }
+    okDelateUsuarioHorarios() {
+        ApiController.postUsuarioHorarios(this.state.usuario.id_usuario, this.state.nuevosHorarios, this.okHorariosSave.bind(this))
+    }
+    okHorariosSave() {
+        this.setState({ isLoading: false })
     }
     render() {
         const element = (data, index) => (
@@ -423,80 +458,80 @@ class UserContactoEdit extends Component {
         else {
             return (
                 <View style={{ flex: 1 }}>
-                <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
-                    <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(5)} enabled>
-                        <View style={styles.allSocialMediaContainer}>
-                            <View style={styles.topBox}>
-                                <Text style={[styles.text, { fontSize: wp(4.8) }]}>Horarios Disponibles</Text>
-                            </View>
-
-                            <Table style={{ flexDirection: "row" }}>
-                                <TableWrapper style={{ width: 80 }}>
-                                    <Cell data="" style={styles.singleHead} />
-                                    <TableWrapper style={{ flexDirection: 'row' }}>
-                                        <Col data={turnos} heightArr={[hp(6.6), hp(6.6), hp(6.6)]} textStyle={styles.text} />
-                                    </TableWrapper>
-                                </TableWrapper>
-
-                                {/* Right Wrapper */}
-                                <TableWrapper style={{ flex: 1 }}>
-                                    <Cols data={tableData} heightArr={[hp(3.3), hp(6.6), hp(6.6), hp(6.6), hp(6.6), hp(6.6), hp(6.6)]} textStyle={styles.text} />
-                                </TableWrapper>
-                            </Table>
-                            <View style={{ borderColor: "#DFD8C8", borderBottomWidth: 1, paddingBottom: hp(3.3), marginHorizontal: wp(8) }} />
-
-                            {this.state.contactoNuevo.length != -1 ?
-                                <View style={styles.bottomBox}>
-                                    <View style={[{ flexDirection: 'row', justifyContent: "center", alignItems: 'center', marginBottom: hp(2) }]}>
-                                        <Text style={[styles.text, { fontSize: wp(4.8), textAlign: 'center' }]}>Contacto</Text>
-                                        <TouchableOpacity style={styles.bubblePlus} onPress={() => this.animateContactBar()}>
-                                            <FontAwesome style={{ textAlign: 'center' }} name={"plus"} size={hp(2.5)} color="white" />
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    <FlatList
-                                        data={this.state.contactoNuevo}
-                                        numColumns={2}
-                                        scrollEnabled={false}
-                                        initialNumToRender={50}
-                                        keyExtractor={(item) => {
-                                            return item.id_contacto.toString();
-                                        }}
-                                        renderItem={({ index, item }) => {
-                                            return (
-                                                this.contactoEdit(index, item)
-                                            )
-                                        }
-                                        } />
-
+                    <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+                        <KeyboardAvoidingView style={[styles.container]} behavior="position" keyboardVerticalOffset={hp(5)} enabled>
+                            <View style={styles.allSocialMediaContainer}>
+                                <View style={styles.topBox}>
+                                    <Text style={[styles.text, { fontSize: wp(4.8) }]}>Horarios Disponibles</Text>
                                 </View>
-                                :
-                                <View />
-                            }
-                            {this.showButton()}
-                        </View>
-                    </KeyboardAvoidingView>
-                </TouchableWithoutFeedback>
-                <Animated.View style={[styles.bottomAnimatedContainer, { transform: [{ translateY: this.state.startValueContactBar }] }]}>
+
+                                <Table style={{ flexDirection: "row" }}>
+                                    <TableWrapper style={{ width: 80 }}>
+                                        <Cell data="" style={styles.singleHead} />
+                                        <TableWrapper style={{ flexDirection: 'row' }}>
+                                            <Col data={turnos} heightArr={[hp(6.6), hp(6.6), hp(6.6)]} textStyle={styles.text} />
+                                        </TableWrapper>
+                                    </TableWrapper>
+
+                                    {/* Right Wrapper */}
+                                    <TableWrapper style={{ flex: 1 }}>
+                                        <Cols data={tableData} heightArr={[hp(3.3), hp(6.6), hp(6.6), hp(6.6), hp(6.6), hp(6.6), hp(6.6)]} textStyle={styles.text} />
+                                    </TableWrapper>
+                                </Table>
+                                <View style={{ borderColor: "#DFD8C8", borderBottomWidth: 1, paddingBottom: hp(3.3), marginHorizontal: wp(8) }} />
+
+                                {this.state.nuevoContacto.length != -1 ?
+                                    <View style={styles.bottomBox}>
+                                        <View style={[{ flexDirection: 'row', justifyContent: "center", alignItems: 'center', marginBottom: hp(2) }]}>
+                                            <Text style={[styles.text, { fontSize: wp(4.8), textAlign: 'center' }]}>Contacto</Text>
+                                            <TouchableOpacity style={styles.bubblePlus} onPress={() => this.animateContactBar()}>
+                                                <FontAwesome style={{ textAlign: 'center' }} name={"plus"} size={hp(2.5)} color="white" />
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        <FlatList
+                                            data={this.state.nuevoContacto}
+                                            numColumns={2}
+                                            scrollEnabled={false}
+                                            initialNumToRender={50}
+                                            keyExtractor={(item) => {
+                                                return item.id_contacto.toString();
+                                            }}
+                                            renderItem={({ index, item }) => {
+                                                return (
+                                                    this.contactoEdit(index, item)
+                                                )
+                                            }
+                                            } />
+
+                                    </View>
+                                    :
+                                    <View />
+                                }
+                                {this.showButton()}
+                            </View>
+                        </KeyboardAvoidingView>
+                    </TouchableWithoutFeedback>
+                    <Animated.View style={[styles.bottomAnimatedContainer, { transform: [{ translateY: this.state.startValueContactBar }] }]}>
                         <View style={[styles.searchBar]}>
-                            <TouchableOpacity style={[styles.logoSocialMediaBar, {flex: 0.5}]} onPress={() => this.desAnimateContactBar(false)}>
-                                <Entypo style={{textAlign: "center"}} name={"cross"} size={hp(2.5)} color="#FFF7EE"></Entypo>
+                            <TouchableOpacity style={[styles.logoSocialMediaBar, { flex: 0.5 }]} onPress={() => this.desAnimateContactBar(false)}>
+                                <Entypo style={{ textAlign: "center" }} name={"cross"} size={hp(2.5)} color="#FFF7EE"></Entypo>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(1)}>
-                                <Fontisto style={{textAlign: "center"}} name={"instagram"} size={hp(2.5)} color='#FFF7EE' />
+                                <Fontisto style={{ textAlign: "center" }} name={"instagram"} size={hp(2.5)} color='#FFF7EE' />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(2)}>
-                                <Feather style={{textAlign: "center"}} name={"phone"} size={hp(2.5)} color='#FFF7EE' />
+                                <Feather style={{ textAlign: "center" }} name={"phone"} size={hp(2.5)} color='#FFF7EE' />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(3)}>
-                                <MaterialCommunityIcons style={{textAlign: "center"}} name={"email-outline"} size={hp(2.5)} color='#FFF7EE' />
+                                <MaterialCommunityIcons style={{ textAlign: "center" }} name={"email-outline"} size={hp(2.5)} color='#FFF7EE' />
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(4)}>
-                                <Fontisto style={{textAlign: "center"}} name={"whatsapp"} size={hp(2.5)} color='#FFF7EE' />
+                                <Fontisto style={{ textAlign: "center" }} name={"whatsapp"} size={hp(2.5)} color='#FFF7EE' />
                             </TouchableOpacity>
                         </View>
-                </Animated.View>
-                    </View>
+                    </Animated.View>
+                </View>
             );
         }
     }

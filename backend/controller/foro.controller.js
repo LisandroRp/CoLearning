@@ -142,7 +142,7 @@ let crearForoTags = (req, res) =>
       });
 };
 
-let crearRespuestaForo = (req, res) =>
+let postUsuarioRespuestas = (req, res) =>
 {      
     console.log("idForo: ",req.body.idForo);
     console.log("idUsuario: ",req.body.idUsuario);
@@ -157,4 +157,4 @@ let crearRespuestaForo = (req, res) =>
       });
 };
 
-module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen, crearForo, crearForoTags, crearRespuestaForo};
+module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen, crearForo, crearForoTags, postUsuarioRespuestas};

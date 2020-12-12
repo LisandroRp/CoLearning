@@ -67,6 +67,7 @@ class PerfilHome extends React.Component {
         this.setState({monedasBase: monedas, isLoadingMonedas: false})
     }
     okUsuario(usuario) {
+        console.log(usuario)
         if (usuario.esProfesor) {
             ApiController.getDondeClasesProfesor(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
         }
@@ -356,7 +357,7 @@ class PerfilHome extends React.Component {
 
                                 <View style={styles.dropDownViewContainer}>
                                     <Text style={[styles.text, { fontSize: wp(4.8), textAlign: 'center' }]}>Materias</Text>
-                                    {this.state.usuario.dondeClases.length != 0 ?
+                                    {this.state.usuario.materias.length != 0 ?
                                         this.state.usuario.materias.map((item, index) => (
                                             <View style={[styles.dropDownContainer, this.marginSize(index)]} key={item.nombre_materia}>
                                                 <DropDownItem contentVisible={false}
@@ -376,7 +377,7 @@ class PerfilHome extends React.Component {
                                         )
                                         )
                                         :
-                                        <View style={[{ padding: 10, marginTop: 10, flex: 1, alignItems: "center", borderRadius: 10 }]}>
+                                        <View style={[{ padding: 10, margin: 10, flex: 1, alignItems: "center", borderRadius: 10 }]}>
                                             <Text>No se han agregado materias</Text>
                                         </View>
                                     }

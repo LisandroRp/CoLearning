@@ -28,7 +28,12 @@ class PerfilEdit extends React.Component {
         super(props);
         this.state = {
             isLoading: true,
-            cambios: false,
+            cambiosUsuario: false,
+            cambiosDomicilio: false,
+            cambiosDondeClases: false,
+            cambiosTipoClases: false,
+            cambiosMaterias: false,
+            cambiosMoney: false,
             modalDescripcionVisible: false,
             modalVisible: false,
             materia: "",
@@ -40,13 +45,13 @@ class PerfilEdit extends React.Component {
             nuevasDondeClases: [],
             nuevasTipoClases: [],
             nuevaMoneda: 0,
-            nuevoMonto: '100',
+            nuevoMonto: '',
             nuevaMoney: {},
 
             nuevaDescripcion: "",
             editableIndex: "",
 
-            contactoNuevo: [],
+            nuevoContacto: [],
 
             materiasBase: [{ id_materia: 1, nombre_materia: "Ingles", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
             { id_materia: 2, nombre_materia: "Matematica", des_materia: "Clases de Ingles avanzadas para examenes internacionales" },
@@ -74,6 +79,10 @@ class PerfilEdit extends React.Component {
             startValueSearchBar: new Animated.Value(0),
             endValueSearchBar: hp(20),
             durationSearchBar: 500,
+
+            startValueContactBar: new Animated.Value(0),
+            endValueContactBar: -hp(15),
+            durationContactBar: 500,
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
         this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
@@ -86,7 +95,13 @@ class PerfilEdit extends React.Component {
             ApiController.getDondeClasesProfesor(ExportadorObjetos.createUsuario(usuario), this.okDondeClases.bind(this))
         }
         else {
-            this.setState({ usuario: ExportadorObjetos.createUsuarioBasico(usuario), contactoNuevo: this.contactoList(usuario), isLoading: false })
+            this.setState({
+                usuario: ExportadorObjetos.createUsuarioBasico(usuario),
+                nuevoNombre: usuario.nombre_usuario,
+                nuevoApellido: usuario.apellido,
+                nuevoContacto: this.contactoList(usuario),
+                isLoading: false
+            })
         }
     }
     okDondeClases(usuario, dondeClases) {
@@ -102,7 +117,7 @@ class PerfilEdit extends React.Component {
         usuario.materias = materias
         this.setState({
             usuario: usuario,
-            contactoNuevo: this.contactoList(usuario),
+            nuevoContacto: this.contactoList(usuario),
             nuevasMaterias: usuario.materias,
             nuevasTipoClases: usuario.tipoClases,
             nuevasDondeClases: usuario.dondeClases,
@@ -115,12 +130,12 @@ class PerfilEdit extends React.Component {
         })
         ApiController.getMaterias(this.okMaterias.bind(this))
     }
-    okMaterias(materias){
-        this.setState({materiasBase: materias, memory: materias})
+    okMaterias(materias) {
+        this.setState({ materiasBase: materias, memory: materias })
         ApiController.getMonedas(this.okMonedas.bind(this))
     }
-    okMonedas(monedas){
-        this.setState({monedasBase: monedas, isLoading: false})
+    okMonedas(monedas) {
+        this.setState({ monedasBase: monedas, isLoading: false })
     }
     //************************ */
     //Contacto
@@ -143,14 +158,14 @@ class PerfilEdit extends React.Component {
         return contactoList
     }
     cambiarContacto(index, des_contacto) {
-        var contactoNuevo = this.state.contactoNuevo
-        contactoNuevo[index].des_contacto = des_contacto
-        this.setState({ contactoNuevo: contactoNuevo, cambios: true })
+        var nuevoContacto = this.state.nuevoContacto
+        nuevoContacto[index].des_contacto = des_contacto
+        this.setState({ nuevoContacto: nuevoContacto, cambiosUsuario: true })
     }
     sacarContacto(index) {
-        var contactoNuevo = this.state.contactoNuevo
-        contactoNuevo.splice(index, 1)
-        this.setState({ contactoNuevo: contactoNuevo, cambios: true })
+        var nuevoContacto = this.state.nuevoContacto
+        nuevoContacto.splice(index, 1)
+        this.setState({ nuevoContacto: nuevoContacto, cambiosUsuario: true })
     }
     contactoEdit(index, item) {
 
@@ -241,6 +256,48 @@ class PerfilEdit extends React.Component {
                 )
         }
     }
+    agregarContacto(id_contacto) {
+        var contactoList = this.state.nuevoContacto
+
+        var flag = false
+        for (var i = 0; i < contactoList.length; i++) {
+            if (contactoList[i].id_contacto == (id_contacto - 1)) {
+                flag = true
+            }
+        }
+        if (id_contacto == 1) {
+            if (flag) {
+                alert("Instagram ya está en la lista")
+                return contactoList
+            }
+            contactoList.push({ id_contacto: 0, des_contacto: this.state.usuario.instagram, cambiosUsuario: true })
+            return contactoList
+        }
+        if (id_contacto == 2) {
+            if (flag) {
+                alert("Telefono ya está en la lista")
+                return contactoList
+            }
+            contactoList.push({ id_contacto: 1, des_contacto: this.state.usuario.telefono, cambiosUsuario: true })
+            return contactoList
+        }
+        if (id_contacto == 3) {
+            if (flag) {
+                alert("Email ya está en la lista")
+                return contactoList
+            }
+            contactoList.push({ id_contacto: 2, des_contacto: this.state.usuario.email, cambiosUsuario: true })
+            return contactoList
+        }
+        if (id_contacto == 4) {
+            if (flag) {
+                alert("WhatsApp ya está en la lista")
+                return contactoList
+            }
+            contactoList.push({ id_contacto: 3, des_contacto: this.state.usuario.whatsApp, cambiosUsuario: true })
+            return contactoList
+        }
+    }
     //************************ */
     //Contacto
     //************************ */
@@ -302,7 +359,7 @@ class PerfilEdit extends React.Component {
         if (flag == 0) {
             nuevasDondeClases.push(dondeClases)
         }
-        this.setState({ nuevasDondeClases: nuevasDondeClases, cambios: true })
+        this.setState({ nuevasDondeClases: nuevasDondeClases, cambiosDondeClases: true })
     }
 
     //************************ */
@@ -365,7 +422,7 @@ class PerfilEdit extends React.Component {
             nuevasTipoClases.push(tipoClases)
         }
 
-        this.setState({ nuevasTipoClases: nuevasTipoClases, cambios: true })
+        this.setState({ nuevasTipoClases: nuevasTipoClases, cambiosTipoClases: true })
     }
     //************************ */
     // Materias
@@ -377,7 +434,7 @@ class PerfilEdit extends React.Component {
 
         if (this.validarCambiarMateria(materiasViejas, materiaNueva)) {
             materiasNuevas.push(materiaNueva)
-            this.setState({ nuevasMaterias: materiasNuevas, cambios: true })
+            this.setState({ nuevasMaterias: materiasNuevas, cambiosMaterias: true })
             this.desAnimate()
         }
     }
@@ -404,7 +461,7 @@ class PerfilEdit extends React.Component {
                 contador++;
             }
         }
-        this.setState({ nuevasMaterias: nuevasMaterias, cambios: true })
+        this.setState({ nuevasMaterias: nuevasMaterias, cambiosMaterias: true })
     }
     traerMateria(id_materiaNueva) {
         var contador = 0
@@ -435,25 +492,7 @@ class PerfilEdit extends React.Component {
         }
         return materiasFilter
     }
-    cambiarMoney(materias, materiaVieja, materiaNueva) {
-        if (this.state.flag == 0) {
-            if (this.validarCambiarMateria(materias, materiaNueva)) {
-                for (var i = 0; i < materias.length; i++) {
-                    if (materias[i].id_materia == materiaVieja.id_materia) {
-                        materias[i] = this.traerMateria(materiaNueva)
-                    }
-                }
-                this.setState({ nuevasMaterias: materias })
-            }
-            else {
-                this.setState({ flag: 1 })
-            }
-        }
-        else {
-            this.setState({ flag: 0 })
-        }
 
-    }
     //************************ */
     // Money
     //************************ */
@@ -518,17 +557,16 @@ class PerfilEdit extends React.Component {
         this.setState({ materia: value })
     };
     addNewMoney() {
-        console.log(this.state.nuevaMoneda)
-        if(this.state.nuevaMoneda != 0 && this.state.nuevaMoneda != null){
-        var nuevaMoneda = this.buscarMoneda()
-        var newMoney = {
-            id_moneda: nuevaMoneda.id_moneda,
-            des_moneda: nuevaMoneda.des_moneda,
-            monto: this.state.nuevoMonto
+        if (this.state.nuevaMoneda != 0 && this.state.nuevaMoneda != null) {
+            var nuevaMoneda = this.buscarMoneda()
+            var newMoney = {
+                id_moneda: nuevaMoneda.id_moneda,
+                des_moneda: nuevaMoneda.des_moneda,
+                monto: this.state.nuevoMonto
+            }
+            this.setState({ nuevaMoney: newMoney, cambiosMoney: true, modalVisible: false })
         }
-        this.setState({ nuevaMoney: newMoney, cambios: true, modalVisible: false })
-        }
-        else{
+        else {
             alert("Debe seleccionarse un tipo de moneda")
         }
     }
@@ -558,26 +596,34 @@ class PerfilEdit extends React.Component {
         var materiasNuevas = this.state.nuevasMaterias
 
         materiasNuevas[this.state.editableIndex].des_materia = this.state.nuevaDescripcion
-        this.setState({ nuevasMaterias: materiasNuevas, cambios: true, modalDescripcionVisible: false, isLoading: false })
+        this.setState({ nuevasMaterias: materiasNuevas, cambiosMaterias: true, modalDescripcionVisible: false, isLoading: false })
     }
     changeNombre() {
         if (this.state.nuevoNombre != this.state.usuario.nombre_usuario) {
-            this.setState({ cambios: true })
+            this.setState({ cambiosUsuario: true })
         }
     }
     changeApellido() {
         if (this.state.nuevoApellido != this.state.usuario.apellido) {
-            this.setState({ cambios: true })
+            this.setState({ cambiosUsuario: true })
         }
     }
     changeDomicilio() {
         if (this.state.nuevoDomicilio != this.state.usuario.domicilio) {
-            this.setState({ cambios: true })
+            this.setState({ cambiosDomicilio: true })
         }
     }
+    //************************* */
+    //*********Save************ */
+    //************************* */
 
     showButton() {
-        if (this.state.cambios) {
+        if (this.state.cambiosUsuario == true ||
+            this.state.cambiosDomicilio == true ||
+            this.state.cambiosDondeClases == true ||
+            this.state.cambiosTipoClases == true ||
+            this.state.cambiosMaterias == true ||
+            this.state.cambiosMoney == true) {
             return (
                 <TouchableOpacity style={styles.buscarButton} onPress={() => { this.onPressSave() }}>
                     <Text style={styles.screenButtonText}>
@@ -585,6 +631,139 @@ class PerfilEdit extends React.Component {
                             </Text>
                 </TouchableOpacity>
             )
+        }
+    }
+    onPressSave() {
+        this.setState({ isLoading: true })
+        if (this.state.cambiosUsuario == true) {
+            if (this.state.nuevoContacto.find(contacto => contacto.id_contacto == 2)) {
+                var usuario = {
+                    id_usuario: this.state.usuario.id_usuario,
+                    nombre_usuario: this.state.nuevoNombre,
+                    apellido: this.state.nuevoApellido,
+                    instagram: this.state.nuevoContacto.find(contacto => contacto.id_contacto == 0) ? this.state.nuevoContacto.find(contacto => contacto.id_contacto == 0) : null,
+                    telefono: this.state.nuevoContacto.find(contacto => contacto.id_contacto == 1) ? this.state.nuevoContacto.find(contacto => contacto.id_contacto == 1) : null,
+                    email: this.state.nuevoContacto.find(contacto => contacto.id_contacto == 2).des_contacto,
+                    whatsApp: this.state.nuevoContacto.find(contacto => contacto.id_contacto == 3) ? this.state.nuevoContacto.find(contacto => contacto.id_contacto == 3) : null
+                }
+            }
+            else {
+                alert("Debe ingresar un Email antes de guardar los cambios")
+                this.setState({ isLoading: false })
+                return;
+            }
+            ApiController.updateUsuario(usuario, this.okUsuarioSave.bind(this))
+        }
+        else {
+            this.okUsuarioSave();
+        }
+    }
+    okUsuarioSave() {
+        if (this.state.cambiosDomicilio == true) {
+            console.log(this.state.usuario.id_domicilio)
+            console.log(this.state.nuevoDomicilio)
+            ApiController.updateDomicilio(this.state.usuario.id_domicilio, this.state.nuevoDomicilio, this.okDomicilio.bind(this))
+        }
+        else {
+            this.okDomicilio();
+        }
+    }
+    okDomicilio() {
+        if (this.state.cambiosDondeClases == true) {
+            ApiController.deleteDondeClases(this.state.usuario.id_usuario, this.okDeleteDondeClases.bind(this))
+        }
+        else {
+            this.okDondeClasesSave();
+        }
+    }
+    okDeleteDondeClases() {
+        ApiController.postDondeClases(this.state.usuario.id_usuario, this.state.nuevasDondeClases, this.okDondeClasesSave.bind(this))
+    }
+    okDondeClasesSave() {
+        if (this.state.cambiosTipoClases == true) {
+            ApiController.deleteTipoClases(this.state.usuario.id_usuario, this.okDeleteTipoClases.bind(this))
+        }
+        else {
+            this.okTipoClasesSave();
+        }
+    }
+    okDeleteTipoClases() {
+        ApiController.postTipoClases(this.state.usuario.id_usuario, this.state.nuevasTipoClases, this.okTipoClasesSave.bind(this))
+    }
+    okTipoClasesSave() {
+        if (this.state.cambiosMaterias == true) {
+            ApiController.deleteMaterias(this.state.usuario.id_usuario, this.okDeleteMaterias.bind(this))
+        }
+        else {
+            this.okMateriasSave();
+        }
+    }
+    okDeleteMaterias() {
+        ApiController.postMaterias(this.state.usuario.id_usuario, this.state.nuevasMaterias, this.okMateriasSave.bind(this))
+    }
+    okMateriasSave() {
+        if (this.state.cambiosMoney == true) {
+            ApiController.updateMoney(this.state.usuario.id_usuario, this.state.nuevaMoney, this.okMoneySave.bind(this))
+        }
+        else {
+            this.okMoneySave();
+        }
+    }
+    okMoneySave() {
+        this.setState({
+            isLoading: false,
+            cambiosUsuario: false,
+            cambiosDondeClases: false,
+            cambiosTipoClases: false,
+            cambiosMaterias: false,
+            cambiosMoney: false
+        })
+    }
+    animateContactBar() {
+        if (this.state.cambios) {
+            this.setState({ animationStyle: true })
+            if (this.state.contactoNuevo.length > 2) {
+                Animated.timing(this.state.startValueContactBar, {
+                    toValue: this.state.endValueContactBar,
+                    duration: this.state.durationContactBar,
+                    useNativeDriver: true,
+                }).start();
+            }
+            if (this.state.contactoNuevo.length > 0 && this.state.contactoNuevo.length < 3) {
+                Animated.timing(this.state.startValueContactBar, {
+                    toValue: this.state.endValueContactBar,
+                    duration: this.state.durationContactBar,
+                    useNativeDriver: true,
+                }).start();
+            }
+            if (this.state.contactoNuevo.length < 1) {
+                Animated.timing(this.state.startValueContactBar, {
+                    toValue: this.state.endValueContactBar,
+                    duration: this.state.durationContactBar,
+                    useNativeDriver: true,
+                }).start();
+            }
+        }
+        else {
+            this.setState({ animationStyle: true })
+            Animated.timing(this.state.startValueContactBar, {
+                toValue: this.state.endValueContactBar,
+                duration: this.state.durationContactBar,
+                useNativeDriver: true,
+            }).start();
+        }
+    }
+    desAnimateContactBar(id_contacto) {
+        Animated.timing(this.state.startValueContactBar, {
+            toValue: -hp(10),
+            duration: this.state.durationContactBar,
+            useNativeDriver: true,
+        }).start();
+        if (id_contacto == false) {
+            setTimeout(() => this.setState({ animationStyle: false }), 500)
+        }
+        else {
+            setTimeout(() => this.setState({ animationStyle: false, contactoNuevo: this.agregarContacto(id_contacto) }), 500)
         }
     }
     render() {
@@ -603,33 +782,33 @@ class PerfilEdit extends React.Component {
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View>
                             <View style={{ alignSelf: "center" }}>
-                            <View style={[styles.profileImage, {backgroundColor: (this.state.usuario.src == null ? "#F28C0F" : "transparent")}]}>
+                                <View style={[styles.profileImage, { backgroundColor: (this.state.usuario.src == null ? "#F28C0F" : "transparent") }]}>
                                     {this.state.usuario.src == null ?
                                         <Text style={{ fontSize: wp(25), textAlign: "center", color: 'white', alignContent: 'center' }}>
                                             {this.state.usuario.nombre_usuario.slice(0, 1).toUpperCase()}{this.state.usuario.apellido.slice(0, 1).toUpperCase()}
                                         </Text>
                                         :
-                                    <Image source={this.state.usuario.src} style={styles.image} resizeMode="center"></Image>
+                                        <Image source={this.state.usuario.src} style={styles.image} resizeMode="center"></Image>
                                     }
                                 </View>
                             </View>
 
                             <View style={styles.infoContainer}>
                                 <View style={{ flexDirection: "row", paddingHorizontal: wp(8) }}>
-                                    <TextInput style={[styles.text, styles.titleName]} placeholder={"Nombre"} onEndEditing={() => this.changeNombre()} onChangeText={(value) => this.setState({ nuevoNombre: value })} ref={(input) => { this.nombre = input }}>{this.state.usuario.nombre_usuario}</TextInput>
+                                    <TextInput style={[styles.text, styles.titleName]} placeholder={"Nombre"} onEndEditing={() => this.changeNombre()} onChangeText={(value) => this.setState({ nuevoNombre: value })} ref={(input) => { this.nombre = input }}>{this.state.nuevoNombre}</TextInput>
                                     <TouchableOpacity style={{ alignSelf: "center", position: "absolute", right: 0 }} onPress={() => this.nombre.focus()}>
                                         <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(5)} color="#E76921" />
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ flexDirection: "row", paddingHorizontal: wp(8) }}>
-                                    <TextInput style={[styles.text, styles.titleName]} placeholder={"Apellido"} onEndEditing={() => this.changeApellido()} onChangeText={(value) => this.setState({ nuevoApellido: value })} ref={(input) => { this.apellido = input }}>{this.state.usuario.apellido}</TextInput>
+                                    <TextInput style={[styles.text, styles.titleName]} placeholder={"Apellido"} onEndEditing={() => this.changeApellido()} onChangeText={(value) => this.setState({ nuevoApellido: value })} ref={(input) => { this.apellido = input }}>{this.state.nuevoApellido}</TextInput>
                                     <TouchableOpacity style={{ alignSelf: "center", position: "absolute", right: 0 }} onPress={() => this.apellido.focus()}>
                                         <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(5)} color="#E76921" />
                                     </TouchableOpacity>
                                 </View>
                                 {this.state.usuario.esProfesor ?
                                     <View style={{ flexDirection: "row", paddingHorizontal: wp(6), marginTop: hp(1) }}>
-                                        <TextInput style={[styles.text, styles.titleDomicilio]} placeholder={"Domicilio"} onEndEditing={() => this.changeDomicilio()} onChangeText={(value) => this.setState({ nuevoDomicilio: value })} ref={(input) => { this.domicilio = input }}>{this.state.usuario.domicilio}</TextInput>
+                                        <TextInput style={[styles.text, styles.titleDomicilio]} placeholder={"Domicilio"} onEndEditing={() => this.changeDomicilio()} onChangeText={(value) => this.setState({ nuevoDomicilio: value })} ref={(input) => { this.domicilio = input }}>{this.state.nuevoDomicilio}</TextInput>
                                         <TouchableOpacity style={{ alignSelf: "center", position: "absolute", right: 0 }} onPress={() => this.domicilio.focus()}>
                                             <FontAwesome style={{ textAlign: 'center' }} name={"pencil"} size={wp(4)} color="#AEB5BC" />
                                         </TouchableOpacity>
@@ -757,11 +936,16 @@ class PerfilEdit extends React.Component {
                             ///////////////////                            
                             :
                             /////////////////// 
-                            (this.state.contactoNuevo.length != 0 ?
-                                <View style={styles.bottomBox}>
-                                    <Text style={[styles.text, { fontSize: wp(4.8), alignSelf: "center" }]}>Contacto</Text>
+                            <View style={styles.bottomBox}>
+                                <View style={[{ flexDirection: 'row', justifyContent: "center", alignItems: 'center', marginBottom: hp(2) }]}>
+                                    <Text style={[styles.text, { fontSize: wp(4.8), textAlign: 'center' }]}>Contacto</Text>
+                                    <TouchableOpacity style={styles.bubblePlus} onPress={() => this.animateContactBar()}>
+                                        <FontAwesome style={{ textAlign: 'center' }} name={"plus"} size={hp(2.5)} color="white" />
+                                    </TouchableOpacity>
+                                </View>
+                                {(this.state.nuevoContacto.length != 0 ?
                                     <FlatList
-                                        data={this.state.contactoNuevo}
+                                        data={this.state.nuevoContacto}
                                         numColumns={2}
                                         scrollEnabled={false}
                                         initialNumToRender={50}
@@ -774,37 +958,38 @@ class PerfilEdit extends React.Component {
                                             )
                                         }
                                         } />
-                                </View>
-                                :
-                                <View />
-                            )
+                                    :
+                                    <View />
+                                )}
+                                {this.showButton()}
+                            </View>
                         }
 
 
 
                     </ScrollView>
                     <Animated.View style={[styles.fullScreenAnimate, this.animationStyle(), { opacity: this.state.startValue }]}>
-                       <ScrollView>
-                        <FlatList
-                            style={{ paddingTop: hp(8), flex: 1 }}
-                            columnWrapperStyle={styles.listContainer}
-                            data={this.materiasFilter(this.state.materiasBase)}
-                            numColumns={2}
-                            scrollEnabled={false}
-                            initialNumToRender={50}
-                            keyExtractor={(item) => {
-                                return item.id_materia.toString();
-                            }}
-                            renderItem={({ item }) => {
-                                return (
-                                    <View style={{ flex: 1 }}>
-                                        <TouchableOpacity style={[this.marginSizeMaterias(item), styles.card]} onPress={() => this.guardarMaterias(this.state.nuevasMaterias, item)}>
-                                            <Text>{item.nombre_materia}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            }
-                            } />
+                        <ScrollView>
+                            <FlatList
+                                style={{ paddingTop: hp(8), flex: 1 }}
+                                columnWrapperStyle={styles.listContainer}
+                                data={this.materiasFilter(this.state.materiasBase)}
+                                numColumns={2}
+                                scrollEnabled={false}
+                                initialNumToRender={50}
+                                keyExtractor={(item) => {
+                                    return item.id_materia.toString();
+                                }}
+                                renderItem={({ item }) => {
+                                    return (
+                                        <View style={{ flex: 1 }}>
+                                            <TouchableOpacity style={[this.marginSizeMaterias(item), styles.card]} onPress={() => this.guardarMaterias(this.state.nuevasMaterias, item)}>
+                                                <Text>{item.nombre_materia}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                }
+                                } />
                         </ScrollView>
                     </Animated.View>
                     <Animated.View style={[styles.headerAnimatedContainer, { transform: [{ translateY: this.state.startValueSearchBar }] }]}>
@@ -823,6 +1008,25 @@ class PerfilEdit extends React.Component {
                                 containerStyle={{ backgroundColor: '#F28C0F', paddingBottom: hp(1), paddingTop: 0, marginRight: wp(3.3), flex: 1 }}
                                 searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
                             />
+                        </View>
+                    </Animated.View>
+                    <Animated.View style={[styles.bottomAnimatedContainer, { transform: [{ translateY: this.state.startValueContactBar }] }]}>
+                        <View style={[styles.searchBar]}>
+                            <TouchableOpacity style={[styles.logoSocialMediaBar, { flex: 0.5 }]} onPress={() => this.desAnimateContactBar(false)}>
+                                <Entypo style={{ textAlign: "center" }} name={"cross"} size={hp(2.5)} color="#FFF7EE"></Entypo>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(1)}>
+                                <Fontisto style={{ textAlign: "center" }} name={"instagram"} size={hp(2.5)} color='#FFF7EE' />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(2)}>
+                                <Feather style={{ textAlign: "center" }} name={"phone"} size={hp(2.5)} color='#FFF7EE' />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(3)}>
+                                <MaterialCommunityIcons style={{ textAlign: "center" }} name={"email-outline"} size={hp(2.5)} color='#FFF7EE' />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.logoSocialMediaBar} onPress={() => this.desAnimateContactBar(4)}>
+                                <Fontisto style={{ textAlign: "center" }} name={"whatsapp"} size={hp(2.5)} color='#FFF7EE' />
+                            </TouchableOpacity>
                         </View>
                     </Animated.View>
                     <Modal
@@ -1377,6 +1581,17 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: wp(3.3),
         backgroundColor: "#F28C0F"
+    },
+    bottomAnimatedContainer: {
+        flexDirection: 'row',
+        backgroundColor: "#F28C0F",
+        width: wp(100),
+        bottom: -hp(15),
+        position: 'absolute',
+    },
+    logoSocialMediaBar: {
+        flex: 1,
+        marginVertical: hp(2)
     }
 });
 export default withNavigation(PerfilEdit);

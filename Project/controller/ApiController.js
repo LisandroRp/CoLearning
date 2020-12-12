@@ -108,6 +108,170 @@ getTipoClases(okTipoClases) {
             okTipoClases(data);
         })
 }
+updateUsuario(usuario, okUsuarioSave){
+    let uri = url+'/user/updateUsuario'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: usuario.id_usuario,
+            nombre: usuario.nombre_usuario,
+            apellido: usuario.apellido,
+            instagram: usuario.instagram,
+            telefono: usuario.telefono,
+            email: usuario.email,
+            whatsApp: usuario.whatsApp,
+        }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okUsuarioSave(res);
+    }).catch((err) => console.log(err));
+}
+updateDomicilio(id_domicilio, des_domicilio, okDomicilioSave){
+    let uri = url+'/user/updateDomicilio'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idDomicilio: id_domicilio,
+            desDomicilio: des_domicilio,
+        }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okDomicilioSave(res);
+    }).catch((err) => console.log(err));
+}
+updateMoney(id_usuario, money, okMoneySave){
+    let uri = url+'/user/updateMoney'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: id_usuario,
+            money: money
+        }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okMoneySave(res);
+    }).catch((err) => console.log(err));
+}
+updateUsuarioRespuestas(id_usuario, okUsuarioRespuestas){
+    let uri = url+'/user/updateUsuarioRespuestas'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: id_usuario
+        }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okUsuarioRespuestas(res);
+    }).catch((err) => console.log(err));
+}
+//Delete
+deleteDondeClases(id_usuario, okDeleteDondeClases){
+    let uri = url+'/user/deleteDondeClases'
+    fetch(uri, {
+        method: 'DELETE',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: id_usuario,
+        }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okDeleteDondeClases(res);
+    }).catch((err) => console.log(err));
+}
+
+deleteTipoClases(id_usuario, okDeleteTipoClases){
+    let uri = url+'/user/deleteTipoClases'
+    fetch(uri, {
+        method: 'DELETE',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: id_usuario,
+        }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okDeleteTipoClases(res);
+    }).catch((err) => console.log(err));
+}
+deleteMaterias(id_usuario, okDeleteMaterias){
+    let uri = url+'/user/deleteMaterias'
+    fetch(uri, {
+        method: 'DELETE',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: id_usuario,
+        }),
+    }).then((res) => {
+        return res.json();
+    }).catch((err) => console.log(err)).then((res) => {
+        okDeleteMaterias(res);
+    }).catch((err) => console.log(err));
+}
+//Post
+postDondeClases(id_usuario, dondeClases, okDondeClasesSave){
+    let uri = url+'/user/postDondeClases'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: id_usuario,
+            dondeClases: dondeClases,
+        }),
+    }).then((res) => {
+        return res;
+    }).catch((err) => console.log(err)).then((res) => {
+        okDondeClasesSave(res);
+    }).catch((err) => console.log(err));
+}
+postTipoClases(id_usuario, tipoClases, okTipoClasesSave){
+    let uri = url+'/user/postTipoClases'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: id_usuario,
+            tipoClases: tipoClases
+        }),
+    }).then((res) => {
+        return res;
+    }).catch((err) => console.log(err)).then((res) => {
+        okTipoClasesSave(res);
+    }).catch((err) => console.log(err));
+}
+postMaterias(id_usuario, materias, okMateriasSave){
+    let uri = url+'/user/postMaterias'
+    fetch(uri, {
+        method: 'POST',
+        mode: "cors",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            idUsuario: id_usuario,
+            materias: materias
+        }),
+    }).then((res) => {
+        return res;
+    }).catch((err) => console.log(err)).then((res) => {
+        okMateriasSave(res);
+    }).catch((err) => console.log(err));
+}
 //********************** */
 //Comentarios
 //********************** */

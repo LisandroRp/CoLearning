@@ -49,7 +49,7 @@ class ForoEspecifico extends Component {
     this.setState({ foro: foro[0], isLoadingParams: false })
   }
   okRespuestasForo(respuestas) {
-    this.setState({ respuestas: respuestas, isLoadingRespuestas: false })
+    this.setState({ respuestas: respuestas, modalVisible: false, isLoadingRespuestas: false })
   }
 
   votar(voto, item, index) {
@@ -82,7 +82,10 @@ class ForoEspecifico extends Component {
     }
   }
   okRespuesta(){
-    ApiController.getRespuestasForo(this.state.foro.id_foro)
+    ApiController.updateUsuarioRespuestas(this.props.id_usuario, this.okUsuarioRespuestas.bind(this))
+  }
+  okUsuarioRespuestas(){
+    ApiController.getRespuestasForo(this.state.foro.id_foro, this.okRespuestasForo.bind(this))
   }
   onLayout = (e) => {
     this.setState({
@@ -91,10 +94,9 @@ class ForoEspecifico extends Component {
   }
   marginSize(index) {
     if (index != this.state.respuestas.length - 1) {
-
         return { marginTop: hp(2) }
     } else {
-        return { marginBottom: hp(2), marginTop: hp(2) }
+        return { marginBottom: this.state.marginTop + hp(5), marginTop: hp(2) }
     }
 }
   render() {
@@ -162,7 +164,7 @@ class ForoEspecifico extends Component {
         return (
           <View style={styles.container}>
             <View style={[{ flex: 1 }]}>
-              <ScrollView style={{ paddingTop: this.state.marginTop + hp(2) }}>
+              <ScrollView style={{ paddingTop: this.state.marginTop + hp(2)}}>
               {(this.state.respuestas).map((item, index) => (
                 <View style={[styles.todo, this.marginSize(index)]}>
                     <DropDownItem key={item.id_respuesta.toString()} contentVisible={false}
@@ -233,7 +235,6 @@ class ForoEspecifico extends Component {
                 </View>
                 ))}
               </ScrollView>
-
               {this.state.foro.esAnonimo ?
                 <View style={[{ flexDirection: 'row', position: "absolute" }]}>
                   <View style={styles.preguntaContainer} onLayout={this.onLayout}>

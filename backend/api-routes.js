@@ -148,6 +148,86 @@ router.post('/user/updateRating',(req, res) =>{
     else
     usuarioController.updateNuevoRating(req,res); 
 });
+
+router.post('/user/updateUsuario',(req, res) =>{
+    console.log("Update Datos Usuario: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.updateUsuario(req,res); 
+});
+
+router.post('/user/updateDomicilio',(req, res) =>{
+    console.log("Update Domicilio: ", req.body);
+    if(!req.body.idDomicilio) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.updateDomicilio(req,res); 
+});
+
+router.post('/user/updateMoney',(req, res) =>{
+    console.log("Update Money: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.updateMoney(req,res); 
+});
+
+router.delete('/user/deleteDondeClases',(req, res) =>{
+    console.log("Delete Donde Clases: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.deleteDondeClases(req,res); 
+});
+
+router.delete('/user/deleteTipoClases',(req, res) =>{
+    console.log("Delete Tipo Clases: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.deleteTipoClases(req,res); 
+});
+
+router.delete('/user/deleteMaterias',(req, res) =>{
+    console.log("Delete Materias: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.deleteMaterias(req,res); 
+});
+
+router.post('/user/postDondeClases',(req, res) =>{
+    console.log("Post Donde Clases: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.postDondeClases(req,res); 
+});
+
+router.post('/user/postTipoClases',(req, res) =>{
+    console.log("post Tipo Clases: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.postTipoClases(req,res); 
+});
+
+router.post('/user/postMaterias',(req, res) =>{
+    console.log("Post Materias: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.postMaterias(req,res); 
+});
+
+router.post('/user/updateUsuarioRespuestas',(req, res) =>{
+    console.log("Update UsuarioRespuestas: ", req.body);
+    if(!req.body.idUsuario) 
+        res.status(409).send({ msg: "Ha ocurrido un error" });
+    else
+    usuarioController.UpdateUsuarioRespuestas(req,res); 
+});
 //**************************/Fin Recursos Usuario**************************** */
 
 //**************************Inicio Recursos catalogo**************************** */
@@ -263,11 +343,11 @@ router.post('/crearForoTag/foroTag',(req, res) =>{
 
 //EndPoint para crear ForoTags
 router.post('/crearRespuesta/foro/respuesta',(req, res) =>{
-    console.log("Crear RespuestaForo: ", req.body);
+    console.log("Crear usuarioRespuestas: ", req.body);
     if(!req.body.titulo || !req.body.respuesta) 
         res.status(409).send({ msg: "Ha ocurrido un error" });
     else
-        foroController.crearRespuestaForo(req,res); 
+        foroController.postUsuarioRespuestas(req,res); 
 });
 
 
