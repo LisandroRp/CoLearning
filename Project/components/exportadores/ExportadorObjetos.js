@@ -126,14 +126,6 @@ class ExportadorObjetos extends Component {
 
             case 6: return (require("../../assets/Profile/Mark.jpg"))
 
-            case 7: return (require("../../assets/Profile/Lorenzo.jpg"))
-
-            case 8: return (require("../../assets/Profile/Jorge.jpg"))
-
-            case 9: return (require("../../assets/Profile/Cristina.jpg"))
-
-            case 10: return (require("../../assets/Profile/Laura.jpg"))
-
             default: return (null)
         }
     }

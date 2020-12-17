@@ -197,14 +197,6 @@ router.delete('/user/deleteMaterias',(req, res) =>{
     usuarioController.deleteMaterias(req,res); 
 });
 
-router.delete('/user/delateUsuarioHorarios',(req, res) =>{
-    console.log("Delete UsuarioHorarios: ", req.body);
-    if(!req.body.idUsuario) 
-        res.status(409).send({ msg: "Ha ocurrido un error" });
-    else
-    usuarioController.delateUsuarioHorarios(req,res); 
-});
-
 router.post('/user/postDondeClases',(req, res) =>{
     console.log("Post Donde Clases: ", req.body);
     if(!req.body.idUsuario) 
@@ -229,30 +221,13 @@ router.post('/user/postMaterias',(req, res) =>{
     usuarioController.postMaterias(req,res); 
 });
 
-router.post('/user/postUsuarioHorarios',(req, res) =>{
-    console.log("Post UsuarioHorarios: ", req.body);
+router.post('/user/updateUsuarioRespuestas',(req, res) =>{
+    console.log("Update UsuarioRespuestas: ", req.body);
     if(!req.body.idUsuario) 
         res.status(409).send({ msg: "Ha ocurrido un error" });
     else
-    usuarioController.postUsuarioHorarios(req,res); 
+    usuarioController.UpdateUsuarioRespuestas(req,res); 
 });
-
-router.post('/user/updateUsuarioRespuestasCantidad',(req, res) =>{
-    console.log("Update UsuarioRespuestasCantidad: ", req.body);
-    if(!req.body.idUsuario) 
-        res.status(409).send({ msg: "Ha ocurrido un error" });
-    else
-    usuarioController.updateUsuarioRespuestasCantidad(req,res); 
-});
-
-router.post('/user/updateUsuarioRespuestasBuenas',(req, res) =>{
-    console.log("Update UsuarioRespuestasBuenas: ", req.body);
-    if(!req.body.idUsuario) 
-        res.status(409).send({ msg: "Ha ocurrido un error" });
-    else
-    usuarioController.updateUsuarioRespuestasBuenas(req,res); 
-});
-
 //**************************/Fin Recursos Usuario**************************** */
 
 //**************************Inicio Recursos catalogo**************************** */
@@ -341,28 +316,6 @@ router.get('/foros/foro', (req, res) => {
         res.status(409).send({ msg: "El campo nombre o id del foro es requerido." });
     else
         foroController.findForosByIdAndName(req,res);  
-});
-router.get('/foros/foro/respuesta/:idRespuesta/user/:idUsuario', (req, res) => {
-    console.log("Consultar Foros id o nombre: ", req.params);
-    
-    if(!req.params.idRespuesta && !req.params.idUsuario) 
-        res.status(409).send({ msg: "Hubo un problema." });
-    else
-        foroController.getYaVotasteRespuesta(req,res);  
-});
-router.post('/foros/foro/updateRespuesta',(req, res) =>{
-    console.log("Update Respuesta: ", req.body);
-    if(!req.body.idRespuesta)  
-        res.status(409).send({ msg: "Ha ocurrido un error" });
-    else
-    foroController.updateRespuesta(req,res); 
-});
-router.post('/foros/foro/postUsuarioRespuesta',(req, res) =>{
-    console.log("Post UsuarioRespuesta: ", req.body);
-    if(!req.body.idRespuesta && !req.body.idUsuario)  
-        res.status(409).send({ msg: "Ha ocurrido un error" });
-    else
-    foroController.postUsuarioRespuesta(req,res); 
 });
 /////////////////////
 //Crear Foro

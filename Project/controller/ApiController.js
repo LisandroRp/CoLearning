@@ -161,8 +161,8 @@ updateMoney(id_usuario, money, okMoneySave){
         okMoneySave(res);
     }).catch((err) => console.log(err));
 }
-updateUsuarioRespuestasCantidad(id_usuario, okUsuarioRespuestasCantidad){
-    let uri = url+'/user/updateUsuarioRespuestasCantidad'
+updateUsuarioRespuestas(id_usuario, okUsuarioRespuestas){
+    let uri = url+'/user/updateUsuarioRespuestas'
     fetch(uri, {
         method: 'POST',
         mode: "cors",
@@ -173,22 +173,7 @@ updateUsuarioRespuestasCantidad(id_usuario, okUsuarioRespuestasCantidad){
     }).then((res) => {
         return res.json();
     }).catch((err) => console.log(err)).then((res) => {
-        okUsuarioRespuestasCantidad(res);
-    }).catch((err) => console.log(err));
-}
-updateUsuarioRespuestasBuenas(id_usuario, okUsuarioRespuestasBuenas){
-    let uri = url+'/user/updateUsuarioRespuestasBuenas'
-    fetch(uri, {
-        method: 'POST',
-        mode: "cors",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            idUsuario: id_usuario
-        }),
-    }).then((res) => {
-        return res.json();
-    }).catch((err) => console.log(err)).then((res) => {
-        okUsuarioRespuestasBuenas(res);
+        okUsuarioRespuestas(res);
     }).catch((err) => console.log(err));
 }
 //Delete
@@ -207,6 +192,7 @@ deleteDondeClases(id_usuario, okDeleteDondeClases){
         okDeleteDondeClases(res);
     }).catch((err) => console.log(err));
 }
+
 deleteTipoClases(id_usuario, okDeleteTipoClases){
     let uri = url+'/user/deleteTipoClases'
     fetch(uri, {
@@ -235,21 +221,6 @@ deleteMaterias(id_usuario, okDeleteMaterias){
         return res.json();
     }).catch((err) => console.log(err)).then((res) => {
         okDeleteMaterias(res);
-    }).catch((err) => console.log(err));
-}
-delateUsuarioHorarios(id_usuario, okDelateUsuarioHorarios){
-    let uri = url+'/user/delateUsuarioHorarios'
-    fetch(uri, {
-        method: 'DELETE',
-        mode: "cors",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            idUsuario: id_usuario,
-        }),
-    }).then((res) => {
-        return res.json();
-    }).catch((err) => console.log(err)).then((res) => {
-        okDelateUsuarioHorarios(res);
     }).catch((err) => console.log(err));
 }
 //Post
@@ -299,22 +270,6 @@ postMaterias(id_usuario, materias, okMateriasSave){
         return res;
     }).catch((err) => console.log(err)).then((res) => {
         okMateriasSave(res);
-    }).catch((err) => console.log(err));
-}
-postUsuarioHorarios(id_usuario, horarios, okHorariosSave){
-    let uri = url+'/user/postUsuarioHorarios'
-    fetch(uri, {
-        method: 'POST',
-        mode: "cors",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            idUsuario: id_usuario,
-            horarios: horarios
-        }),
-    }).then((res) => {
-        return res;
-    }).catch((err) => console.log(err)).then((res) => {
-        okHorariosSave(res);
     }).catch((err) => console.log(err));
 }
 //********************** */
@@ -451,15 +406,6 @@ getRespuestasForo(id_foro, okForo) {
             okForo(data);
         })
 }
-getYaVotasteRespuesta(id_usuario, id_respuesta, voto, index, okYaVotaste){
-let uri = url+'/foros/foro/respuesta/'+ id_respuesta + '/user/'+id_usuario
-fetch(uri).then(res => {
-    return res.json()
-}).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
-    then(yaVoto => {
-        okYaVotaste(yaVoto, voto, index);
-    })
-}
 postForo(id_usuario, titulo, pregunta, esAnonimo, descripcion, okForo) {
     let uri = url+'/crearForo/foro'
     fetch(uri, {
@@ -499,39 +445,6 @@ postRespuestaForo(id_foro, id_usuario, titulo, respuesta, okRespuesta) {
         okRespuesta();
     }).catch((err) => console.log(err));
 }
-updateRespuesta(id_respuesta, voto, index, okUpdateRespuesta) {
-    let uri = url+'/foros/foro/updateRespuesta'
-    fetch(uri, {
-        method: 'POST',
-        mode: "cors",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idRespuesta: id_respuesta, voto: voto }),
-    }).then((res) => {
-        return res.json();
-    }).catch((err) => console.log(err)).then((res) => {
-        if(voto == (-1)){
-            okUpdateRespuesta(false, index);
-        }
-        else{
-            okUpdateRespuesta(true, index);
-        }
-        
-    }).catch((err) => console.log(err));
-}
-postUsuarioRespuesta(id_usuario, id_respuesta, voto, okVoto) {
-    let uri = url+'/foros/foro/postUsuarioRespuesta'
-    fetch(uri, {
-        method: 'POST',
-        mode: "cors",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idUsuario: id_usuario, idRespuesta: id_respuesta, voto: voto }),
-    }).then((res) => {
-        return res.json();
-    }).catch((err) => console.log(err)).then((res) => {
-        okVoto(voto);
-    }).catch((err) => console.log(err));
-}
-
 //********************** */
 //Chats
 //********************** */

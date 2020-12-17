@@ -4,7 +4,7 @@ import {
     Text,
     View,
     StatusBar,
-    RefreshControl,
+    SafeAreaView,
     Image,
     Modal,
     ScrollView,
@@ -41,7 +41,6 @@ function createNuevaMoney(item, monto) {
         monto: monto
     };
 }
-
 class PerfilHome extends React.Component {
 
     constructor(props) {
@@ -49,7 +48,6 @@ class PerfilHome extends React.Component {
         this.state = {
             isLoading: true,
             isLoadingMonedas: true,
-            isRefreshing: false,
             modalVisible: false,
             max_rating: 5,
             usuario: {},
@@ -217,7 +215,6 @@ class PerfilHome extends React.Component {
     render() {
         var aux = -1
         let React_Native_Rating_Bar = [];
-
         for (var i = 1; i <= this.state.max_rating; i++) {
             aux++
             React_Native_Rating_Bar.push(
@@ -248,10 +245,7 @@ class PerfilHome extends React.Component {
         else {
             return (
                 <View style={styles.container}>
-                    <ScrollView showsVerticalScrollIndicator={false} 
-                    refreshControl={
-                        <RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => {this.setState({isLoading: true}), ApiController.getUsuarioById(this.state.usuario.id_usuario, this.okUsuario.bind(this))}} />
-                    }>
+                    <ScrollView showsVerticalScrollIndicator={false}>
                         <View>
                             <View style={{ alignSelf: "center" }}>
                                 <View style={[styles.profileImage, { backgroundColor: (this.state.usuario.src == null ? "#F28C0F" : "transparent") }]}>

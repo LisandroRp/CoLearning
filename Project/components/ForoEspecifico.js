@@ -52,41 +52,15 @@ class ForoEspecifico extends Component {
     this.setState({ respuestas: respuestas, modalVisible: false, isLoadingRespuestas: false })
   }
 
-  checkYaVoto(voto, item, index) { 
-    if (voto) {  
-      ApiController.getYaVotasteRespuesta(this.props.id_usuario, this.state.respuestas[index].id_respuesta, 1, index, this.okYaVotaste.bind(this))
+  votar(voto, item, index) {
+    var nuevasRespuestas = this.state.respuestas
+    if (voto) {
+      nuevasRespuestas[index].votos = nuevasRespuestas[index].votos + 1
     }
     else {
-      ApiController.getYaVotasteRespuesta(this.props.id_usuario, this.state.respuestas[index].id_respuesta, (-1), index, this.okYaVotaste.bind(this))
+      nuevasRespuestas[index].votos = nuevasRespuestas[index].votos - 1
     }
-  }
-  okYaVotaste(yaVoto, voto, index){
-    var nuevasRespuestas = this.state.respuestas
-    if(yaVoto){
-      alert("Ya votaste por esta respuesta")
-    }
-    else{
-      if(voto == 1){
-        nuevasRespuestas[index].votos = nuevasRespuestas[index].votos + 1
-      }
-      else{
-        nuevasRespuestas[index].votos = nuevasRespuestas[index].votos - 1
-      }
-      this.setState({ respuestas: nuevasRespuestas })
-      ApiController.updateRespuesta(nuevasRespuestas[index].id_respuesta, voto, index, this.okUpdateRespuesta.bind(this))
-    }
-  }
-  okUpdateRespuesta(voto, index){
-    ApiController.postUsuarioRespuesta(this.props.id_usuario, this.state.respuestas[index].id_respuesta, voto, this.okPostVotarRespuesta.bind(this))
-  }
-  okPostVotarRespuesta(voto){
-    console.log(voto)
-    if(voto){
-      ApiController.updateUsuarioRespuestasBuenas(this.props.id_usuario, this.okRespuestasBuenas.bind(this))
-    }
-  }
-  okRespuestasBuenas(){
-
+    this.setState({ respuestas: nuevasRespuestas })
   }
   marcarMejorRespuesta(index) {
     var nuevasRespuestas = this.state.respuestas
@@ -108,9 +82,9 @@ class ForoEspecifico extends Component {
     }
   }
   okRespuesta(){
-    ApiController.updateUsuarioRespuestasCantidad(this.props.id_usuario, this.okUsuarioRespuestasCantidad.bind(this))
+    ApiController.updateUsuarioRespuestas(this.props.id_usuario, this.okUsuarioRespuestas.bind(this))
   }
-  okUsuarioRespuestasCantidad(){
+  okUsuarioRespuestas(){
     ApiController.getRespuestasForo(this.state.foro.id_foro, this.okRespuestasForo.bind(this))
   }
   onLayout = (e) => {
@@ -197,11 +171,11 @@ class ForoEspecifico extends Component {
                       header={
                         <View style={styles.backgroundTitulo}>
                           <View style={[{ marginBottom: wp(5) }]}>
-                            <TouchableOpacity onPress={() => { this.checkYaVoto(true, item, index) }}>
+                            <TouchableOpacity onPress={() => { this.votar(true, item, index) }}>
                               <FontAwesome style={[{ marginBottom: 8 }]} name={"thumbs-up"} size={hp(2.5)} color="#5EC43A"></FontAwesome>
                             </TouchableOpacity>
                             <Text style={styles.rating}>{item.votos}</Text>
-                            <TouchableOpacity onPress={() => { this.checkYaVoto(false, item, index) }}>
+                            <TouchableOpacity onPress={() => { this.votar(false, item, index) }}>
                               <FontAwesome style={[{ marginTop: 8 }]} name={"thumbs-down"} size={hp(2.5)} color="#FA5454"></FontAwesome>
                             </TouchableOpacity>
                           </View>
