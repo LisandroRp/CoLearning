@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, StatusBar, Image, ActivityIndicator, Animated, Dimensions, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, Image, ActivityIndicator, Animated, Dimensions, SafeAreaView, ScrollView, RefreshControl } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { withNavigation } from 'react-navigation';
 
@@ -380,6 +380,11 @@ class HomeClases extends React.Component {
     }
     else {
       return (
+        <ScrollView
+        style={styles.containerScrollView}
+        refreshControl={
+                        <RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => {this.setState({isLoading: true}), ApiController.getProfesoresHome(this.okProfesores.bind(this))}} />
+                    }>
         <SafeAreaView style={styles.container}>
           <Carousel
             ref={(c) => { this._carousel = c; }}
@@ -490,6 +495,7 @@ class HomeClases extends React.Component {
           >
           </View>
         </SafeAreaView>
+        </ScrollView>
       );
     }
   }
@@ -522,9 +528,14 @@ class HomeClases extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: hp(80),
     backgroundColor: '#FFF7EE',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  containerScrollView: {
+    flex: 1,
+    backgroundColor: '#FFF7EE',
   },
   shadow: {
     shadowColor: '#00000025',

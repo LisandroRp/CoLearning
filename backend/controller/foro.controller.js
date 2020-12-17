@@ -121,8 +121,9 @@ let crearForo = (req, res) =>
 {      
     console.log("El usuario que quiere crear un foro es: ",req.body.idUsuario);
     var sql = 'INSERT INTO `foro`(`id_usuario_fk`, `nombre_foro`, `pregunta`, `fecha_alta`, `esAnonimo`, `descripcion`) ' +
-    'VALUES (?,?,?,?,?,?)'
-    dbConn.query(sql,[req.body.idUsuario, req.body.titulo, req.body.pregunta, getDate() ,req.body.esAnonimo, req.body.descripcion], (err,rows) => {
+    'VALUES (?,?,?,'+ getDate() +',?,?)'
+    console.log(sql);  
+    dbConn.query(sql,[req.body.idUsuario, req.body.titulo, req.body.pregunta, req.body.esAnonimo, req.body.descripcion], (err,rows) => {
         if(err) throw err;      
         console.log(rows);
         res.send(rows);
@@ -157,4 +158,51 @@ let postUsuarioRespuestas = (req, res) =>
       });
 };
 
-module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen, crearForo, crearForoTags, postUsuarioRespuestas};
+let getYaVotasteRespuesta = (req, res) =>
+{      
+    console.log("idUsuario: "+ req.params.idUsuario  )
+    console.log("idRespuesta: "+ req.params.idRespuesta  )
+    var sql = 'SELECT * FROM `usuarioVotosRespuestas` WHERE id_usuario_fk = ? AND id_respuesta_fk = ?';
+    dbConn.query(sql,[req.params.idUsuario, req.params.idRespuesta], (err,rows) => {
+        if(err) throw err;
+        console.log(rows.length)
+        if(rows.length == 0){
+          res.send(false)
+        }
+        else{
+          res.send(true);
+        }      
+      });
+};
+
+let updateRespuesta = (req, res) =>
+{      
+    console.log("idRespuesta: ",req.body.idRespuesta);
+    console.log("voto: ",req.body.voto);
+
+    var sql = 'UPDATE `respuesta` SET `votos`= (votos + ?) WHERE id_respuesta = ?'
+    dbConn.query(sql,[req.body.voto, req.body.idRespuesta], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+        res.send(rows);
+      });
+};
+
+let postUsuarioRespuesta = (req, res) =>
+{      
+    console.log("idForo: ",req.body.idRespuesta);
+    console.log("idUsuario: ",req.body.idUsuario);
+    console.log("titulo: ",req.body.voto);
+
+    var sql = 'INSERT INTO `usuarioVotosRespuestas`(`id_respuesta_fk`, `id_usuario_fk`, `voto`) VALUES (?, ?, ?)'
+    dbConn.query(sql,[req.body.idRespuesta, req.body.idUsuario, req.body.voto], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+        res.send(rows);
+      });
+};
+
+module.exports ={findForosByName,findAllByNames,findTagsByIdForo,findRespuestaByIdForo,findForosByIdAndName,findChatByIdOrigen, crearForo, 
+  crearForoTags, postUsuarioRespuestas,
+  getYaVotasteRespuesta, updateRespuesta, postUsuarioRespuesta
+};
