@@ -4,6 +4,7 @@ const usuarioController =   require('./controller/usuaurio.controller');
 const catalogoController =   require('./controller/catalogo.controller');
 const foroController =   require('./controller/foro.controller');
 const chatController =   require('./controller/chat.controller');
+const analiticaController =   require('./controller/analitica.controller');
 
 //**************************Inicio Recursos Usuario **************************** */
 router.get('/users', (req, res) => {
@@ -227,6 +228,14 @@ router.post('/user/updateUsuarioRespuestas',(req, res) =>{
         res.status(409).send({ msg: "Ha ocurrido un error" });
     else
     usuarioController.UpdateUsuarioRespuestas(req,res); 
+});
+
+router.get('/profesores/:idProfesor/analytics',(req, res) =>{
+    console.log("Materias Analytic: ", req);
+    if(!req.params.idProfesor) 
+        res.status(409).send({ msg: "El campo idProfesor no existe" });
+    else
+        analiticaController.findByIdProfesorByMateriasAnalytic(req,res); 
 });
 //**************************/Fin Recursos Usuario**************************** */
 

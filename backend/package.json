@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "ejs": "^2.7.1",
     "express": "^4.17.1",
+    "multilabelsvm": "^1.0.4",
     "mysql": "^2.18.1",
     "node-cache": "^4.2.1",
     "node-fetch": "^2.6.1",
