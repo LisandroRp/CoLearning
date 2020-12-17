@@ -507,8 +507,22 @@ let deleteMaterias = (req, res) => {
       console.log(rows);
       res.send(rows);
     });
-
 };
+
+let delateUsuarioHorarios = (req, res) => {
+
+  console.log("*******************")
+  console.log("Delete UsuarioHorarios")
+  console.log("*******************")
+
+  var sql = 'DELETE FROM `usuarioHorarios` WHERE id_usuario_fk = ?'
+  dbConn.query(sql,[req.body.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+};
+
 let postDondeClases = (req, res) => {
   
   for(var i = 0; i < req.body.dondeClases.length; i++){
@@ -545,7 +559,18 @@ let postMaterias = (req, res) => {
   }
   res.send();
 };
-let UpdateUsuarioRespuestas = (req, res) => {
+let postUsuarioHorarios = (req, res) => {
+
+  for(var i = 0; i < req.body.horarios.length; i++){
+    var sql = 'INSERT INTO `usuarioHorarios`(`id_usuario_fk`, `dia`, `turno`) VALUES (?, ?, ?)'
+    dbConn.query(sql,[req.body.idUsuario, req.body.horarios[i].dia, req.body.horarios[i].turno], (err,rows) => {
+        if(err) throw err;      
+        console.log(rows);
+      });
+  }
+  res.send();
+};
+let updateUsuarioRespuestasCantidad = (req, res) => {
 
   var sql = 'UPDATE usuarioRespuestas SET res_cantidad = (res_cantidad + 1) WHERE id_usuario_fk = ?'
   dbConn.query(sql,[req.body.idUsuario], (err,rows) => {
@@ -555,6 +580,17 @@ let UpdateUsuarioRespuestas = (req, res) => {
     });
 
 };
+let updateUsuarioRespuestasBuenas = (req, res) => {
+
+  var sql = 'UPDATE usuarioRespuestas SET res_buenas = (res_buenas + 1) WHERE id_usuario_fk = ?'
+  dbConn.query(sql,[req.body.idUsuario], (err,rows) => {
+      if(err) throw err;      
+      console.log(rows);
+      res.send(rows);
+    });
+
+};
+
 module.exports = {
   findAll, findAllById, findByIdProfesor, findAllByIdProfesorByDondeDaClases,
   findByIdProfesorByMaterias, findByIdProfesorByClases, findAllByMail,
@@ -563,5 +599,6 @@ module.exports = {
   updateUsuario, updateDomicilio, updateMoney, 
   deleteDondeClases, deleteTipoClases, deleteMaterias,
   postDondeClases, postTipoClases, postMaterias,
-  UpdateUsuarioRespuestas
+  updateUsuarioRespuestasCantidad, updateUsuarioRespuestasBuenas,
+  delateUsuarioHorarios, postUsuarioHorarios
 };
