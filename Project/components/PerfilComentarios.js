@@ -133,7 +133,7 @@ class UserCalendario extends Component {
             alert("Usted ya ha calificado a este profesor")
         }
         else{
-            this.setState({ modalVisible: false })
+            this.setState({ modalVisible: false, isLoading: true })
             ApiController.postComentario(this.props.id_usuario, this.state.id_usuario, this.state.newRating, this.state.comentario, this.okComentario.bind(this))
         }     
     }
@@ -145,7 +145,7 @@ class UserCalendario extends Component {
         ApiController.updateRating(rating.id_rating, rating.rating, rating.votos, this.okRating.bind(this))
     }
     okRating  = async () =>  {
-        //ApiController.getComentariosByIdProfesor((await this.props.navigation.getParam("id_usuario")) ? await this.props.navigation.getParam("id_usuario") : this.props.id_usuario, this.okComentarios.bind(this))
+        ApiController.getComentariosByIdProfesor((await this.props.navigation.getParam("id_usuario")) ? await this.props.navigation.getParam("id_usuario") : this.props.id_usuario, this.okComentarios.bind(this))
     }
 
     render() {

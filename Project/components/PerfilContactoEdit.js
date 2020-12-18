@@ -417,7 +417,7 @@ class UserContactoEdit extends Component {
         ApiController.postUsuarioHorarios(this.state.usuario.id_usuario, this.state.nuevosHorarios, this.okHorariosSave.bind(this))
     }
     okHorariosSave() {
-        this.setState({ isLoading: false })
+        this.setState({ isLoading: false, cambiosContacto: false, cambiosHorarios: false })
     }
     render() {
         const element = (data, index) => (

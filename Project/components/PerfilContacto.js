@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, StyleSheet, ActivityIndicator, Text, Linking, Dimensions, Keyboard, TouchableOpacity, StatusBar, FlatList } from 'react-native';
+import { View, ScrollView, StyleSheet, ActivityIndicator, Text, RefreshControl, Dimensions, TouchableOpacity, StatusBar, FlatList } from 'react-native';
 import { SearchBar, Icon } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 import { FontAwesome, Feather, Fontisto, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -166,6 +166,9 @@ class UserContactoEdit extends Component {
         }
         else {
             return (
+                <ScrollView refreshControl={
+                    <RefreshControl refreshing={this.state.isRefreshing} tintColor={"#F28C0F"} onRefresh={() => {this.setState({isLoading: true}), ApiController.getUsuarioById(this.state.usuario.id_usuario, this.okUsuario.bind(this))}} />
+                } style={styles.containerScroll}>
                 <View style={styles.container}>
                     <View style={styles.allSocialMediaContainer}>
                         <View style={styles.topBox}>
@@ -209,13 +212,19 @@ class UserContactoEdit extends Component {
                         <View/>
                         }
                     </View>
-                </View>
+                    </View>
+                </ScrollView>
             );
         }
     }
 };
 const resizeMode = 'center';
 const styles = StyleSheet.create({
+
+    containerScroll: {
+        backgroundColor: "#FFF7EE",
+        flex: 1,
+    },
 
     container: {
         backgroundColor: "#FFF7EE",
@@ -231,7 +240,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingBottom: hp(2.2),
         marginHorizontal: wp(8),
-        marginBottom: hp(2.2)
+        marginVertical: hp(2.2)
     },
     bottomBox: {
         paddingTop: hp(2.2),

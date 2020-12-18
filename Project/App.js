@@ -1062,13 +1062,13 @@ const BuscarTabNavigator = createBottomTabNavigator({
       tabBarIcon: ({ tintColor }) => {return (<FontAwesome5 name="chalkboard-teacher" size={hp(2.5)} color={tintColor} />)}
     }
   },
-  Cursos: {
-    screen: CursosMenuScreen,
-    navigationOptions: {
-      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Cursos</Text>,
-      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="school" size={hp(2.5)} color={tintColor} />)}
-    }
-  }
+  // Cursos: {
+  //   screen: CursosMenuScreen,
+  //   navigationOptions: {
+  //     tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Cursos</Text>,
+  //     tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="school" size={hp(2.5)} color={tintColor} />)}
+  //   }
+  // }
 },
 {
   navigationOptions: ({ navigation }) => {
@@ -1154,6 +1154,7 @@ class HomeClasesMenuScreen extends React.Component {
     return (
       <HomeClases
         onPressGo={this.buscarClase.bind(this)}
+        id_usuario={id_perfil}
       />
     );
   }
@@ -1198,13 +1199,13 @@ const HomeTabNavigator = createBottomTabNavigator({
       tabBarIcon: ({ tintColor }) => {return (<FontAwesome5 name="chalkboard-teacher" size={hp(2.5)} color={tintColor} />)}
     }
   },
-  HomeCursos: {
-    screen: HomeCursosScreen,
-    navigationOptions: {
-      tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Cursos</Text>,
-      tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="school" size={hp(2.5)} color={tintColor} />)}
-    }
-  }
+  // HomeCursos: {
+  //   screen: HomeCursosScreen,
+  //   navigationOptions: {
+  //     tabBarLabel: ({ focused }) => <Text style={{ fontSize: hp(1.5), color: (focused ? '#A7370F' : "white")}}>Cursos</Text>,
+  //     tabBarIcon: ({ tintColor }) => {return (<MaterialCommunityIcons name="school" size={hp(2.5)} color={tintColor} />)}
+  //   }
+  // }
 },
 {
   navigationOptions: ({ navigation }) => {

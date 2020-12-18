@@ -121,9 +121,8 @@ let crearForo = (req, res) =>
 {      
     console.log("El usuario que quiere crear un foro es: ",req.body.idUsuario);
     var sql = 'INSERT INTO `foro`(`id_usuario_fk`, `nombre_foro`, `pregunta`, `fecha_alta`, `esAnonimo`, `descripcion`) ' +
-    'VALUES (?,?,?,'+ getDate() +',?,?)'
-    console.log(sql);  
-    dbConn.query(sql,[req.body.idUsuario, req.body.titulo, req.body.pregunta, req.body.esAnonimo, req.body.descripcion], (err,rows) => {
+    'VALUES (?,?,?,?,?,?)'
+    dbConn.query(sql,[req.body.idUsuario, req.body.titulo, req.body.pregunta, getDate(), req.body.esAnonimo, req.body.descripcion], (err,rows) => {
         if(err) throw err;      
         console.log(rows);
         res.send(rows);

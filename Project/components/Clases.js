@@ -6,10 +6,12 @@ import { FontAwesome } from '@expo/vector-icons';
 import AntDesign from 'react-native-vector-icons/MaterialIcons'
 
 import ExportadorLogos from './exportadores/ExportadorLogos'
+import ExportadorObjetos from './exportadores/ExportadorObjetos';
 
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import ApiController from '../controller/ApiController';
-import ExportadorObjetos from './exportadores/ExportadorObjetos';
+import * as Font from 'expo-font';
+
 
 var { height, width } = Dimensions.get('window');
 
@@ -19,6 +21,7 @@ class Clases extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            isLoadingFont: true,
             modalVisible: false,
             profesores: [],
             memory: [],
@@ -29,12 +32,12 @@ class Clases extends Component {
     }
     componentDidMount = async () => {
         ApiController.getProfesoresFilter(await this.props.navigation.getParam("nombre_profesor"), await this.props.navigation.getParam("materia"), await this.props.navigation.getParam("des_domicilio"), await this.props.navigation.getParam("rating"), this.okProfesores.bind(this))
+        this.loadFont()
         this.keyboardDidShow = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
         this.keyboardWillShow = Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
         this.keyboardWillHide = Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
     }
     okProfesores(profesoresBase) {
-        console.log(profesoresBase)
         this.setState({ profesores: profesoresBase, memory: profesoresBase, isLoading: false })
     }
     keyboardDidShow = () => {
@@ -49,6 +52,13 @@ class Clases extends Component {
         this.setState({ searchBarFocused: false })
     }
 
+    loadFont = async () => {
+        await Font.loadAsync({
+            'mainFont': require('../assets/fonts/LettersForLearners.ttf'),
+        });
+        this.setState({ isLoadingFont: false })
+    }
+
     marginSize(item) {
         if (item.id_usuario != this.state.profesores[this.state.profesores.length - 1].id_usuario) {
 
@@ -57,7 +67,7 @@ class Clases extends Component {
             return { marginBottom: height * 0.028, marginTop: height * 0.028 }
         }
     }
-    
+
     filtrarPrecio() {
         var clasesPrecio = []
         for (var i = 0; i < this.state.profesores.length; i++) {
@@ -122,7 +132,7 @@ class Clases extends Component {
     };
 
     render() {
-        if (this.state.isLoading) {
+        if (this.state.isLoading || this.state.isLoadingFont) {
             return (
                 <View style={styles.container}>
                     <StatusBar barStyle="black" backgroundColor="white" />
@@ -131,150 +141,162 @@ class Clases extends Component {
             );
         }
         else {
-            return (
-                <View style={styles.container}>
-                    <StatusBar barStyle="black" backgroundColor="white" />
-                    <View style={{ backgroundColor: '#F28C0F' }}>
-                        <SearchBar
-                            placeholder="Buscar..."
-                            platform='ios'
-                            onChangeText={value => this.searchProfesor(value)}
-                            value={this.state.value}
-                            inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5) }}
-                            placeholderTextColor='rgba(0, 0, 0, 0.3)'
-                            cancelButtonProps={{ buttonTextStyle: { color: 'white', paddingTop: 0 } }}
-                            containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3) }}
-                            buttonStyle={{}}
-                            searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
-                        />
-                    </View>
-                    <ScrollView>
-                        <View style={styles.priceFilterView}>
-                            <TouchableOpacity style={[styles.buttonContainer, styles.shadow]}
-                                onPress={() => this.OrdenarPorPrecio(0)}>
-                                <Text style={styles.loginText}>Precio: Mayor to Menor</Text>
-                            </TouchableOpacity>
-                            {(this.state.filtrarPrecio == false) ?
-                                <TouchableOpacity onPress={() => {
-                                    this.setModalVisible(true);
-                                }} style={styles.fab}>
-                                    <AntDesign name="attach-money" size={hp(2.7)} color="white" style={{ textAlign: "right" }} />
-                                </TouchableOpacity>
-                                :
-                                <TouchableOpacity onPress={() => {
-                                    this.noFiltrar();
-                                }} style={styles.fab}>
-                                    <AntDesign name="money-off" size={25} color="white" style={{ marginLeft: 0.5 }} />
-                                </TouchableOpacity>
-                            }
-                            <TouchableOpacity style={[styles.buttonContainer, styles.shadow]}
-                                onPress={() => [this.OrdenarPorPrecio(1)]}>
-                                <Text style={styles.loginText}>Precio: Menor to Mayor</Text>
-                            </TouchableOpacity>
+            if (this.state.profesores.length == 0) {
+                return (
+                    <View style={styles.noProfesoresContainer}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
+                            <Text style={[styles.noProfesoresMensaje, { fontFamily: "mainFont" }]}>No se ha encontrado ningún profesor relacionado a los filtros seleccionados.</Text>
                         </View>
-                        <FlatList
-                            style={styles.contentList}
-                            columnWrapperStyle={styles.listContainer}
-                            data={this.state.profesores}
-                            initialNumToRender={50}
-                            keyExtractor={(item) => {
-                                return item.id_usuario.toString();
-                            }}
-                            renderItem={({ item }) => {
-                                return (
-                                    <View>
-                                        <TouchableOpacity style={[this.marginSize(item), styles.card, styles.shadow]} onPress={() => this.props.onPressGo(item.id_usuario, item.nombre_usuario, item.apellido, item.des_domicilio, item.esProfesor)}>
-                                            {ExportadorObjetos.profileImage(item.id_usuario) ?
-                                                <View style={[styles.imageContainer, { borderWidth: 0 }]}>
-                                                    <Image
-                                                        source={ExportadorObjetos.profileImage(item.id_usuario)}
-                                                        style={[styles.image, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
-                                                    />
-                                                </View>
-                                                :
-                                                <View style={[styles.imageContainer, { borderWidth: 2 }]}>
-                                                    <Text style={{ fontSize: wp(7.7), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
-                                                        {item.nombre_usuario.slice(0, 1).toUpperCase()}{item.apellido.slice(0, 1).toUpperCase()}
-                                                    </Text>
-                                                </View>
-                                            }
-                                            <View style={styles.cardContent}>
-                                                <Text style={styles.cardTitulo} numberOfLines={2}>{item.nombre_usuario + " " + item.apellido}</Text>
-                                                <Text style={styles.cardSubTitulo} numberOfLines={2}>{item.des_domicilio}</Text>
-                                                {item.nombre_materia ? 
-                                                    <Text style={[styles.cardSubTituloMateria]} numberOfLines={1}>{item.nombre_materia}</Text>
-                                                :
-                                                <View/>
-                                                }
-                                                {item.des_moneda && item.monto ?
-                                                    <View style={{ flex: 1, flexDirection: "row", marginLeft: 2, marginTop: 5 }}>
-                                                        <Text style={styles.cardSubTituloMoney}>A partir de: </Text>
-
-                                                        <Text style={styles.cardSubTituloMoneyMonto}>{item.des_moneda}{item.monto}/h</Text>
+                    </View>
+                )
+            }
+            else {
+                return (
+                    <View style={styles.container}>
+                        <StatusBar barStyle="black" backgroundColor="white" />
+                        <View style={{ backgroundColor: '#F28C0F' }}>
+                            <SearchBar
+                                placeholder="Buscar..."
+                                platform='ios'
+                                onChangeText={value => this.searchProfesor(value)}
+                                value={this.state.value}
+                                inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5) }}
+                                placeholderTextColor='rgba(0, 0, 0, 0.3)'
+                                cancelButtonProps={{ buttonTextStyle: { color: 'white', paddingTop: 0 } }}
+                                containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3) }}
+                                buttonStyle={{}}
+                                searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
+                            />
+                        </View>
+                        <ScrollView>
+                            <View style={styles.priceFilterView}>
+                                <TouchableOpacity style={[styles.buttonContainer, styles.shadow]}
+                                    onPress={() => this.OrdenarPorPrecio(0)}>
+                                    <Text style={styles.loginText}>Precio: Mayor to Menor</Text>
+                                </TouchableOpacity>
+                                {(this.state.filtrarPrecio == false) ?
+                                    <TouchableOpacity onPress={() => {
+                                        this.setModalVisible(true);
+                                    }} style={styles.fab}>
+                                        <AntDesign name="attach-money" size={hp(2.7)} color="white" style={{ textAlign: "right" }} />
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity onPress={() => {
+                                        this.noFiltrar();
+                                    }} style={styles.fab}>
+                                        <AntDesign name="money-off" size={25} color="white" style={{ marginLeft: 0.5 }} />
+                                    </TouchableOpacity>
+                                }
+                                <TouchableOpacity style={[styles.buttonContainer, styles.shadow]}
+                                    onPress={() => [this.OrdenarPorPrecio(1)]}>
+                                    <Text style={styles.loginText}>Precio: Menor to Mayor</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <FlatList
+                                style={styles.contentList}
+                                columnWrapperStyle={styles.listContainer}
+                                data={this.state.profesores}
+                                initialNumToRender={50}
+                                keyExtractor={(item) => {
+                                    return item.id_usuario.toString();
+                                }}
+                                renderItem={({ item }) => {
+                                    return (
+                                        <View>
+                                            <TouchableOpacity style={[this.marginSize(item), styles.card, styles.shadow]} onPress={() => this.props.onPressGo(item.id_usuario, item.nombre_usuario, item.apellido, item.des_domicilio, item.esProfesor)}>
+                                                {ExportadorObjetos.profileImage(item.id_usuario) ?
+                                                    <View style={[styles.imageContainer, { borderWidth: 0 }]}>
+                                                        <Image
+                                                            source={ExportadorObjetos.profileImage(item.id_usuario)}
+                                                            style={[styles.image, { resizeMode: ((item.id_usuario == 0) ? 'contain' : 'contain') }]}
+                                                        />
                                                     </View>
                                                     :
-                                                    <View />
+                                                    <View style={[styles.imageContainer, { borderWidth: 2 }]}>
+                                                        <Text style={{ fontSize: wp(7.7), textAlign: "center", color: '#F28C0F', alignContent: 'center' }}>
+                                                            {item.nombre_usuario.slice(0, 1).toUpperCase()}{item.apellido.slice(0, 1).toUpperCase()}
+                                                        </Text>
+                                                    </View>
                                                 }
+                                                <View style={styles.cardContent}>
+                                                    <Text style={styles.cardTitulo} numberOfLines={2}>{item.nombre_usuario + " " + item.apellido}</Text>
+                                                    <Text style={styles.cardSubTitulo} numberOfLines={2}>{item.des_domicilio}</Text>
+                                                    {item.nombre_materia ?
+                                                        <Text style={[styles.cardSubTituloMateria]} numberOfLines={1}>{item.nombre_materia}</Text>
+                                                        :
+                                                        <View />
+                                                    }
+                                                    {item.des_moneda && item.monto ?
+                                                        <View style={{ flex: 1, flexDirection: "row", marginLeft: 2, marginTop: 5 }}>
+                                                            <Text style={styles.cardSubTituloMoney}>A partir de: </Text>
 
-                                            </View>
-                                            <View style={styles.starView}>
-                                                <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()} />
-                                                {/* <FontAwesome name="star" style={styles.HeartImage}
+                                                            <Text style={styles.cardSubTituloMoneyMonto}>{item.des_moneda}{item.monto}/h</Text>
+                                                        </View>
+                                                        :
+                                                        <View />
+                                                    }
+
+                                                </View>
+                                                <View style={styles.starView}>
+                                                    <Image style={styles.starImage} source={ExportadorLogos.traerEstrellaLlena()} />
+                                                    {/* <FontAwesome name="star" style={styles.HeartImage}
                                                     size={hp(5)}
                                                 /> */}
-                                                <Text style={styles.rating}>{item.rating + "/5"}</Text>
-                                                <Text style={styles.votos}>Votos: {item.votos}</Text>
-                                            </View>
+                                                    <Text style={styles.rating}>{item.rating + "/5"}</Text>
+                                                    <Text style={styles.votos}>Votos: {item.votos}</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )
+                                }
+                                } />
+                        </ScrollView>
+                        <Modal
+                            animationType="fade"
+                            visible={this.state.modalVisible}
+                            transparent={true}
+                            onRequestClose={() => this.setState({ modalVisible: false })}  >
+                            <TouchableOpacity style={[styles.modalContainer, styles.shadow]} activeOpacity={1} onPress={Keyboard.dismiss}>
+
+                                <View style={styles.modal}>
+                                    <Text style={styles.cardTitulo}>Precio</Text>
+                                    <View style={[{ flexDirection: "row", justifyContent: 'space-between' }]}>
+                                        <TextInput style={[styles.inputMonto, styles.shadowLight]}
+                                            value={this.state.nuevoMonto}
+                                            maxLength={4}
+                                            placeholder="Min."
+                                            keyboardType="numeric"
+                                            placeholderTextColor="grey"
+                                            underlineColorAndroid='transparent'
+                                            onChangeText={(text) => this.setState({ minPrice: text })}
+                                        />
+                                        <TextInput style={[styles.inputMonto, styles.shadowLight]}
+                                            value={this.state.nuevoMonto}
+                                            maxLength={4}
+                                            placeholder="Max."
+                                            keyboardType="numeric"
+                                            placeholderTextColor="grey"
+                                            underlineColorAndroid='transparent'
+                                            onChangeText={(text) => this.setState({ maxPrice: text })}
+                                        />
+                                    </View>
+                                    <View style={[{ flexDirection: "row" }]}>
+                                        <TouchableOpacity style={[styles.buttonContainerLogin]}
+                                            onPress={() => this.setModalVisible(false)}>
+                                            <Text style={styles.loginText}>Cancelar</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={[styles.buttonContainerLogin]}
+                                            onPress={() => [this.ActivarFiltrarPrecio()]}>
+                                            <Text style={styles.loginText}>Aceptar</Text>
                                         </TouchableOpacity>
                                     </View>
-                                )
-                            }
-                            } />
-                    </ScrollView>
-                    <Modal
-                        animationType="fade"
-                        visible={this.state.modalVisible}
-                        transparent={true}
-                        onRequestClose={() => this.setState({ modalVisible: false })}  >
-                        <TouchableOpacity style={[styles.modalContainer, styles.shadow]} activeOpacity={1} onPress={Keyboard.dismiss}>
-
-                            <View style={styles.modal}>
-                                <Text style={styles.cardTitulo}>Precio</Text>
-                                <View style={[{ flexDirection: "row", justifyContent: 'space-between' }]}>
-                                    <TextInput style={[styles.inputMonto, styles.shadowLight]}
-                                        value={this.state.nuevoMonto}
-                                        maxLength={4}
-                                        placeholder="Min."
-                                        keyboardType="numeric"
-                                        placeholderTextColor="grey"
-                                        underlineColorAndroid='transparent'
-                                        onChangeText={(text) => this.setState({ minPrice: text })}
-                                    />
-                                    <TextInput style={[styles.inputMonto, styles.shadowLight]}
-                                        value={this.state.nuevoMonto}
-                                        maxLength={4}
-                                        placeholder="Max."
-                                        keyboardType="numeric"
-                                        placeholderTextColor="grey"
-                                        underlineColorAndroid='transparent'
-                                        onChangeText={(text) => this.setState({ maxPrice: text })}
-                                    />
                                 </View>
-                                <View style={[{ flexDirection: "row" }]}>
-                                    <TouchableOpacity style={[styles.buttonContainerLogin]}
-                                        onPress={() => this.setModalVisible(false)}>
-                                        <Text style={styles.loginText}>Cancelar</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={[styles.buttonContainerLogin]}
-                                        onPress={() => [this.ActivarFiltrarPrecio()]}>
-                                        <Text style={styles.loginText}>Aceptar</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    </Modal>
-                </View>
-            )
+                            </TouchableOpacity>
+                        </Modal>
+                    </View>
+                )
+            }
         }
     }
 };
@@ -287,6 +309,22 @@ const styles = StyleSheet.create({
     StatusBar: {
         height: hp(3),
         backgroundColor: "black"
+    },
+    noProfesoresContainer: {
+        backgroundColor: "#FFF7EE",
+        justifyContent: "center",
+        flex: 1
+    },
+    fondoImage: {
+        width: wp(80),
+        height: wp(30),
+        resizeMode: 'contain',
+    },
+    noProfesoresMensaje: {
+        marginHorizontal: wp(5),
+        textAlign: "center",
+        fontSize: wp(8),
+        color: '#F28C0F'
     },
     priceFilterView: {
         flexDirection: 'row',

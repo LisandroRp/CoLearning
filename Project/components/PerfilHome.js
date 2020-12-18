@@ -250,7 +250,7 @@ class PerfilHome extends React.Component {
                 <View style={styles.container}>
                     <ScrollView showsVerticalScrollIndicator={false} 
                     refreshControl={
-                        <RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => {this.setState({isLoading: true}), ApiController.getUsuarioById(this.state.usuario.id_usuario, this.okUsuario.bind(this))}} />
+                        <RefreshControl refreshing={this.state.isRefreshing} tintColor={"#F28C0F"} onRefresh={() => {this.setState({isLoading: true}), ApiController.getUsuarioById(this.state.usuario.id_usuario, this.okUsuario.bind(this))}} />
                     }>
                         <View>
                             <View style={{ alignSelf: "center" }}>

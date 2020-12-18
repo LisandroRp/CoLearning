@@ -31,7 +31,9 @@ class HomeClases extends React.Component {
     this.Star_With_Border = ExportadorLogos.traerEstrellaBorde();
   }
   componentDidMount() {
-    ApiController.getProfesoresHome(this.okProfesores.bind(this))
+    console.log(this.props.id_usuario)
+    ApiController.getProfesoresHomeAnalitycs(this.props.id_usuario, this.okProfesores.bind(this))
+    //ApiController.getProfesoresHome(this.okProfesores.bind(this))
     this.loadFont()
     this.setState({ activeImage: this.state.clases[0] })
     //this.setState({ isLoading: false })
@@ -64,7 +66,9 @@ class HomeClases extends React.Component {
         materiaActual = ExportadorObjetos.createMaterias(profesoresBase[contadorInterno].id_materia, profesoresBase[contadorInterno].nombre_materia)
         if (flag == 0) {
           while (contadorInterno < lenght && profesoresBase[contadorInterno].id_usuario == profesorActual.id_usuario && profesoresBase[contadorInterno].id_materia == materiaActual.id_meteria) {
-            arrayDondeClases.push(ExportadorObjetos.createDondeClases(profesoresBase[contadorInterno].id_dondeClases, profesoresBase[contadorInterno].des_dondeClases))
+            if(profesoresBase[contadorInterno].id_dondeClases != null){
+              arrayDondeClases.push(ExportadorObjetos.createDondeClases(profesoresBase[contadorInterno].id_dondeClases, profesoresBase[contadorInterno].des_dondeClases))
+            }
             contadorInterno++
             contadorDondeClases++
           }
@@ -89,6 +93,7 @@ class HomeClases extends React.Component {
       arrayMaterias = []
       arrayDondeClases = []
     }
+    console.log(arrayProfesores)
     this.setState({ clases: arrayProfesores, activeImage: arrayProfesores[0], isLoading: false })
   }
   UNSAFE_componentWillMount() {
@@ -383,7 +388,7 @@ class HomeClases extends React.Component {
         <ScrollView
         style={styles.containerScrollView}
         refreshControl={
-                        <RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => {this.setState({isLoading: true}), ApiController.getProfesoresHome(this.okProfesores.bind(this))}} />
+                        <RefreshControl refreshing={this.state.isRefreshing} tintColor={"#F28C0F"} onRefresh={() => {this.setState({isLoading: true}), ApiController.getProfesoresHomeAnalitycs(this.props.id_usuario, this.okProfesores.bind(this))}} />
                     }>
         <SafeAreaView style={styles.container}>
           <Carousel

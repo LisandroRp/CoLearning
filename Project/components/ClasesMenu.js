@@ -23,7 +23,7 @@ class ClasesMenu extends Component {
             domicilio: '',
             dondeClases: [],
             tipoClases: [],
-            selecDondeClase: [false, true, false],
+            selecDondeClase: [false, false, false],
             selecTipoClases: [false, false, false]
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();
@@ -135,8 +135,9 @@ class ClasesMenu extends Component {
         this.setState({selecTipoClases: tipoClase})
     }
     buscarProfesor() {
-        if (!this.state.tema.trim()) {
-            alert("Debe proporcionar el tema de la clase que le interese")
+        if (!this.state.tema.trim() && !this.state.nombre_profesor.trim()) {
+            alert("Debe proporcionar el tema de la clase o el nombre del profesor")
+            return
         }
         else {
             this.props.onPressSearch(this.state.nombre_profesor, this.state.tema, this.state.domicilio, this.state.rating)

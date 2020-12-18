@@ -250,6 +250,7 @@ let getPromedioByIdProfesor = (req, res) => {
 };
 
 let updateNuevoRating = (req, res) => {
+  console.log("*************************************************************");
   console.log("Update nuevo rating con el id_usuario: " + req.body.idRating);
 
   var sql = 'UPDATE rating SET votos = ?, rating = ? WHERE  id_rating = ?'
@@ -565,7 +566,7 @@ let postUsuarioHorarios = (req, res) => {
     var sql = 'INSERT INTO `usuarioHorarios`(`id_usuario_fk`, `dia`, `turno`) VALUES (?, ?, ?)'
     dbConn.query(sql,[req.body.idUsuario, req.body.horarios[i].dia, req.body.horarios[i].turno], (err,rows) => {
         if(err) throw err;      
-        console.log(rows);
+        //console.log(rows);
       });
   }
   res.send();

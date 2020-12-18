@@ -193,7 +193,7 @@ let findByIdProfesorByMateriasAnalytic = (req, res) => {
     console.log(req.params.idProfesor);
     var idBusqueda = req.params.idProfesor;
     var materia =  getValueDataSet(idBusqueda);
-    var values = [];
+    //var values = [];
     console.log(materia);
     var sql = 'SELECT u.id_usuario,u.nombre_usuario,u.apellido,u.src, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'
     + ' FROM usuario u'
@@ -205,12 +205,13 @@ let findByIdProfesorByMateriasAnalytic = (req, res) => {
     + ' left join usuariopormoneda um on um.id_usuario_fk = u.id_usuario'
     + ' left join moneda mo on mo.id_moneda = um.id_moneda_fk'
     + ' left join rating r on r.id_rating = u.id_rating_fk'
-    + ' WHERE u.esProfesor = 1 and r.rating >= 3 or m.nombre_materia like ?'
-    + ' group by u.id_usuario,u.nombre_usuario,u.apellido,u.src, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'
+    + ' WHERE (u.esProfesor = 1 and r.rating >= 3 and r.votos >= 50) or (m.nombre_materia like ? and u.esProfesor = 1 and r.rating >= 3)'
+  //  + ' group by u.id_usuario,u.nombre_usuario,u.apellido,u.src, d.des_domicilio, m.id_materia, m.nombre_materia, do.id_dondeClases, do.des_dondeClases,mo.id_moneda, mo.des_moneda,um.monto,r.votos,r.rating'
     + ' Order by 1,6,8 desc';
-    values.push('%'.concat(materia).concat('%'));
-    console.log(sql + ' - ' + values);
-    dbConn.query(sql, values, (err, rows) => {
+    //values.push('%'.concat(materia).concat('%'));
+    //console.log(sql + ' - ' + values);
+    console.log(materia)
+    dbConn.query(sql, ['%'.concat(materia).concat('%')], (err, rows) => {
       if (err) throw err;
       console.log('El usuario by id: ' + idBusqueda);
       console.log(rows);

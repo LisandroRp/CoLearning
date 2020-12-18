@@ -1,6 +1,6 @@
 import React from 'react';
 import { GiftedChat } from 'react-native-gifted-chat'; // 0.3.0
-import { View, Image, StyleSheet, ActivityIndicator, FlatList, SafeAreaView, TouchableOpacity, StatusBar, Text, Dimensions } from 'react-native';
+import { View, Image, StyleSheet, ActivityIndicator, FlatList, SafeAreaView, TouchableOpacity, StatusBar, Text, Dimensions, ScrollView, RefreshControl } from 'react-native';
 import { SearchBar, ThemeConsumer } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 
@@ -36,16 +36,24 @@ class ChatList extends React.Component {
     id_user: this.props.id_usuario,
     value: "",
     isLoading: true,
+    isLoadingFont: true,
     flag: false
   };
 
   componentDidMount() {
     ApiController.getChatsByIdUsuario(this.props.id_usuario, this.okChats.bind(this))
+    this.loadFont();
   }
   okChats(chatList) {
     this.setState({ chatList: chatList, memory: chatList, isLoading: false })
   }
 
+  loadFont = async () => {
+    await Font.loadAsync({
+        'mainFont': require('../assets/fonts/LettersForLearners.ttf'),
+    });
+    this.setState({ isLoadingFont: false })
+}
   ///////////////////////////////////////
 
   marginSize(item) {
@@ -110,9 +118,23 @@ class ChatList extends React.Component {
   };
 
   render() {
-    if (this.state.isLoading) {
+    if (this.state.isLoading || this.state.isLoadingFont) {
       return (
         <View style={styles.container}>
+        <View style={{ backgroundColor: '#F28C0F' }}>
+              <SearchBar
+                placeholder="Buscar..."
+                platform='ios'
+                onChangeText={value => this.searchChat(value)}
+                value={this.state.value}
+                inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5) }}
+                placeholderTextColor='rgba(0, 0, 0, 0.3)'
+                cancelButtonProps={{ buttonTextStyle: { color: 'white', paddingTop: 0 } }}
+                containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3) }}
+                buttonStyle={{}}
+                searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
+              />
+          </View>
           <StatusBar barStyle="black" backgroundColor="white" />
           <ActivityIndicator size="large" color='#F28C0F' backgroundColor=' #616161' style={{ flex: 1 }}></ActivityIndicator>
         </View>
@@ -122,10 +144,29 @@ class ChatList extends React.Component {
       if (this.state.chatList.length == 0) {
         return (
           <View style={styles.noComentariosContainer}>
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ backgroundColor: '#F28C0F' }}>
+              <SearchBar
+                placeholder="Buscar..."
+                platform='ios'
+                onChangeText={value => this.searchChat(value)}
+                value={this.state.value}
+                inputContainerStyle={{ backgroundColor: '#FFF7EE', height: hp(5) }}
+                placeholderTextColor='rgba(0, 0, 0, 0.3)'
+                cancelButtonProps={{ buttonTextStyle: { color: 'white', paddingTop: 0 } }}
+                containerStyle={{ backgroundColor: '#F28C0F', paddingTop: 0, marginHorizontal: wp(3.3) }}
+                buttonStyle={{}}
+                searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
+              />
+            </View>
+          <ScrollView refreshControl={
+            <RefreshControl refreshing={this.state.isRefreshing} tintColor={"#F28C0F"} onRefresh={() => {this.setState({isLoading: true}), ApiController.getChatsByIdUsuario(this.props.id_usuario, this.okChats.bind(this))}} />
+        }
+        style = {{flex:1}}>
+            <View style={{ height: hp(80), justifyContent: 'center', alignItems: 'center' }}>
               <Image source={ExportadorLogos.traerLogoNaranja()} style={styles.fondoImage}></Image>
               <Text style={[styles.noComentariosMensaje, { fontFamily: "mainFont" }]}>No tienes ningun chat activo</Text>
             </View>
+            </ScrollView>
           </View>
         )
       }
@@ -146,6 +187,10 @@ class ChatList extends React.Component {
                 searchIcon={{ color: 'rgba(0, 0, 0, 0.3)' }}
               />
             </View>
+            <ScrollView refreshControl={
+                        <RefreshControl refreshing={this.state.isRefreshing} tintColor={"#F28C0F"} onRefresh={() => {this.setState({isLoading: true}), ApiController.getChatsByIdUsuario(this.props.id_usuario, this.okChats.bind(this))}} />
+                    }
+                    style = {{flex:1}}>
             <FlatList
               style={styles.contentList}
               columnWrapperStyle={styles.listContainer}
@@ -155,8 +200,6 @@ class ChatList extends React.Component {
                 return item.id_usuario.toString();
               }}
               renderItem={({ item }) => {
-                // console.log("*************************")
-                // console.log(item)
                 return (
                   <View>
                     {/* <TouchableOpacity style={[this.marginSize(item), styles.card]} onPress={() => {this.props.onPressGoChat(item.id_user, item.userDestino.id_user, item.userDestino.nombre), fireBase.refOff(this.state.id_user, this.state.chatList)}}> */}
@@ -194,6 +237,7 @@ class ChatList extends React.Component {
                 )
               }
               } />
+            </ScrollView>
           </SafeAreaView>
         );
       }
@@ -212,7 +256,6 @@ const styles = StyleSheet.create({
   },
   noComentariosContainer: {
     backgroundColor: "#FFF7EE",
-    justifyContent: "center",
     flex: 1
   },
   fondoImage: {

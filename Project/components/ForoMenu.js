@@ -16,7 +16,7 @@ class ForoMenu extends Component {
         super(props);
         this.state = {
             tema: "",
-            forosPopulares: [{ id_foro: 2, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer una imagen se ajuste a un View??', id_usuario: 1, nombre_usuario: "Leila Pereyra", esProfesor: false, respuestas: 114, rating: 5, fecha_alta: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
+            forosPopulares: [{ id_foro: 26, nombre_foro: 'Programacion Avanzada', pregunta: 'Como hacer que una imagen se ajuste a un View??', id_usuario: 1, nombre_usuario: "Leila Pereyra", esProfesor: false, respuestas: 114, rating: 5, fecha_alta: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "React Native" }, { id_tag: 2, nombre_tag: "Programming" }] },
             { id_foro: 1, nombre_foro: 'Duda Existencial', pregunta: 'Como hacer para estudiar para Investigacion Operativa??', id_usuario: 1, nombre_usuario: "Juan Marinelli", esProfesor: true, respuestas: 114, rating: 5, fecha_alta: "24 de Junio", tags: [{ id_tag: 1, nombre_tag: "Investigacion Operativa" }] }]  
         };
         this.Star = ExportadorLogos.traerEstrellaLlena();

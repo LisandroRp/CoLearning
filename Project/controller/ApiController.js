@@ -385,6 +385,15 @@ getProfesoresHome(okProfesores) {
             okProfesores(data);
         })
 }
+getProfesoresHomeAnalitycs(id_usuario, okProfesores) {
+    let uri = url+'/profesores/' + id_usuario + '/analytics'
+    fetch(uri).then(res => {
+        return res.json()
+    }).catch((err) => ([alert("Intentar de nuevo"), console.log(err)])).
+        then(data => {
+            okProfesores(data);
+        })
+}
 getProfesoresFilter(nombre, materia, domicilio, rating, okProfesores) {
     let uri = url+'/users/profesor/find?domicilio=' + domicilio + '&nameMateria=' + materia + '&nameProfesor=' + nombre + '&valueRating=' + rating
     fetch(uri).then(res => {
@@ -574,9 +583,9 @@ postUsuarioRespuesta(id_usuario, id_respuesta, voto, okVoto) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idChat: id_chat, idUsuarioOrigen: id_usuarioOrigen, mensaje: mensaje }),
         }).then((res) => {
-            return res.json();
+            return ;
         }).catch((err) => console.log(err)).then((res) => {
-            return res.json();
+            return ;
         }).catch((err) => console.log(err));
     }
 //********************** */

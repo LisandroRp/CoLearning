@@ -144,7 +144,8 @@ router.get('/user/rating/:idUsuario', (req, res) => {
 });
 router.post('/user/updateRating',(req, res) =>{
     console.log("Update Nuevo Rating: ", req.body);
-    if(!req.body.idRating || !req.body.votos || !req.body.rating) 
+    
+    if(!req.body.idRating) 
         res.status(409).send({ msg: "Ha ocurrido un error" });
     else
     usuarioController.updateNuevoRating(req,res); 
